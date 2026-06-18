@@ -35,9 +35,36 @@
   고위험 4트리거 OR 게이트(비가역성/광범위 영향/보안·무결성/신규 외부 의존성), leader가 Plan Approval 직전 판정, 저위험은 분기 생략.  
   leader/CLAUDE/using-orbit SKILL/codex/gemini 정렬. ADR-1: critic은 신규(self-approval 차단의 설계 단계 적용). Triple Crown 3갈래 PASS.
 
+### OMC 비교 2차 — 에이전트/스킬 확장 (2026-06-18 발굴, 미착수)
+
+OMC(oh-my-claudecode) 레포 재비교로 발굴. OMC-1~4 흡수 완료분 제외, neue gap만.
+> ⚠️ Verifier 전담 에이전트는 **추가 금지** — OMC-2 ADR(reviewer가 verifier 흡수)로 기각됨.
+
+- [x] **[OMC-5] Explore 에이전트** (2026-06-18, 커밋 `12d4beb`·`8a45439`·`1ecd41f`·`e532a12`)  
+  신규 `agents/explore.md` — 내부 codebase 검색 전담 read-only(glob/grep/read fan-out). researcher(외부)와 4자 경계표로 분리.  
+  모델 `sonnet`(OMC haiku 대비 상향: 관계·영향 합성). 로스터 6→7, using-orbit/codex/gemini 4표면 정렬. Triple Crown 3갈래 PASS(시범 dispatch 무편집 직접 검증).
+
+- [~] **[OMC-6] Planner / Architect 책임 분리** — **보류** (2026-06-18, critic REVISE)  
+  플랜(`.planning/2026-06-18-planner-agent-separation.md`)은 작성됐으나 critic 게이트에서 보류 결정.  
+  근거: ① 전제("architect 과부하")가 실측 아닌 OMC 대칭 맞추기 — 옮겨갈 책임은 요구사항 1줄+태스크 1단계뿐인데 해법은 신규 opus 에이전트+12파일 계약 변경. ② 대안(b)(architect 단독 저자 유지, planner는 발견만)이 플랜 자체 D2 논리상 더 우수한데 미검토. ③ 경량성(7→8역, 매 작업 핸드오프 1회 추가) 트레이드오프.  
+  **재검토 조건: dogfooding에서 architect 과부하가 실제 관측될 때.** 현행 7역 유지.
+
+- [x] **[OMC-7] 선별 스킬 도입 → 스킬 이식 종결, 자율모드로 진화** (2026-06-19)  
+  researcher 종속성 조사 결과: OMC 41종 스킬 대부분이 OMC 고유 인프라(`/team`·`/ralph`·MCP·공유큐) 종속이거나 orbit 스택(superpowers/gstack/gsd/skillify)과 중복 → **이식 가치 있는 독립 스킬 없음**. 자동화 모드(autopilot/ralplan/team)는 허브앤스포크·사람게이트와 구조적 충돌.  
+  대신 사용자 제안으로 **opt-in 자율 실행 모드(접근 A)** 로 방향 전환 → 아래 완료 항목 참조.
+
+- [ ] **[OMC-8] 분리형 전문 에이전트(선택)** — Designer(UI) / Security-Reviewer(OWASP) / QA-Tester(인터랙티브)  
+  현황: reviewer/builder가 해당 책임 흡수 중. **과부하 또는 도메인 특화 요구 시에만** 분리.  
+  도메인 순수 ✅(preset 형태). **가치 중간, 우선순위 낮음**.
+
 ---
 
 ## 완료
+
+- [x] **opt-in 자율 실행 모드 (접근 A 전체)** (2026-06-19, 커밋 `5ed666d`·`003a394`·`19bbf4a`·`91651dc`·`1bcc70a`·`6cc0fd9`·`0944aae`·`ba38d59`)  
+  OMC-7에서 진화. 저위험 작업 묶음 일괄 선승인 + 리드 자율 루프. **신규 에이전트·훅·상태파일·의존성 0** — 기존 critic 4트리거 게이트·리드 루프·Plan Approval 재사용한 순수 계약 정렬.  
+  안전장치: opt-in 기본 비활성 / critic-on-entry 독립 검증 / 보수적 기본값(모호⇒정지) / 누적 blast radius / 배치 상한 ≤5+재동기화 / 경계 범위 재검증 / Triple Crown 검증강도 불변 / N1 carve-out.  
+  설계 스파이크(A vs B 비교, B 기각) → critic 게이트 **2라운드**(블로커#1+major#2·#3 → N1·N2) → Plan Approval. 7표면 정렬, 하네스 C1–C14 + 역검증 PASS, Triple Crown 3갈래 PASS, 배포물만 수정 diff 검증.
 
 - [x] **orbit 자체 개발팀 환경 구성** (2026-06-18)  
   `.claude/agents/` (5역: leader/architect/builder/reviewer/researcher),  
