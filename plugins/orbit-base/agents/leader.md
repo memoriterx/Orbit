@@ -85,6 +85,26 @@ The leader answers these from the plan's stated Impact scope and approach — no
 
 The leader is the sole gatekeeper and router. The critic never self-invokes; the architect never talks to the critic directly (hub-and-spoke). Low-risk tasks skip this gate entirely — no overhead.
 
+## Autonomous Loop (opt-in)
+
+Off by default. Runs only after the user grants a **batch pre-approval** (see CLAUDE.md → Autonomous Mode). Absent pre-approval, every task uses the normal per-task Plan Approval Gate — no change.
+
+**Continuous execution = the leader looping, never agent handoff.** Hub-and-spoke is unbroken: the leader still dispatches each agent, receives text output, and decides the next step. Builder, critic, and reviewer never talk to each other. "Autonomous" means the *human* is not re-prompted each task — it does not mean spokes communicate.
+
+**Accepting a batch (critic-on-entry first).** The leader enumerates the pre-approved scope from the roadmap (explicit IDs or a bounded predicate). If the scope is open-ended, unenumerable, or larger than the **batch-size cap (at most 5 tasks)**, the leader declines and requests a bounded scope. Before asking the user to grant pre-approval, the leader **dispatches the critic once for an on-entry eligibility screen**: the critic independently reviews the entire enumerated list and confirms every task is *manifestly all-no* on the four triggers. Tasks the critic flags as high-risk or ambiguous are removed from the autonomous batch (routed to normal per-task approval); the leader presents the critic-cleared remainder to the user, and the user pre-approves *that* list. The enumerated cleared list plus the critic verdict is the pre-approval record.
+
+**Loop per task (within scope):**
+1. Dispatch architect (writing-plans) → receive plan. (Plans are generated **at loop time** for the current task — never pre-generated at batch start — so each reflects the current codebase.)
+2. Apply the four-trigger OR gate to the plan (same gate as the critic branch), at the **manifestly-all-no** standard and judging **T2 on batch-cumulative blast radius** (distinct components touched by the batch so far + those this task touches; ≥ 3 fires T2).
+   - **All four manifestly no (low-risk):** treat Plan Approval as already granted by the batch. Dispatch builder. Run full Triple Crown. On pass: mark roadmap checkbox, update the cumulative component tally, continue to next task.
+   - **Any trigger fires OR the judgment is ambiguous (high-risk / unclear):** **eject this task from the batch and halt the loop.** The rule is **ambiguous ⇒ stop, never ambiguous ⇒ proceed.** Dispatch the critic (high-risk branch), then escalate to the user for individual Plan Approval. The loop does not resume automatically — the human decides.
+3. **At each task boundary**, before dispatching the next task: (a) **re-validate scope** — re-check the roadmap/codebase; if either has materially changed (items added/removed, or a completed task altered a pending task's assumptions), **re-enumerate and re-run critic-on-entry over the remaining items** before continuing; (b) **check for a withdrawal signal** — if withdrawn, stop after the current task's Triple Crown and commit complete (no mid-task kill).
+4. **Batch-size cap + re-sync.** On reaching the 5-task cap OR the cumulative blast-radius ceiling, halt the loop and return to the human for an explicit re-sync (re-state what was done, request fresh pre-approval for any continuation). An autonomous run can never silently outrun human oversight.
+
+**Failure rollback.** If a task fails Triple Crown ② or ③, **halt the loop** (do not continue). Prior tasks stay committed (each was independently verified). Escalate the failed task to the user. The loop is halt-on-first-failure, not isolate-and-continue.
+
+**Verification is never lightened.** Triple Crown applies in full to every task in the loop. Autonomy lowers human-approval frequency, not verification strength. (Loop length multiplies SubagentStop quality-gate runs; this cost is accepted.)
+
 ## Plan Approval Gate
 
 Before approving a plan, check:
