@@ -16,12 +16,18 @@
 #   - The SubagentStart hook (viewer-attach.sh) auto-connects the viewer pane.
 #
 # Variables (all overridable via environment or .orbit/config):
-#   ORBIT_TMUX_SESSION   — tmux session name            (default: "orbit")
-#   CLAUDE_PROJECT_DIR   — project root                 (default: git root or pwd)
-#   ORBIT_SKIP_PERMISSIONS — pass --dangerously-skip-permissions to claude
-#                            (default: true; set to "" to disable)
+#   ORBIT_TMUX_SESSION      — tmux session name            (default: "orbit")
+#   CLAUDE_PROJECT_DIR      — project root                 (default: git root or pwd)
+#   ORBIT_SKIP_PERMISSIONS  — pass --dangerously-skip-permissions to claude
+#                             (default: true; set to "" to disable)
+#   ORBIT_SKIP_PLUGIN_CHECK — skip orbit plugin detection & install step  (default: unset)
+#   ORBIT_INSTALL_WEBDEV    — also install orbit-web-dev preset            (default: unset)
+#   ORBIT_INSTALL_DEPS      — opt-in: install/update companion plugins     (default: unset)
+#                             auto-installs: superpowers (claude-plugins-official marketplace)
+#                             manual-only:   gstack, gsd (skills-dir install — instructions printed)
+#   ORBIT_SKIP_UPDATE       — skip all update checks                       (default: unset)
 
-set -e
+set -euo pipefail
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -107,14 +113,17 @@ echo "  OK python3 $(python3 --version 2>/dev/null | awk '{print $2}')"
 echo "  Project root: $PROJECT"
 echo "  Session name: $SESSION"
 
-# ── [0.5/5] orbit plugin detection & auto-install ────────────
+# ── [0.5/5] orbit plugin detection, update & companion install ─
 # Skip entirely if ORBIT_SKIP_PLUGIN_CHECK=1 (offline / already installed).
 if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
     echo ""
     echo -e "${YELLOW}[0.5/5] Checking orbit plugin...${NC}"
 
+    _ORBIT_BASE_INSTALLED=0
+
     if claude plugin list 2>/dev/null | grep -q "orbit-base"; then
-        echo "  OK orbit-base already installed — skipping"
+        echo "  OK orbit-base already installed"
+        _ORBIT_BASE_INSTALLED=1
     else
         echo "  orbit-base not detected — attempting auto-install..."
 
@@ -128,6 +137,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         # Step 2: install orbit-base (idempotent)
         if claude plugin install orbit-base 2>/dev/null; then
             echo -e "  ${GREEN}OK orbit-base installed${NC}"
+            _ORBIT_BASE_INSTALLED=1
         else
             echo -e "  ${RED}Auto-install failed.${NC}"
             echo "  To activate team features, run inside claude:"
@@ -143,6 +153,77 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             else
                 echo -e "  ${YELLOW}Warning: orbit-web-dev install failed (orbit-base required first)${NC}"
             fi
+        fi
+    fi
+
+    # ── Update check ─────────────────────────────────────────────
+    # Runs unless ORBIT_SKIP_UPDATE=1.  Failures are non-fatal.
+    if [ "${ORBIT_SKIP_UPDATE:-}" != "1" ]; then
+        echo ""
+        echo -e "${YELLOW}  Checking for updates...${NC}"
+
+        # Pull latest marketplace index (idempotent git fetch under the hood)
+        if claude plugin marketplace update orbit-marketplace 2>/dev/null; then
+            echo "  OK orbit-marketplace index refreshed"
+        else
+            echo -e "  ${YELLOW}  Warning: could not refresh orbit-marketplace index (offline?)${NC}"
+        fi
+
+        # Update orbit-base itself (only if installed)
+        if [ "$_ORBIT_BASE_INSTALLED" = "1" ]; then
+            if claude plugin update orbit-base 2>/dev/null; then
+                echo "  OK orbit-base up-to-date"
+            else
+                echo -e "  ${YELLOW}  Warning: orbit-base update check failed (non-fatal)${NC}"
+            fi
+        fi
+    else
+        echo "  ORBIT_SKIP_UPDATE=1 — skipping update checks"
+    fi
+
+    # ── Companion plugins (opt-in via ORBIT_INSTALL_DEPS=1) ──────
+    # superpowers: available in claude-plugins-official marketplace → auto-install/update.
+    # gstack, gsd:  skills-dir installs (not in any marketplace) → manual instructions only.
+    if [ "${ORBIT_INSTALL_DEPS:-}" = "1" ]; then
+        echo ""
+        echo -e "${YELLOW}  ORBIT_INSTALL_DEPS=1 — companion plugins...${NC}"
+
+        # superpowers — marketplace-installable (claude-plugins-official)
+        if claude plugin list 2>/dev/null | grep -q "superpowers"; then
+            echo "  OK superpowers already installed"
+            if [ "${ORBIT_SKIP_UPDATE:-}" != "1" ]; then
+                if claude plugin update superpowers 2>/dev/null; then
+                    echo "  OK superpowers up-to-date"
+                else
+                    echo -e "  ${YELLOW}  Warning: superpowers update check failed (non-fatal)${NC}"
+                fi
+            fi
+        else
+            echo "  Installing superpowers from claude-plugins-official..."
+            if claude plugin install superpowers@claude-plugins-official 2>/dev/null; then
+                echo -e "  ${GREEN}OK superpowers installed${NC}"
+            else
+                echo -e "  ${YELLOW}  superpowers auto-install failed. Run inside claude:${NC}"
+                echo "      /plugin install superpowers"
+            fi
+        fi
+
+        # gstack — skills-dir only (no marketplace entry) → manual instructions
+        if [ -d "${HOME}/.claude/skills/gstack" ]; then
+            echo "  OK gstack already present (~/.claude/skills/gstack)"
+        else
+            echo -e "  ${YELLOW}  gstack is not in any marketplace — manual install required:${NC}"
+            echo "      Clone or copy the gstack skill folder into ~/.claude/skills/gstack/"
+            echo "      See: https://github.com/obra/gstack (or your team's source)"
+        fi
+
+        # gsd — skills-dir only (no marketplace entry) → manual instructions
+        if [ -d "${HOME}/.claude/skills/gsd" ]; then
+            echo "  OK gsd already present (~/.claude/skills/gsd)"
+        else
+            echo -e "  ${YELLOW}  gsd is not in any marketplace — manual install required:${NC}"
+            echo "      Clone or copy the gsd skill folder into ~/.claude/skills/gsd/"
+            echo "      See: https://github.com/obra/gsd (or your team's source)"
         fi
     fi
 fi

@@ -136,10 +136,22 @@ bash /path/to/orbit/setup-orbit.sh
 | `ORBIT_TMUX_SESSION` | `orbit` | tmux 세션명 (`.orbit/config`에서도 설정 가능) |
 | `CLAUDE_PROJECT_DIR` | git root / pwd | 프로젝트 루트 경로 |
 | `ORBIT_SKIP_PERMISSIONS` | `true` | `--dangerously-skip-permissions` 전달 여부 (`""`로 비활성화) |
-| `ORBIT_SKIP_PLUGIN_CHECK` | (unset) | `1`로 설정하면 플러그인 감지·설치 단계를 건너뜀 (오프라인·이미 설치 확신 시) |
+| `ORBIT_SKIP_PLUGIN_CHECK` | (unset) | `1`로 설정하면 플러그인 감지·설치·업데이트 단계 전체를 건너뜀 (오프라인·이미 설치 확신 시) |
 | `ORBIT_INSTALL_WEBDEV` | (unset) | `1`로 설정하면 `orbit-web-dev`도 함께 자동 설치 |
+| `ORBIT_INSTALL_DEPS` | (unset) | `1`로 설정하면 동반 플러그인(superpowers/gstack/gsd) 설치·업데이트를 시도 |
+| `ORBIT_SKIP_UPDATE` | (unset) | `1`로 설정하면 orbit 및 동반 플러그인 업데이트 체크를 건너뜀 |
 
 **플러그인 자동 감지·설치:** `setup-orbit.sh`는 Claude CLI 실행 전에 `orbit-base`가 설치돼 있는지 확인한다. 미설치 시 `memoriterx/Orbit` 마켓플레이스 등록과 `orbit-base` 설치를 자동으로 시도한다(비대화형, 멱등). 자동 설치에 실패하면 에러로 중단하지 않고 claude 안에서 수동 실행할 명령을 안내한다.
+
+**업데이트 체크:** `ORBIT_SKIP_UPDATE=1`을 지정하지 않으면 매 실행 시 `orbit-marketplace` 인덱스를 갱신하고 `orbit-base`를 최신 버전으로 업데이트한다(실패해도 비치명적). `ORBIT_INSTALL_DEPS=1`일 때는 `superpowers`도 함께 업데이트한다.
+
+**동반 플러그인 분류:**
+
+| 플러그인 | 설치 방법 | `ORBIT_INSTALL_DEPS=1` 동작 |
+|----------|----------|---------------------------|
+| `superpowers` | `claude-plugins-official` 마켓플레이스 → 자동 설치 가능 | 미설치 시 자동 설치, 설치 시 업데이트 |
+| `gstack` | `~/.claude/skills/` 수동 설치 (마켓플레이스 미등록) | 설치 여부 확인 후 수동 안내만 출력 |
+| `gsd` | `~/.claude/skills/` 수동 설치 (마켓플레이스 미등록) | 설치 여부 확인 후 수동 안내만 출력 |
 
 SubagentStart 훅(`viewer-attach.sh`)이 서브에이전트 트랜스크립트를 뷰어 팬에 자동 연결한다.
 tmux가 없는 환경에서는 훅이 graceful no-op으로 종료되어 영향 없다.
