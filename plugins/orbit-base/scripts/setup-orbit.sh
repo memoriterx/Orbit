@@ -107,6 +107,46 @@ echo "  OK python3 $(python3 --version 2>/dev/null | awk '{print $2}')"
 echo "  Project root: $PROJECT"
 echo "  Session name: $SESSION"
 
+# ── [0.5/5] orbit plugin detection & auto-install ────────────
+# Skip entirely if ORBIT_SKIP_PLUGIN_CHECK=1 (offline / already installed).
+if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
+    echo ""
+    echo -e "${YELLOW}[0.5/5] Checking orbit plugin...${NC}"
+
+    if claude plugin list 2>/dev/null | grep -q "orbit-base"; then
+        echo "  OK orbit-base already installed — skipping"
+    else
+        echo "  orbit-base not detected — attempting auto-install..."
+
+        # Step 1: ensure orbit marketplace is registered (idempotent)
+        if claude plugin marketplace add memoriterx/Orbit 2>/dev/null; then
+            echo "  OK orbit-marketplace registered"
+        else
+            echo -e "  ${YELLOW}Warning: could not register orbit-marketplace${NC}"
+        fi
+
+        # Step 2: install orbit-base (idempotent)
+        if claude plugin install orbit-base 2>/dev/null; then
+            echo -e "  ${GREEN}OK orbit-base installed${NC}"
+        else
+            echo -e "  ${RED}Auto-install failed.${NC}"
+            echo "  To activate team features, run inside claude:"
+            echo "    /plugin marketplace add memoriterx/Orbit"
+            echo "    /plugin install orbit-base"
+        fi
+
+        # Step 3: install orbit-web-dev if requested
+        if [ "${ORBIT_INSTALL_WEBDEV:-}" = "1" ]; then
+            echo "  ORBIT_INSTALL_WEBDEV=1 — installing orbit-web-dev..."
+            if claude plugin install orbit-web-dev 2>/dev/null; then
+                echo -e "  ${GREEN}OK orbit-web-dev installed${NC}"
+            else
+                echo -e "  ${YELLOW}Warning: orbit-web-dev install failed (orbit-base required first)${NC}"
+            fi
+        fi
+    fi
+fi
+
 mkdir -p "$ORBIT_DIR"
 if [ -s "$NOTIF_LOG" ]; then
     mv "$NOTIF_LOG" "$ORBIT_DIR/notifications.$(date +%Y%m%d-%H%M%S).log"

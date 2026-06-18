@@ -136,6 +136,10 @@ bash /path/to/orbit/setup-orbit.sh
 | `ORBIT_TMUX_SESSION` | `orbit` | tmux 세션명 (`.orbit/config`에서도 설정 가능) |
 | `CLAUDE_PROJECT_DIR` | git root / pwd | 프로젝트 루트 경로 |
 | `ORBIT_SKIP_PERMISSIONS` | `true` | `--dangerously-skip-permissions` 전달 여부 (`""`로 비활성화) |
+| `ORBIT_SKIP_PLUGIN_CHECK` | (unset) | `1`로 설정하면 플러그인 감지·설치 단계를 건너뜀 (오프라인·이미 설치 확신 시) |
+| `ORBIT_INSTALL_WEBDEV` | (unset) | `1`로 설정하면 `orbit-web-dev`도 함께 자동 설치 |
+
+**플러그인 자동 감지·설치:** `setup-orbit.sh`는 Claude CLI 실행 전에 `orbit-base`가 설치돼 있는지 확인한다. 미설치 시 `memoriterx/Orbit` 마켓플레이스 등록과 `orbit-base` 설치를 자동으로 시도한다(비대화형, 멱등). 자동 설치에 실패하면 에러로 중단하지 않고 claude 안에서 수동 실행할 명령을 안내한다.
 
 SubagentStart 훅(`viewer-attach.sh`)이 서브에이전트 트랜스크립트를 뷰어 팬에 자동 연결한다.
 tmux가 없는 환경에서는 훅이 graceful no-op으로 종료되어 영향 없다.
