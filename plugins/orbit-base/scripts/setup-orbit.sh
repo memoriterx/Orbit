@@ -24,6 +24,10 @@
 #   ORBIT_INSTALL_DEPS      — opt-in: install/update companion plugins     (default: unset)
 #                             auto-installs: superpowers (claude-plugins-official marketplace)
 #                             manual-only:   gstack, gsd (skills-dir install — instructions printed)
+#   ORBIT_INSTALL_SCOPE     — plugin install scope: user, project, or local (default: user)
+#                             user: available globally across all projects
+#                             project: written to .claude/ in the current project
+#                             local:   written to .claude/ but git-ignored (local override)
 #   ORBIT_SKIP_UPDATE       — skip all update checks                       (default: unset)
 
 set -euo pipefail
@@ -33,6 +37,20 @@ CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+# ── Plugin install scope ──────────────────────────────────────
+# Validate ORBIT_INSTALL_SCOPE; fall back to "user" on invalid value.
+_raw_scope="${ORBIT_INSTALL_SCOPE:-user}"
+case "$_raw_scope" in
+    user|project|local)
+        ORBIT_INSTALL_SCOPE="$_raw_scope"
+        ;;
+    *)
+        echo -e "${YELLOW}Warning: ORBIT_INSTALL_SCOPE='$_raw_scope' is not valid (user/project/local) — falling back to 'user'${NC}"
+        ORBIT_INSTALL_SCOPE="user"
+        ;;
+esac
+unset _raw_scope
 
 # ── Session name ─────────────────────────────────────────────
 SESSION="${ORBIT_TMUX_SESSION:-orbit}"
@@ -127,16 +145,18 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         echo "  orbit-base not detected — attempting auto-install..."
 
         # Step 1: ensure orbit marketplace is registered (idempotent)
-        if claude plugin marketplace add memoriterx/Orbit 2>/dev/null; then
+        if claude plugin marketplace add memoriterx/Orbit --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
             echo "  OK orbit-marketplace registered"
         else
             echo -e "  ${YELLOW}Warning: could not register orbit-marketplace${NC}"
         fi
 
         # Step 2: install orbit-base (idempotent)
-        if claude plugin install orbit-base 2>/dev/null; then
+        if claude plugin install orbit-base --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
             echo -e "  ${GREEN}OK orbit-base installed${NC}"
             _ORBIT_BASE_INSTALLED=1
+            [ "$ORBIT_INSTALL_SCOPE" != "user" ] && \
+                echo -e "  ${CYAN}Installed at $ORBIT_INSTALL_SCOPE scope — active only in this project${NC}"
         else
             echo -e "  ${RED}Auto-install failed.${NC}"
             echo "  To activate team features, run inside claude:"
@@ -161,7 +181,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
 
         # Update orbit-base itself (only if installed)
         if [ "$_ORBIT_BASE_INSTALLED" = "1" ]; then
-            if claude plugin update orbit-base 2>/dev/null; then
+            if claude plugin update orbit-base --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
                 echo "  OK orbit-base up-to-date"
             else
                 echo -e "  ${YELLOW}  Warning: orbit-base update check failed (non-fatal)${NC}"
@@ -182,7 +202,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         if claude plugin list 2>/dev/null | grep -q "superpowers"; then
             echo "  OK superpowers already installed"
             if [ "${ORBIT_SKIP_UPDATE:-}" != "1" ]; then
-                if claude plugin update superpowers 2>/dev/null; then
+                if claude plugin update superpowers --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
                     echo "  OK superpowers up-to-date"
                 else
                     echo -e "  ${YELLOW}  Warning: superpowers update check failed (non-fatal)${NC}"
@@ -190,8 +210,10 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             fi
         else
             echo "  Installing superpowers from claude-plugins-official..."
-            if claude plugin install superpowers@claude-plugins-official 2>/dev/null; then
+            if claude plugin install superpowers@claude-plugins-official --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
                 echo -e "  ${GREEN}OK superpowers installed${NC}"
+                [ "$ORBIT_INSTALL_SCOPE" != "user" ] && \
+                    echo -e "  ${CYAN}Installed at $ORBIT_INSTALL_SCOPE scope — active only in this project${NC}"
             else
                 echo -e "  ${YELLOW}  superpowers auto-install failed. Run inside claude:${NC}"
                 echo "      /plugin install superpowers"

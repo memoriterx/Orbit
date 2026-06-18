@@ -134,6 +134,7 @@ bash /path/to/orbit/setup-orbit.sh
 | `ORBIT_SKIP_PERMISSIONS` | `true` | `--dangerously-skip-permissions` 전달 여부 (`""`로 비활성화) |
 | `ORBIT_SKIP_PLUGIN_CHECK` | (unset) | `1`로 설정하면 플러그인 감지·설치·업데이트 단계 전체를 건너뜀 (오프라인·이미 설치 확신 시) |
 | `ORBIT_INSTALL_DEPS` | (unset) | `1`로 설정하면 동반 플러그인(superpowers/gstack/gsd) 설치·업데이트를 시도 |
+| `ORBIT_INSTALL_SCOPE` | `user` | 플러그인 설치 범위: `user`(전역), `project`(프로젝트 `.claude/`), `local`(로컬 전용). 자체 팀 에이전트가 있는 프로젝트에서 충돌을 피하거나 전역 오염 없이 시험할 때 `project`/`local`로 격리한다. |
 | `ORBIT_SKIP_UPDATE` | (unset) | `1`로 설정하면 orbit 및 동반 플러그인 업데이트 체크를 건너뜀 |
 
 **플러그인 자동 감지·설치:** `setup-orbit.sh`는 Claude CLI 실행 전에 `orbit-base`가 설치돼 있는지 확인한다. 미설치 시 `memoriterx/Orbit` 마켓플레이스 등록과 `orbit-base` 설치를 자동으로 시도한다(비대화형, 멱등). 자동 설치에 실패하면 에러로 중단하지 않고 claude 안에서 수동 실행할 명령을 안내한다.
