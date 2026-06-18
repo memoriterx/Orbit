@@ -115,6 +115,8 @@ fi
   2. /orbit-cycle 로 작업 1건 생명주기를 시작한다.
   3. (선택) .orbit/config 에서 ORBIT_TMUX_SESSION 을 수정한다.
   4. (선택) .orbit/quality-gate.sh 에 프로젝트 빌드/린트 명령을 채운다.
+  5. (선택) tmux 팀 환경(리드 + 뷰어 2팬)을 쓰려면:
+       bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-orbit.sh"
 ```
 
 ## 주의사항
