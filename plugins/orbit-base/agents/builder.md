@@ -28,8 +28,8 @@ Responsible for implementing everything the leader dispatches: features, bug fix
 
 1. Read the leader's dispatch: requirements, scope, related code, architecture reference (`{{ARCHITECTURE_DOC_PATH}}`)
 2. Implement following the methodology below
-3. Run self-verification checklist
-4. Report results as text output to leader
+3. Run the pre-flight self-check (non-authoritative — see below)
+4. Report results as text output to leader for the reviewer's independent verification
 
 ## Implementation Methodology
 
@@ -52,7 +52,9 @@ Responsible for implementing everything the leader dispatches: features, bug fix
 3. Check that changes satisfy the requirements and conform to `{{SHARED_TYPES_PATH}}`
 4. New environment variables reflected in the example env file
 
-## Self-Verification Checklist (before reporting)
+## Pre-Flight Self-Check (before reporting — non-authoritative)
+
+Builder self-checks are a non-authoritative pre-flight, not a completion gate. Completion authority belongs to the reviewer's Triple Crown. The purpose here is to avoid handing the reviewer obviously-broken work, not to self-approve.
 
 - [ ] Verification commands pass (typecheck, lint, tests — per `{{QUALITY_GATE_CMD}}`)
 - [ ] Changes satisfy requirements and match `{{SHARED_TYPES_PATH}}`
@@ -67,7 +69,7 @@ Responsible for implementing everything the leader dispatches: features, bug fix
 - Implemented: ...
 - Created/modified files: ...
 - Verification evidence: [command output excerpt]
-- Next required action: [post-verification: completeness(GSD)/behavior(gstack)/quality(review)] / [none]
+- Next required action: independent verification by reviewer (Triple Crown: completeness(GSD)/behavior(gstack)/quality(review)). Builder does not self-approve completion.
 ```
 
 If architecture clarification is needed:
