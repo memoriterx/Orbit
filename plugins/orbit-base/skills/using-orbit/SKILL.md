@@ -51,6 +51,10 @@ After a task is done, an optional branch may fire. When the **Rule of Three** is
 
 **Critical:** The leader never writes the plan directly — not even a draft or outline. Plan writing is architect's job, always. The leader's role in step 1 is to dispatch architect and receive the plan as output.
 
+### Optional Mode: Autonomous Loop (opt-in, default off)
+
+By default every task uses per-task Plan Approval — unchanged. The user may instead grant a **batch pre-approval**: one exercise of the Plan Approval Gate over a named, finite set of roadmap tasks (capped at a few tasks). Before that approval, the **critic independently screens the whole batch on entry** — every task must be *manifestly* low-risk (four-trigger all-no). Within the cleared scope the leader runs an **autonomous loop** — plan → four-trigger gate → build → full Triple Crown → next — without re-prompting the human each task. The judgment is conservative: **anything ambiguous halts the loop** (ambiguous ⇒ stop). Blast radius is tracked **cumulatively across the batch**, and the loop halts for a human re-sync on reaching the batch-size cap. Hub-and-spoke is preserved: the leader loops; agents never hand off to each other. If any task's plan fires a four-trigger (high-risk) or is ambiguous, it is **ejected from the batch and the loop halts** for individual human approval — the human gate for high-risk work stays non-negotiable. Triple Crown is never lightened. See CLAUDE.md → Autonomous Mode and leader.md → Autonomous Loop.
+
 ### Plan Approval Gate
 
 Before approving a plan, the leader checks:
@@ -112,6 +116,7 @@ When a task completes, it gets a checkbox. Key architectural decisions are promo
 | Lifecycle discipline | Full | Full | Full |
 | Triple Crown verification prose | Full + companion skills | Manual checklist | Manual checklist |
 | Slash commands | Full | Partial | Partial |
+| Autonomous loop (opt-in) | Full (leader loop over Agent dispatch) | Sequential (no background pseudo-parallelism) | Manual sequential (single context, role-switch per task) |
 
 Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle discipline survives in all environments** — plan → approve → build → verify is the invariant.
 
@@ -121,6 +126,7 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 |------|---------|
 | Hub-and-spoke | Leader routes all agent communication |
 | Plan Approval | User gate before any implementation |
+| Autonomous Mode | Opt-in (default off): critic screens a finite low-risk batch on entry; user pre-approves once; leader loops with cumulative blast-radius + batch cap; any four-trigger firing or ambiguity halts the loop for individual approval |
 | Triple Crown | Three-prong post-implementation verification |
 | Thin Ledger | Minimal roadmap — no ceremony |
 | builder | Executor — generic implementer; self-check is non-authoritative |
