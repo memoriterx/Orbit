@@ -41,13 +41,37 @@ All agent communication routes through the leader. No agent communicates directl
 
 ## Plan Approval Gate
 
-No implementation proceeds without the user's explicit approval of the written plan. This gate is non-negotiable.
+No implementation proceeds without the user's explicit approval of the written plan — given per task, or once over a pre-approved batch scope (see Autonomous Mode). This gate is non-negotiable: any four-trigger high-risk firing always forces individual human approval.
 
 Approval criteria:
 1. Tests included or testing strategy defined
 2. Impact scope clearly stated
 3. No architecture conflicts
 4. Success criteria measurable
+
+## Autonomous Mode (opt-in)
+
+Autonomous mode is **off by default**. Absent an explicit batch pre-approval, every task uses the standard per-task Plan Approval Gate above — unchanged. Autonomous mode never weakens that gate; it exercises it once over a stated scope.
+
+**Batch pre-approval.** The user may exercise the Plan Approval Gate **once** over a *named, finite, enumerable set of tasks* (explicit roadmap IDs, or a bounded predicate over the roadmap). Open-ended scope ("just keep going") is not valid; the leader declines it and requests a bounded scope. Batch pre-approval is the same human gate, exercised once — not its removal.
+
+**Critic-on-entry (independent eligibility screen).** Before the user grants the pre-approval, the leader enumerates the scope and dispatches the **critic once** to independently review the *entire enumerated batch* — confirming every task is manifestly all-no on the four triggers. Any task the critic flags as high-risk or ambiguous is removed from the autonomous batch and routed to normal per-task approval; the user pre-approves only the critic-cleared remainder. This is a second pair of eyes at the entry point, not only after a trigger fires mid-loop. Reuses the existing critic agent.
+
+**Low-risk (autonomous-eligible).** A task is eligible if and only if **all four** of the four-trigger OR gate conditions are *manifestly no* (the same four triggers the critic uses), with no ambiguity:
+1. Reversible (no data migration / rewrite / backward-compat break).
+2. Contained (< 3 components AND no public interface/contract change) — judged on **batch-cumulative blast radius**, not the task alone.
+3. Integrity-neutral (no auth / permissions / secrets / deletion / money / PII path).
+4. No new external dependency.
+
+"Repetitive" and "exploratory" are motivations for batching, not separate gates. The four triggers are the sole, measurable eligibility criterion.
+
+**Conservative default (ambiguous ⇒ stop).** Eligibility requires a *manifestly all-no* judgment. If any trigger's verdict is unclear, borderline, or a low-confidence call, the task is **not eligible**: the loop halts and the task goes to individual human Plan Approval. The rule is **"ambiguous ⇒ stop", never "ambiguous ⇒ proceed."** The only path to autonomous execution is an unambiguous all-no.
+
+**Batch-cumulative blast radius (T2) + batch-size cap.** T2 is judged against the **running cumulative total of distinct components touched by the batch so far** (not per-task-in-isolation): before each task the leader sums components already modified plus those the next task touches; reaching ≥ 3 distinct components fires T2 and halts the loop. An autonomous batch is additionally capped at **at most 5 tasks per pre-approval**; on reaching either ceiling the loop halts and the leader returns to the human for an explicit **re-sync** (re-state what was done, request fresh pre-approval for any continuation). This bounds accumulation, cross-task interaction, and context drift.
+
+**Scope re-validation (staleness guard).** Scope is enumerated once at pre-approval, but the codebase/roadmap change during the loop. **At each task boundary** the leader re-confirms scope validity before the next task: if the roadmap/codebase has materially changed (items added/removed, or a completed task altered a pending task's assumptions), the leader **re-enumerates and re-runs critic-on-entry over the remaining items** before continuing. Per-task plans are generated at loop time (never pre-generated stale at the batch start), so each reflects the codebase as it is at that iteration.
+
+**Auto-halt (hard).** During an autonomous batch, the leader applies the four-trigger gate (manifestly-all-no standard, batch-cumulative T2) to each task's plan. If **any** trigger fires **or the judgment is ambiguous**, the task is **ejected from the batch**, the **loop halts**, and the task escalates to **individual human Plan Approval** (with the critic branch, since a trigger fired). The human gate for high-risk work remains non-negotiable.
 
 ## Verification Standard
 
