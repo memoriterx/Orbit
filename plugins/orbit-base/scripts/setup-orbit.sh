@@ -21,7 +21,6 @@
 #   ORBIT_SKIP_PERMISSIONS  — pass --dangerously-skip-permissions to claude
 #                             (default: true; set to "" to disable)
 #   ORBIT_SKIP_PLUGIN_CHECK — skip orbit plugin detection & install step  (default: unset)
-#   ORBIT_INSTALL_WEBDEV    — also install orbit-web-dev preset            (default: unset)
 #   ORBIT_INSTALL_DEPS      — opt-in: install/update companion plugins     (default: unset)
 #                             auto-installs: superpowers (claude-plugins-official marketplace)
 #                             manual-only:   gstack, gsd (skills-dir install — instructions printed)
@@ -145,15 +144,6 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             echo "    /plugin install orbit-base"
         fi
 
-        # Step 3: install orbit-web-dev if requested
-        if [ "${ORBIT_INSTALL_WEBDEV:-}" = "1" ]; then
-            echo "  ORBIT_INSTALL_WEBDEV=1 — installing orbit-web-dev..."
-            if claude plugin install orbit-web-dev 2>/dev/null; then
-                echo -e "  ${GREEN}OK orbit-web-dev installed${NC}"
-            else
-                echo -e "  ${YELLOW}Warning: orbit-web-dev install failed (orbit-base required first)${NC}"
-            fi
-        fi
     fi
 
     # ── Update check ─────────────────────────────────────────────

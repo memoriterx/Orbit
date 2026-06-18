@@ -1,8 +1,8 @@
 # Smoke Test Results — Phase 5
 
 - **날짜:** 2026-06-18
-- **실행:** Phase 5 스모크 검증 (A~D + 참조 무결성)
-- **판정:** A = 통과, B = 통과, C = 미검증(환경 없음), D = 통과(주석 포함)
+- **실행:** Phase 5 스모크 검증 (A + C + D + 참조 무결성)
+- **판정:** A = 통과, C = 미검증(환경 없음), D = 통과
 
 ---
 
@@ -24,7 +24,6 @@ grep -riE 'oremi|오르미|네이버|부케|/Users/dh' plugins/orbit-base
 | `plugins/orbit-base/.claude-plugin/plugin.json` | PASS |
 | `plugins/orbit-base/.codex-plugin/plugin.json` | PASS |
 | `plugins/orbit-base/gemini-extension.json` | PASS |
-| `plugins/orbit-web-dev/.claude-plugin/plugin.json` | PASS |
 | `plugins/orbit-base/hooks/hooks.json` | PASS |
 
 모두 `python3 -m json.tool` 파싱 통과.
@@ -45,19 +44,19 @@ cat AGENTS.md (첫 줄):
 
 base `agents/*.md` + `CLAUDE.md`의 `{{SLOT}}` 토큰 전수:
 
-| 슬롯 | 정의 위치 (Domain Slots 표) | web-dev 채움값 제공 여부 |
-|------|-----------------------------|--------------------------|
-| `{{ARCHITECTURE_DOC_PATH}}` | architect.md, CLAUDE.md, builder.md | web-dev agent 예시 제공 (PASS) |
-| `{{SHARED_TYPES_PATH}}` | architect.md, builder.md, reviewer.md | web-dev agent 예시 제공 (PASS) |
-| `{{DOMAIN_SCOPE}}` | architect.md | web-dev agent 예시 제공 (PASS) |
-| `{{CONSISTENCY_LENS}}` | architect.md | web-dev `architect-web.md`로 override — 대체 PASS |
-| `{{DOMAIN_DESIGN_ITEMS}}` | architect.md | web-dev `architect-web.md`로 override — 대체 PASS |
+| 슬롯 | 정의 위치 (Domain Slots 표) | 채움값 방법 |
+|------|-----------------------------|------------|
+| `{{ARCHITECTURE_DOC_PATH}}` | architect.md, CLAUDE.md, builder.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{SHARED_TYPES_PATH}}` | architect.md, builder.md, reviewer.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{DOMAIN_SCOPE}}` | architect.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{CONSISTENCY_LENS}}` | architect.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{DOMAIN_DESIGN_ITEMS}}` | architect.md | 프로젝트 CLAUDE.md에서 채움 |
 | `{{PRODUCT_PATHS}}` | leader.md, CLAUDE.md | 프로젝트 CLAUDE.md에서 채움 (문서화됨) — PASS |
-| `{{QUALITY_GATE_CMD}}` | builder.md, reviewer.md, CLAUDE.md | web-dev 예시 제공 + `.orbit/quality-gate.sh` 위임 — PASS |
-| `{{BEHAVIOR_VERIFICATION_METHOD}}` | reviewer.md | web-dev `qa-web.md` + README 슬롯 표 — PASS |
-| `{{QUALITY_REVIEW_SKILL}}` | reviewer.md | web-dev `qa-web.md` (superpowers 기본값 명시) — PASS |
-| `{{STATIC_VERIFICATION_SKILL}}` | reviewer.md | web-dev `qa-web.md` (web-qa skill) — PASS |
-| `{{RESEARCH_SOURCES}}` | researcher.md | web-dev `presets/research-sources.md` 예시 — PASS |
+| `{{QUALITY_GATE_CMD}}` | builder.md, reviewer.md, CLAUDE.md | `.orbit/quality-gate.sh`에 채움 — PASS |
+| `{{BEHAVIOR_VERIFICATION_METHOD}}` | reviewer.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{QUALITY_REVIEW_SKILL}}` | reviewer.md | 프로젝트 CLAUDE.md에서 채움 (superpowers 기본값) |
+| `{{STATIC_VERIFICATION_SKILL}}` | reviewer.md | 프로젝트 CLAUDE.md에서 채움 |
+| `{{RESEARCH_SOURCES}}` | researcher.md | 프로젝트 CLAUDE.md에서 직접 채움 |
 | `{{MEMORY_PATH}}` | CLAUDE.md | 프로젝트 CLAUDE.md에서 채움 (문서화됨) — PASS |
 
 **결과: 고아 플레이스홀더 0건 — 모든 슬롯이 Domain Slots 표에 정의되고 채움값 경로 존재 — PASS**
@@ -120,46 +119,6 @@ grep -rn '/Users/dh' plugins/orbit-base
 
 ---
 
-## 스모크 B — web-dev 구조 검증
-
-### B-1. 에이전트 존재 확인
-
-`plugins/orbit-web-dev/agents/`:
-- `architect-web.md` — 존재 (PASS)
-- `designer.md` — 존재 (PASS)
-- `fullstack.md` — 존재 (PASS)
-- `qa-web.md` — 존재 (PASS)
-
-### B-2. 스킬 4종 존재 확인
-
-`plugins/orbit-web-dev/skills/`:
-- `nextjs-build/SKILL.md` — 존재 (PASS)
-- `api-build/SKILL.md` — 존재 (PASS)
-- `ui-design/SKILL.md` — 존재 (PASS)
-- `web-qa/SKILL.md` — 존재 (PASS)
-
-### B-3. 슬롯 매핑 일관성
-
-base 에이전트 슬롯 vs web-dev 에이전트 슬롯 교차 확인:
-
-| base 슬롯 | web-dev 매핑 상태 |
-|-----------|------------------|
-| `{{SHARED_TYPES_PATH}}` | fullstack.md·architect-web.md·qa-web.md 모두 동일 슬롯 사용 — 일관 (PASS) |
-| `{{QUALITY_GATE_CMD}}` | fullstack.md 명시 (예: `tsc --noEmit && next lint`) — PASS |
-| `{{STATIC_VERIFICATION_SKILL}}` | qa-web.md에서 `web-qa` skill로 구체화 — PASS |
-| `{{BEHAVIOR_VERIFICATION_METHOD}}` | qa-web.md에서 gstack 예시 제공 — PASS |
-| `{{RESEARCH_SOURCES}}` | `presets/research-sources.md`로 채움값 제공 — PASS |
-| `{{CONSISTENCY_LENS}}` | base architect 슬롯 → architect-web이 체크리스트로 구체화 (override) — PASS |
-| `{{DOMAIN_DESIGN_ITEMS}}` | base architect 슬롯 → architect-web의 "Core Responsibilities" 섹션으로 구체화 — PASS |
-
-### B-4. base 선행 필요 안내
-
-`plugins/orbit-web-dev/README.md` 첫 섹션에 "orbit-base must be installed before orbit-web-dev" 명시 확인 — PASS
-
-**스모크 B 종합: PASS**
-
----
-
 ## 스모크 C — 크로스 AI (best-effort)
 
 실제 Codex / Gemini 설치 환경 없음 → 구조 검증만 수행.
@@ -191,8 +150,7 @@ base 에이전트 슬롯 vs web-dev 에이전트 슬롯 교차 확인:
 | 스모크 | 결과 | 비고 |
 |--------|------|------|
 | **A** (CC base 설치 구조 검증) | **PASS** | .orbit/ 스캐폴딩·quality-gate·graceful degradation 전부 통과 |
-| **B** (web-dev 구조 검증) | **PASS** | 에이전트 4종·스킬 4종·슬롯 매핑 일관성 확인 |
 | **C** (크로스AI best-effort) | **미검증** | 환경 없음 — 구조적으로 superpowers 패턴 일치 |
 | **D** (참조 무결성) | **PASS** | 오르미 잔재 0건·JSON 전부 유효·심링크 정상·고아 슬롯 0건 |
 
-**배포 가능 기준(A·B·D 전부 통과) → 충족.**
+**배포 가능 기준(A·D 통과) → 충족.**
