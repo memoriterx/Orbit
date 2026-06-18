@@ -59,6 +59,8 @@ roadmap selection
 
 Simple questions, meta tasks, and configuration changes do not require the full lifecycle.
 
+**Optional skillify branch (after done):** If the reviewer reports a Rule-of-Three signal — the same procedure or fix recurring across three or more tasks — the leader may dispatch the architect to extract the pattern into a reusable skill. The leader is the sole router here (reviewer never contacts the architect directly). Writing the new skill follows the normal lifecycle: the architect proposes, the leader runs Plan Approval, the builder writes the file. This branch is optional and never blocks task completion. See the skillify skill.
+
 ## Plan Approval Gate
 
 Before approving a plan, check:
