@@ -1,3 +1,9 @@
 # Runtime project-state directory — must not be committed to the framework repo.
 # Each project that uses orbit will have its own .orbit/ at the project root.
 .orbit/
+
+# orbit dev team runtime state — logs excluded, roadmap tracked
+.planning/*.log
+.planning/pending-resume.json
+.planning/session-log.md
+.planning/usage-detect.log

@@ -1,0 +1,72 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p /Users/dh/Project/orbit/.planning && printf '[%s] session stopped (sid=%s)\\n' \"$(date '+%Y-%m-%d %H:%M:%S')\" \"$(jq -r '.session_id // \"?\"')\" >> /Users/dh/Project/orbit/.planning/session-log.md 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "python3 /Users/dh/Project/orbit/.planning/usage-detect.py"
+          }
+        ]
+      }
+    ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "i=$(cat 2>/dev/null); delta=$(printf '%s' \"$i\" | jq -r '.delta // \"\"' 2>/dev/null); printf '%s' \"$delta\" | grep -iqE 'approaching.*usage limit|resets? at [0-9]+:[0-9]+.*[AP]M|out of.*usage' && { mkdir -p /Users/dh/Project/orbit/.planning; printf '[%s] EVT=MESSAGE %s\\n' \"$(date '+%F %T')\" \"$i\" >> /Users/dh/Project/orbit/.planning/usage-detect.log; }; exit 0"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/dh/Project/orbit/.planning/resume-inject.py"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/dh/Project/orbit 2>/dev/null || exit 0; errs=''; rc=0; for f in $(find plugins/orbit-base -name '*.sh' 2>/dev/null); do out=$(bash -n \"$f\" 2>&1); [ $? -ne 0 ] && { errs=\"${errs}\\n[bash -n FAIL] $f:\\n$out\"; rc=1; }; done; for f in $(find plugins/orbit-base -name '*.json' 2>/dev/null); do out=$(python3 -m json.tool \"$f\" > /dev/null 2>&1); [ $? -ne 0 ] && { errs=\"${errs}\\n[json FAIL] $f\"; rc=1; }; done; dom=$(grep -r 'oremi\\|Oremi' plugins/orbit-base/ 2>/dev/null | grep -v '.gitkeep' | wc -l | tr -d ' '); [ \"$dom\" -gt 0 ] && { errs=\"${errs}\\n[DOMAIN PURITY FAIL] plugins/orbit-base/ contains project-specific name (${dom} hits)\"; rc=1; }; if [ $rc -ne 0 ]; then printf '{\"decision\":\"block\",\"reason\":%s}' \"$(printf 'orbit 품질 게이트 실패%b' \"$errs\" | jq -Rs .)\"; fi; exit 0"
+          },
+          {
+            "type": "command",
+            "async": true,
+            "command": "/Users/dh/Project/orbit/_team/notify-done.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "/Users/dh/Project/orbit/_team/auto-attach.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
