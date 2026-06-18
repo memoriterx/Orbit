@@ -1,0 +1,3 @@
+# Runtime project-state directory — must not be committed to the framework repo.
+# Each project that uses orbit will have its own .orbit/ at the project root.
+.orbit/

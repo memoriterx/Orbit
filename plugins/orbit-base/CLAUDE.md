@@ -15,13 +15,17 @@ Orbit is a hub-and-spoke multi-agent team framework for structured software deli
 Whenever working on a meaningful piece of project work, apply the single-task lifecycle:
 
 ```
-roadmap selection → writing-plans → Plan Approval (user confirms)
-→ implementation (TDD) → post-implementation Triple Crown
+roadmap selection
+→ leader dispatches architect (writing-plans) → architect produces plan
+→ Plan Approval: leader presents architect's plan → user confirms
+→ leader dispatches builder (TDD) → post-implementation Triple Crown
   ① Completeness   ② Behavior   ③ Quality
 → done (roadmap checkbox)
 ```
 
 Simple questions, meta tasks, and configuration changes do not require the full lifecycle.
+
+**Leader writes nothing.** Plan writing, design, investigation, and implementation all belong to agents (architect or builder). The leader's direct actions are limited to: roadmap selection, dispatching agents, presenting plans for approval, and marking roadmap checkboxes.
 
 ## Hub-and-Spoke Communication Rule
 

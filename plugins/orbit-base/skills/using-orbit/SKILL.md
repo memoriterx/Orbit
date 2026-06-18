@@ -29,14 +29,16 @@ Every piece of work follows this lifecycle:
 
 ```
 0. Select    leader picks one task from roadmap
-1. Plan      brainstorming (optional) → writing-plans → plan document
-2. Approve   leader presents plan → user approval (no implementation without approval)
+1. Plan      leader dispatches architect (writing-plans) → architect produces plan document
+2. Approve   leader presents architect's plan → user approval (no implementation without approval)
 3. Build     leader dispatches builder (TDD, systematic debugging, verification)
 4. Verify    Triple Crown three-pronged verification (reviewer coordinates)
 5. Done      roadmap checkbox + key decisions promoted to memory
 ```
 
 Simple questions, meta tasks, and configuration changes skip the lifecycle.
+
+**Critical:** The leader never writes the plan directly — not even a draft or outline. Plan writing is architect's job, always. The leader's role in step 1 is to dispatch architect and receive the plan as output.
 
 ### Plan Approval Gate
 
@@ -66,11 +68,11 @@ If ③ surfaces architecture concerns, the leader dispatches the architect for a
 
 The leader delegates everything except:
 - Roadmap selection and checkbox management
-- Plan Approval gate (presents to user, awaits confirmation)
+- Plan Approval gate (presents architect's plan to user, awaits confirmation)
 - Memory file updates (key decisions only)
-- Agent and skill definitions
+- Agent and skill definitions (leader.md, CLAUDE.md)
 
-Root cause analysis, investigation, bash execution, implementation, and verification all belong to agents.
+Root cause analysis, investigation, **plan writing**, bash execution, implementation, and verification all belong to agents. When the thought "this is simple enough to do inline" arises, that is the exact cue to delegate immediately.
 
 ## Reporting Channel
 

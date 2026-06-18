@@ -52,21 +52,27 @@ cat "${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md"
 
 ---
 
-## Step 2: writing-plans (플랜 작성)
+## Step 2: writing-plans (플랜 작성 — architect 위임)
 
-`superpowers:writing-plans` 스킬이 설치돼 있으면 사용한다:
+**리드는 플랜을 직접 작성하지 않는다.** 초안조차 직접 쓰는 것은 위반이다.
+
+리드는 **architect**를 `Agent()`로 디스패치해 플랜 작성을 위임한다:
 
 ```
-/writing-plans
+Agent(architect, prompt="[작업 컨텍스트와 요구사항]. writing-plans 스킬로 플랜 문서를 작성해 주세요.")
 ```
 
-없으면 직접 플랜을 작성한다. 플랜은 다음을 포함해야 한다:
+`superpowers:writing-plans` 스킬이 설치돼 있으면 architect가 그 스킬을 사용한다.
+
+architect가 생성하는 플랜은 다음을 포함해야 한다:
 - **Goal**: 이 작업으로 달성할 상태
 - **Success Criteria**: 완료 판정 기준 (측정 가능)
 - **Tasks**: 체크박스 목록 (`- [ ] T1: ...`)
 - **검증 방법**: 3갈래 검증 각각의 실행 명령
 
 플랜 파일 위치 예시: `.orbit/plans/PLAN-<slug>.md`
+
+architect의 플랜이 도착하면 리드는 Step 3(Plan Approval)으로 진행한다.
 
 ---
 
@@ -162,7 +168,7 @@ cat "${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md"
 
 | 플러그인 | 있을 때 | 없을 때 |
 |----------|---------|---------|
-| superpowers | /writing-plans, TDD 스킬, /review 사용 | 직접 플랜 작성, 수동 TDD, diff 직접 검토 |
+| superpowers | architect가 /writing-plans 스킬 사용, TDD 스킬, /review 사용 | architect가 수동으로 플랜 작성 (리드 직접 작성은 어느 경우도 금지), 수동 TDD, diff 직접 검토 |
 | gsd | /gsd:verify 자동화 | 체크박스 수동 확인 |
 | gstack | /gstack QA 자동화 | quality-gate.sh 수동 실행 |
 
