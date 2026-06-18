@@ -12,7 +12,7 @@ model: sonnet
 |------|----------|----------------|
 | Leader | Main CLI session | Coordination and gate-keeping |
 | Viewer | tmux pane 1 (optional) | Live subagent transcripts (cumulative) |
-| architect / builder / reviewer / researcher | Temporary Agent() instances | Role-specific design, implementation, verification |
+| architect / builder / critic / reviewer / researcher | Temporary Agent() instances | Role-specific design, implementation, plan critique, verification |
 
 ## Principles
 
@@ -50,7 +50,10 @@ There is no shortcut. "Simple task" is not an exception.
 ```
 roadmap selection
 → leader dispatches architect (writing-plans) → architect produces plan
-→ Plan Approval: leader presents plan → user confirms
+→ High-risk gate: leader applies the four-trigger OR gate to the plan
+   ├─ high-risk → dispatch critic → Critique Report → architect revises → (re-gate)
+   └─ low-risk  → skip critic
+→ Plan Approval: leader presents (revised) plan → user confirms
 → leader dispatches builder (TDD, implementation)
 → post-implementation Triple Crown
   ① Completeness: GSD    ② Behavior: gstack    ③ Quality: superpowers review
@@ -60,6 +63,27 @@ roadmap selection
 Simple questions, meta tasks, and configuration changes do not require the full lifecycle.
 
 **Optional skillify branch (after done):** If the reviewer reports a Rule-of-Three signal — the same procedure or fix recurring across three or more tasks — the leader may dispatch the architect to extract the pattern into a reusable skill. The leader is the sole router here (reviewer never contacts the architect directly). Writing the new skill follows the normal lifecycle: the architect proposes, the leader runs Plan Approval, the builder writes the file. This branch is optional and never blocks task completion. See the skillify skill.
+
+## High-Risk Decision Gate (critic branch)
+
+After the architect returns a plan and **before** Plan Approval, the leader judges whether the decision is high-risk by applying a four-trigger OR gate to the plan. If **any** trigger fires, the leader dispatches the **critic** for an independent critique; otherwise the critic is skipped.
+
+| Trigger | High-risk if yes |
+|---------|------------------|
+| Irreversibility | Undoing this later requires data migration, rewrite, or breaking backward compatibility? |
+| Blast radius | Touches 3+ components/modules, or changes a public interface/contract? |
+| Security / data integrity | Touches auth, permissions, secrets, deletion, or money/PII data paths? |
+| New external dependency | Introduces a new runtime dependency, external service, or vendor lock-in? |
+
+The leader answers these from the plan's stated Impact scope and approach — no separate measurement is needed.
+
+**Branch flow (high-risk only):**
+1. Leader dispatches `Agent(critic)` with the plan, the triggers that fired, and the architecture reference.
+2. Critic returns a Critique Report (verdict PROCEED or REVISE) to the leader.
+3. On REVISE: leader relays the findings to the architect, who revises the plan. The leader may re-run the critic on the revised plan.
+4. On PROCEED: leader proceeds to Plan Approval.
+
+The leader is the sole gatekeeper and router. The critic never self-invokes; the architect never talks to the critic directly (hub-and-spoke). Low-risk tasks skip this gate entirely — no overhead.
 
 ## Plan Approval Gate
 
@@ -75,6 +99,7 @@ Before approving a plan, check:
 Agent(builder, background=True)   # implementation
 Agent(reviewer, foreground)       # post Triple Crown coordination
 Agent(architect, foreground)      # design or arch consistency lens
+Agent(critic, foreground)         # high-risk plan critique (only when gate fires)
 Agent(researcher, background)     # external source investigation
 ```
 
