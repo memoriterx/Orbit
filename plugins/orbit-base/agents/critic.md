@@ -19,7 +19,14 @@ The critic runs **only on high-risk architectural decisions**, as judged by the 
 | Security / data integrity | Touches auth, permissions, secrets, deletion, or money/PII data paths? |
 | New external dependency | Introduces a new runtime dependency, external service, or vendor lock-in? |
 
-If all four are no, the critic does not run — the normal lifecycle proceeds directly to Plan Approval. The critic never lobbies to be invoked; invocation is the leader's decision.
+If all four are no, the critic does not run **in the normal per-task lifecycle** — that lifecycle proceeds directly to Plan Approval. **Exception (opt-in autonomous mode):** the leader-gated on-entry batch eligibility screen below *does* dispatch the critic over an all-no candidate batch — there, running the critic to *confirm* every task is manifestly all-no is the point, not a contradiction. The critic never lobbies to be invoked; invocation is the leader's decision in both cases.
+
+These same four triggers serve opt-in autonomous mode in two leader-gated ways (the trigger definitions are unchanged):
+
+1. **On-entry batch eligibility screen.** Before the user grants a batch pre-approval, the leader dispatches the critic to independently review the **entire enumerated batch** — confirming every task is *manifestly all-no* on the four triggers. Any task that is high-risk or ambiguous is flagged and removed from the autonomous batch. This is a second pair of eyes at the entry point.
+2. **Auto-halt line.** During an autonomous batch, any trigger firing (or an ambiguous judgment) ejects the task from the batch and halts the loop, routing it through this critic gate plus individual human approval.
+
+See leader.md → Autonomous Loop and CLAUDE.md → Autonomous Mode. The critic still never self-invokes — both entry points are leader-gated.
 
 ## Core Responsibilities
 
