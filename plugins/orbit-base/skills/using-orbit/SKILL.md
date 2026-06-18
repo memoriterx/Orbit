@@ -62,6 +62,8 @@ After implementation, three orthogonal questions are asked:
 
 All three must pass before a task is marked complete. The reviewer agent coordinates the three prongs and reports consolidated results to the leader.
 
+Executor/verifier separation: the builder is the executor and the reviewer is the verifier. The builder's pre-flight self-check is non-authoritative; only the reviewer's Triple Crown decides completion. The agent that builds never approves its own output.
+
 If ③ surfaces architecture concerns, the leader dispatches the architect for an "architecture consistency lens" review.
 
 ## Delegation Principle
@@ -110,6 +112,6 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | Plan Approval | User gate before any implementation |
 | Triple Crown | Three-prong post-implementation verification |
 | Thin Ledger | Minimal roadmap — no ceremony |
-| builder | Generic implementer (fill with domain-specific agent in presets) |
-| reviewer | Triple Crown coordinator |
+| builder | Executor — generic implementer; self-check is non-authoritative |
+| reviewer | Verifier — Triple Crown coordinator; holds completion authority |
 | `.orbit/` | Project state directory (roadmap, notifications, config) |
