@@ -52,8 +52,8 @@ ORBIT_DIR="$PROJECT/.orbit"
 NOTIF_LOG="$ORBIT_DIR/notifications.log"
 
 # ── Skip permissions flag (default: enabled) ──────────────────
-# Set ORBIT_SKIP_PERMISSIONS="" to launch claude without this flag.
-ORBIT_SKIP_PERMISSIONS="${ORBIT_SKIP_PERMISSIONS:-true}"
+# Default: ON (pass --dangerously-skip-permissions).
+# Set ORBIT_SKIP_PERMISSIONS=0 to disable.
 
 # ── Util: wait until a pattern appears in a pane ─────────────
 wait_for_pane() {
@@ -74,7 +74,7 @@ start_claude_in_pane() {
     tmux send-keys -t "$pane" C-u 2>/dev/null; sleep 0.2
 
     local cmd="cd \"$PROJECT\" && unset CLAUDECODE && $claude_bin"
-    [ -n "${ORBIT_SKIP_PERMISSIONS}" ] && cmd="$cmd --dangerously-skip-permissions"
+    [ "${ORBIT_SKIP_PERMISSIONS:-1}" != "0" ] && cmd="$cmd --dangerously-skip-permissions"
     [ -n "$agent_name" ] && cmd="$cmd --agent \"$agent_name\""
 
     tmux send-keys -t "$pane" "$cmd" Enter
@@ -301,4 +301,14 @@ echo -e "${NC}"
 # Focus always starts on the lead (pane 0)
 tmux select-pane -t "$SESSION:0.0"
 
-[ -t 1 ] && tmux attach -t "$SESSION"
+# Attach (or switch) to the session.
+# When running inside an existing tmux client, use switch-client so the current
+# window is replaced by the orbit session rather than triggering
+# "open terminal failed: not a terminal".
+if [ -t 1 ]; then
+    if [ -n "${TMUX:-}" ]; then
+        tmux switch-client -t "$SESSION"
+    else
+        tmux attach -t "$SESSION"
+    fi
+fi
