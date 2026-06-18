@@ -16,25 +16,24 @@
 
 ### OMC 흡수 — orbit-base 개선 4건
 
-- [ ] **[OMC-1] 역할별 모델 티어 명시**  
-  researcher=haiku(경량 탐색), builder=sonnet(구현), architect/reviewer=opus(설계·검토).  
-  orbit-base 에이전트 frontmatter `model:` 필드에 반영. dev팀 에이전트(`.claude/agents/`)는 이미 적용.  
-  _다음 작업: orbit-base 에이전트 파일 4종 frontmatter 업데이트._
+- [x] **[OMC-1] 역할별 모델 티어 명시** (2026-06-18, 커밋 `dc6450e`)  
+  researcher=haiku, builder=sonnet, architect/reviewer=opus, leader=sonnet.  
+  실측 결과 4종은 이미 목표 티어와 일치 → researcher.md 단 1건만 sonnet→haiku 변경. Triple Crown 3갈래 PASS.
 
-- [ ] **[OMC-2] executor/verifier 분리**  
-  현재 builder가 구현 + 1차 검증을 겸함 → 자기승인 위험.  
-  verifier 역할을 별도 에이전트로 분리해 builder 완료 후 독립 검증.  
-  _다음 작업: orbit-base에 verifier.md 추가 + builder.md에서 자체 검증 절차 분리._
+- [x] **[OMC-2] executor/verifier 분리** (2026-06-18, 커밋 `5668e08`·`b45d8f9`·`df70a82`·`b7b2dc9`)  
+  ADR-1: verifier.md 신규 추가 대신 **기존 reviewer가 verifier 흡수** (이미 독립 에이전트로 분리됨).  
+  builder self-check를 비권위적 pre-flight로 강등, reviewer를 완료 판정 권한 보유자로 명시.  
+  4개 표면(builder/reviewer/leader.md + using-orbit SKILL) 프롬프트 정렬. Triple Crown 3갈래 PASS.
 
-- [ ] **[OMC-3] skillify 패턴**  
-  반복적으로 해결되는 문제를 스킬 파일(SKILL.md)로 추출·자동주입하는 패턴 도입.  
-  orbit-base `skills/` 디렉터리에 새 스킬 정의 형식 명세 추가.  
-  _다음 작업: skillify 스킬 정의 + 스킬 추출 트리거 명세 작성._
+- [x] **[OMC-3] skillify 패턴** (2026-06-18, 커밋 `2fe8832`·`2d4c453`·`f799afb`·`cabb932`)  
+  신규 `skills/skillify/SKILL.md` — 트리거 Rule of Three(3회 규칙), 라우팅 reviewer 감지→leader→architect 추출→builder 작성.  
+  ADR-3: native skill discovery로 자동주입(신규 훅 0). ADR-4: authoring은 superpowers writing-skills에 위임(중복 회피).  
+  using-orbit/leader/reviewer 정렬. Triple Crown 3갈래 PASS.
 
-- [ ] **[OMC-4] ralplan식 3자 비판 계획**  
-  고위험 아키텍처 결정 시 critic 역할이 architect 플랜을 독립 비판.  
-  orbit-base에 `critic.md` 에이전트 추가 + leader.md에 고위험 판단 기준 명시.  
-  _다음 작업: 고위험 결정 트리거 정의 → critic 에이전트 프롬프트 작성._
+- [x] **[OMC-4] ralplan식 3자 비판 계획** (2026-06-18, 커밋 `c63a0b8`·`c516343`·`182564b`·`44bd26a`)  
+  신규 `agents/critic.md`(opus, 6번째 에이전트) — 고위험 결정 시 architect 플랜 독립 비판(PROCEED/REVISE).  
+  고위험 4트리거 OR 게이트(비가역성/광범위 영향/보안·무결성/신규 외부 의존성), leader가 Plan Approval 직전 판정, 저위험은 분기 생략.  
+  leader/CLAUDE/using-orbit SKILL/codex/gemini 정렬. ADR-1: critic은 신규(self-approval 차단의 설계 단계 적용). Triple Crown 3갈래 PASS.
 
 ---
 
@@ -52,5 +51,5 @@
 | 마일스톤 | 목표 | 기준 |
 |----------|------|------|
 | M1 — 팀 환경 | dev팀이 orbit을 dogfooding으로 개발 가능 | 완료 |
-| M2 — OMC 흡수 | 4건 백로그 완료 + orbit-base 품질 게이트 통과 | 미완 |
-| M3 — 릴리스 v0.2 | 에이전트 모델 티어 + executor/verifier 분리 반영 | 미완 |
+| M2 — OMC 흡수 | 4건 백로그 완료 + orbit-base 품질 게이트 통과 | **완료 (2026-06-18)** |
+| M3 — 릴리스 v0.2 | 에이전트 모델 티어 + executor/verifier 분리 반영 | **로컬 완료 (2026-06-18, 태그 `v0.2.0`)** — 외부 게시 사용자 승인 대기 |
