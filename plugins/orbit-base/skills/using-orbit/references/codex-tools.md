@@ -74,3 +74,7 @@ Without `multi_agent`:
 | Viewer pane (live subagent transcripts) | Not available |
 | Slash commands (`/orbit-init`, `/orbit-cycle`) | Partial — follow the SKILL.md prose manually |
 | Lifecycle discipline and Triple Crown | Full — identical to Claude Code |
+
+## Autonomous Mode (opt-in)
+
+Orbit's opt-in autonomous loop runs **sequentially** under Codex: the leader processes one pre-approved batch task at a time. Codex's `spawn_agent` / `multi_agent=true` give partial dispatch, but no reliable background pseudo-parallelism, so the loop is strictly serial. The four-trigger auto-halt and full Triple Crown apply identically — only throughput differs.

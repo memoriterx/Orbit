@@ -70,3 +70,7 @@ These tools are available in Gemini CLI but have no Claude Code equivalent:
 Gemini CLI loads Orbit via `GEMINI.md` (pointed to by `gemini-extension.json`). The `@` pointers in `GEMINI.md` load:
 1. `skills/using-orbit/SKILL.md` — lifecycle and methodology prose
 2. `skills/using-orbit/references/gemini-tools.md` — this file (tool mapping)
+
+## Autonomous Mode (opt-in)
+
+Under Gemini CLI's single-context, role-switching model, orbit's opt-in autonomous loop is **manual sequential**: the leader role processes each pre-approved batch task in turn, switching roles per step. The four-trigger auto-halt and full Triple Crown still apply; the human still grants the batch pre-approval once and the loop still halts on any high-risk firing.
