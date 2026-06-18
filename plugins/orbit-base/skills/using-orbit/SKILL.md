@@ -9,7 +9,7 @@ Orbit is a hub-and-spoke multi-agent team framework. It provides a structured li
 
 ## Core Concept: Hub-and-Spoke
 
-The **leader** is the hub. All agents (architect, builder, critic, reviewer, researcher) are spokes. No spoke communicates with another spoke directly — all communication routes through the leader.
+The **leader** is the hub. All agents (architect, builder, explore, critic, reviewer, researcher) are spokes. No spoke communicates with another spoke directly — all communication routes through the leader.
 
 ```
 user
@@ -17,6 +17,7 @@ user
 leader (hub)
   ├── architect   (design, arch review)
   ├── builder     (implementation)
+  ├── explore     (internal codebase search)
   ├── critic      (high-risk plan critique)
   ├── reviewer    (verification)
   └── researcher  (external investigation)
@@ -123,6 +124,7 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | Triple Crown | Three-prong post-implementation verification |
 | Thin Ledger | Minimal roadmap — no ceremony |
 | builder | Executor — generic implementer; self-check is non-authoritative |
+| explore | Read-only internal codebase search — finds files, patterns, relationships; reports to leader; never modifies, designs, or researches externally |
 | critic | High-risk plan critic — challenges the plan before build; invoked only when leader gates high-risk; never self-approves a plan |
 | reviewer | Verifier — Triple Crown coordinator; holds completion authority |
 | `.orbit/` | Project state directory (roadmap, notifications, config) |
