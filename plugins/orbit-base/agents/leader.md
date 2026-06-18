@@ -86,3 +86,5 @@ A task is complete when:
 3. Triple Crown ② behavior verified
 4. Triple Crown ③ quality review passed
 5. roadmap checkbox marked
+
+**Authority note:** The builder's pre-flight self-check is not a completion signal. Completion authority belongs to the reviewer's Triple Crown. The leader treats a builder report as "ready for independent verification," never as "done." The builder is the executor; the reviewer is the verifier — the agent that builds never approves its own work.
