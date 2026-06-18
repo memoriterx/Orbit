@@ -9,7 +9,7 @@ Orbit is a hub-and-spoke multi-agent team framework. It provides a structured li
 
 ## Core Concept: Hub-and-Spoke
 
-The **leader** is the hub. All agents (architect, builder, reviewer, researcher) are spokes. No spoke communicates with another spoke directly — all communication routes through the leader.
+The **leader** is the hub. All agents (architect, builder, critic, reviewer, researcher) are spokes. No spoke communicates with another spoke directly — all communication routes through the leader.
 
 ```
 user
@@ -17,6 +17,7 @@ user
 leader (hub)
   ├── architect   (design, arch review)
   ├── builder     (implementation)
+  ├── critic      (high-risk plan critique)
   ├── reviewer    (verification)
   └── researcher  (external investigation)
 ```
@@ -30,6 +31,7 @@ Every piece of work follows this lifecycle:
 ```
 0. Select    leader picks one task from roadmap
 1. Plan      leader dispatches architect (writing-plans) → architect produces plan document
+1.5 Gate     leader judges high-risk (4-trigger OR gate); if high-risk → critic critiques plan → architect revises; low-risk skips
 2. Approve   leader presents architect's plan → user approval (no implementation without approval)
 3. Build     leader dispatches builder (TDD, systematic debugging, verification)
 4. Verify    Triple Crown three-pronged verification (reviewer coordinates)
@@ -37,6 +39,10 @@ Every piece of work follows this lifecycle:
 ```
 
 Simple questions, meta tasks, and configuration changes skip the lifecycle.
+
+### Optional Branch: High-Risk Critique (between Plan and Approve)
+
+When the leader judges a decision high-risk — irreversible, wide blast radius (3+ components / public contract), security or data-integrity sensitive, or introducing a new external dependency — the leader dispatches the **critic** before Plan Approval. The critic independently challenges the plan's assumptions, failure modes, alternatives, and reversibility cost, then returns a severity-ranked Critique Report (PROCEED or REVISE). The architect revises on REVISE. This is the design-stage form of executor/verifier separation: the plan's author never critiques its own plan. Low-risk tasks skip this entirely. Routing is leader-only; the critic never talks to the architect directly. See the `critic` agent.
 
 ### Optional Branch: Skillify (after Done)
 
@@ -117,6 +123,7 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | Triple Crown | Three-prong post-implementation verification |
 | Thin Ledger | Minimal roadmap — no ceremony |
 | builder | Executor — generic implementer; self-check is non-authoritative |
+| critic | High-risk plan critic — challenges the plan before build; invoked only when leader gates high-risk; never self-approves a plan |
 | reviewer | Verifier — Triple Crown coordinator; holds completion authority |
 | `.orbit/` | Project state directory (roadmap, notifications, config) |
 | skillify | Optional after-done branch: extract a Rule-of-Three recurring solution into a reusable skill |

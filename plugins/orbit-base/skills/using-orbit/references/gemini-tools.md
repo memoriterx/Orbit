@@ -22,6 +22,7 @@ Gemini CLI supports subagents via the `@` syntax. Use `@generalist` to dispatch 
 | Orbit role dispatch | Gemini CLI equivalent |
 |--------------------|-----------------------|
 | `Agent(architect, prompt=...)` | `@generalist` with architect.md instructions + your task |
+| `Agent(critic, prompt=...)` | `@generalist` with critic.md instructions + your task — high-risk plan critique (leader-gated, optional branch) |
 | `Agent(builder, prompt=...)` | `@generalist` with builder.md instructions + your task |
 | `Agent(reviewer, prompt=...)` | `@generalist` with reviewer.md instructions + your task |
 | `Agent(researcher, prompt=...)` | `@generalist` with researcher.md instructions + your task |

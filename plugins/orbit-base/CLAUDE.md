@@ -6,7 +6,7 @@ This file defines the methodology and operating discipline for any project using
 
 Orbit is a hub-and-spoke multi-agent team framework for structured software delivery.
 
-**Team roles:** leader / architect / builder / reviewer / researcher (5 roles)  
+**Team roles:** leader / architect / builder / critic / reviewer / researcher (6 roles)  
 **State directory:** `.orbit/` in the project root  
 **Skill reference:** `skills/using-orbit/SKILL.md`
 
@@ -17,6 +17,7 @@ Whenever working on a meaningful piece of project work, apply the single-task li
 ```
 roadmap selection
 → leader dispatches architect (writing-plans) → architect produces plan
+→ High-risk? leader gates critic (independent plan critique) → architect revises; low-risk skips
 → Plan Approval: leader presents architect's plan → user confirms
 → leader dispatches builder (TDD) → post-implementation Triple Crown
   ① Completeness   ② Behavior   ③ Quality
