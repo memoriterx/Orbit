@@ -1,0 +1,13 @@
+# orbit 프로젝트 설정 — .orbit/config 로 복사해 사용
+# 이 파일은 attach-view.sh 가 source 하므로 bash 문법을 지킬 것.
+
+# tmux 세션명 (기본 "orbit")
+# attach-view.sh 가 이 값으로 tmux 팬을 찾는다.
+ORBIT_TMUX_SESSION="orbit"
+
+# (선택) 뷰어 팬 번호 (기본 1 — attach-view.sh 인자로 전달됨)
+# ORBIT_VIEWER_PANE=1
+
+# (선택) 프로젝트 roadmap 경로 오버라이드
+# 기본: ${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md
+# ORBIT_ROADMAP="${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md"

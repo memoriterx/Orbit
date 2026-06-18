@@ -1,0 +1,32 @@
+{
+  "name": "orbit-base",
+  "version": "0.1.0",
+  "description": "Hub-and-spoke multi-agent team framework: lifecycle, Triple Crown verification, and operating discipline for any domain",
+  "author": {
+    "name": "H",
+    "email": "memoriterx@gmail.com",
+    "url": "https://github.com/memoriterx"
+  },
+  "homepage": "https://github.com/memoriterx/Orbit",
+  "repository": "https://github.com/memoriterx/Orbit",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "orchestration",
+    "hub-and-spoke",
+    "workflow",
+    "tdd",
+    "review",
+    "multi-agent",
+    "triple-crown",
+    "lifecycle"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Orbit Base",
+    "shortDescription": "Hub-and-spoke multi-agent team with Triple Crown verification",
+    "longDescription": "Orbit provides a structured lifecycle for software delivery: plan, approve, implement, verify. Five roles (leader/architect/builder/reviewer/researcher), hub-and-spoke communication, and Triple Crown three-pronged verification (completeness/behavior/quality).",
+    "developerName": "H",
+    "category": "Coding"
+  }
+}

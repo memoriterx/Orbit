@@ -1,0 +1,22 @@
+{
+  "name": "orbit-web-dev",
+  "description": "Next.js App Router fullstack web preset for orbit-base. Adds domain agents (architect-web, designer, fullstack, qa-web), skills (nextjs-build, api-build, ui-design, web-qa), and researcher source presets. Requires orbit-base.",
+  "version": "0.1.0",
+  "author": {
+    "name": "H",
+    "email": "memoriterx@gmail.com"
+  },
+  "homepage": "https://github.com/memoriterx/Orbit",
+  "repository": "https://github.com/memoriterx/Orbit",
+  "license": "MIT",
+  "keywords": [
+    "nextjs",
+    "web-dev",
+    "fullstack",
+    "app-router",
+    "ui-design",
+    "api",
+    "seo",
+    "orbit-web-dev"
+  ]
+}

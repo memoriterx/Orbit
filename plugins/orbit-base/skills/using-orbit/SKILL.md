@@ -1,0 +1,113 @@
+---
+name: using-orbit
+description: Orbit framework orientation — hub-and-spoke multi-agent team, single-task lifecycle, and Triple Crown verification. Use at the start of any orchestrated work session.
+---
+
+# Using Orbit
+
+Orbit is a hub-and-spoke multi-agent team framework. It provides a structured lifecycle for delivering work: plan, approve, implement, verify.
+
+## Core Concept: Hub-and-Spoke
+
+The **leader** is the hub. All agents (architect, builder, reviewer, researcher) are spokes. No spoke communicates with another spoke directly — all communication routes through the leader.
+
+```
+user
+  │
+leader (hub)
+  ├── architect   (design, arch review)
+  ├── builder     (implementation)
+  ├── reviewer    (verification)
+  └── researcher  (external investigation)
+```
+
+The leader dispatches agents via `Agent()`, receives their text output, synthesizes results, and decides next steps.
+
+## Single-Task Lifecycle
+
+Every piece of work follows this lifecycle:
+
+```
+0. Select    leader picks one task from roadmap
+1. Plan      brainstorming (optional) → writing-plans → plan document
+2. Approve   leader presents plan → user approval (no implementation without approval)
+3. Build     leader dispatches builder (TDD, systematic debugging, verification)
+4. Verify    Triple Crown three-pronged verification (reviewer coordinates)
+5. Done      roadmap checkbox + key decisions promoted to memory
+```
+
+Simple questions, meta tasks, and configuration changes skip the lifecycle.
+
+### Plan Approval Gate
+
+Before approving a plan, the leader checks:
+- Tests included or testing strategy defined
+- Impact scope clearly stated  
+- No architecture conflicts flagged
+- Success criteria measurable
+
+No implementation proceeds without explicit user approval.
+
+## Triple Crown Verification
+
+After implementation, three orthogonal questions are asked:
+
+| Prong | Question | Who |
+|-------|----------|-----|
+| ① Completeness | Did we build everything in the plan? | GSD / roadmap comparison |
+| ② Behavior | Does it actually work at runtime? | gstack browser / run / CLI |
+| ③ Quality | Is the code correct and maintainable? | superpowers requesting-code-review |
+
+All three must pass before a task is marked complete. The reviewer agent coordinates the three prongs and reports consolidated results to the leader.
+
+If ③ surfaces architecture concerns, the leader dispatches the architect for an "architecture consistency lens" review.
+
+## Delegation Principle
+
+The leader delegates everything except:
+- Roadmap selection and checkbox management
+- Plan Approval gate (presents to user, awaits confirmation)
+- Memory file updates (key decisions only)
+- Agent and skill definitions
+
+Root cause analysis, investigation, bash execution, implementation, and verification all belong to agents.
+
+## Reporting Channel
+
+Agents report as **text output** to the leader. The leader reads agent output and decides the next step. No direct agent-to-agent communication.
+
+Project notifications go to `.orbit/notifications.log`.
+
+## Roadmap: Thin Ledger
+
+The roadmap (`.orbit/roadmap.md`) is a minimal record:
+- Backlog: unstarted tasks
+- Current: task in progress
+- Milestones: grouped delivery targets
+- Completeness criteria: measurable definition of done
+
+When a task completes, it gets a checkbox. Key architectural decisions are promoted to project memory, not the roadmap.
+
+## Graceful Degradation by Environment
+
+| Feature | Claude Code | Codex | Gemini |
+|---------|-------------|-------|--------|
+| Hub-and-spoke Agent dispatch | Full (Agent tool) | Partial (spawn_agent, multi_agent=true) | Single context, sequential role-switching |
+| Automatic hooks (quality gate, viewer) | Full | Not available → manual | Not available → manual |
+| Lifecycle discipline | Full | Full | Full |
+| Triple Crown verification prose | Full + companion skills | Manual checklist | Manual checklist |
+| Slash commands | Full | Partial | Partial |
+
+Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle discipline survives in all environments** — plan → approve → build → verify is the invariant.
+
+## Quick Reference
+
+| Term | Meaning |
+|------|---------|
+| Hub-and-spoke | Leader routes all agent communication |
+| Plan Approval | User gate before any implementation |
+| Triple Crown | Three-prong post-implementation verification |
+| Thin Ledger | Minimal roadmap — no ceremony |
+| builder | Generic implementer (fill with domain-specific agent in presets) |
+| reviewer | Triple Crown coordinator |
+| `.orbit/` | Project state directory (roadmap, notifications, config) |

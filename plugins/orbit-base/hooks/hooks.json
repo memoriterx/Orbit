@@ -1,0 +1,72 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/session-log.sh\""
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/usage-detect.py\""
+          }
+        ]
+      }
+    ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "i=$(cat 2>/dev/null); delta=$(printf '%s' \"$i\" | jq -r '.delta // \"\"' 2>/dev/null); printf '%s' \"$delta\" | grep -iqE 'approaching.*usage limit|resets? at [0-9]+:[0-9]+.*[AP]M|out of.*usage' && { mkdir -p \"${CLAUDE_PROJECT_DIR}/.orbit\"; printf '[%s] EVT=MESSAGE %s\\n' \"$(date '+%F %T')\" \"$i\" >> \"${CLAUDE_PROJECT_DIR}/.orbit/usage-detect.log\"; }; exit 0"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/resume-inject.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/quality-gate.sh\""
+          },
+          {
+            "type": "command",
+            "async": true,
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/notify-done.sh\""
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/viewer-attach.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "orbit-base",
+  "description": "도메인 무관 멀티에이전트 팀 골격. 허브앤스포크·Plan Approval·생명주기(roadmap→plan→구현→Triple Crown 검증)·사용량 자동재개·뷰어 팬 포함. 어떤 기술 스택에도 적용 가능.",
+  "version": "0.1.0",
+  "author": {
+    "name": "H",
+    "email": "memoriterx@gmail.com"
+  },
+  "homepage": "https://github.com/memoriterx/Orbit",
+  "repository": "https://github.com/memoriterx/Orbit",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "orchestration",
+    "hub-and-spoke",
+    "workflow",
+    "tdd",
+    "review",
+    "multi-agent",
+    "triple-crown",
+    "lifecycle"
+  ]
+}

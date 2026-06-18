@@ -1,0 +1,30 @@
+{
+  "name": "orbit-marketplace",
+  "description": "Orbit — 허브앤스포크 멀티에이전트 팀 프레임워크 (base + 웹개발 프리셋)",
+  "owner": {
+    "name": "H",
+    "email": "memoriterx@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "orbit-base",
+      "description": "도메인 무관 멀티에이전트 팀 골격. 허브앤스포크·생명주기·Triple Crown 검증·사용량 자동재개 포함.",
+      "version": "0.1.0",
+      "source": "./plugins/orbit-base",
+      "author": {
+        "name": "H",
+        "email": "memoriterx@gmail.com"
+      }
+    },
+    {
+      "name": "orbit-web-dev",
+      "description": "Next.js 풀스택 웹개발 프리셋 (orbit-base 선행 설치 필요). 에이전트 4종 + 스킬 4종 + 웹 리서처 주입.",
+      "version": "0.1.0",
+      "source": "./plugins/orbit-web-dev",
+      "author": {
+        "name": "H",
+        "email": "memoriterx@gmail.com"
+      }
+    }
+  ]
+}
