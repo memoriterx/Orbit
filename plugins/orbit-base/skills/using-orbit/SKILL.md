@@ -38,6 +38,10 @@ Every piece of work follows this lifecycle:
 
 Simple questions, meta tasks, and configuration changes skip the lifecycle.
 
+### Optional Branch: Skillify (after Done)
+
+After a task is done, an optional branch may fire. When the **Rule of Three** is met — the same procedure or fix has recurred across three or more separate tasks — the reviewer reports the signal to the leader, who may route the architect to extract the pattern into a reusable skill (`reviewer detects → leader routes → architect extracts → builder writes`). This is never required and never blocks completion. See the `skillify` skill for the trigger, routing, and output format; skill-authoring craft is delegated to superpowers `writing-skills`.
+
 **Critical:** The leader never writes the plan directly — not even a draft or outline. Plan writing is architect's job, always. The leader's role in step 1 is to dispatch architect and receive the plan as output.
 
 ### Plan Approval Gate
@@ -115,3 +119,4 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | builder | Executor — generic implementer; self-check is non-authoritative |
 | reviewer | Verifier — Triple Crown coordinator; holds completion authority |
 | `.orbit/` | Project state directory (roadmap, notifications, config) |
+| skillify | Optional after-done branch: extract a Rule-of-Three recurring solution into a reusable skill |
