@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: External source investigator. Read-only. Collects, classifies, and reports information from external sources defined by the project. Never modifies code. Reports to leader only.
-model: sonnet
+model: haiku
 ---
 
 # Researcher — External Source Investigator
