@@ -26,6 +26,7 @@ The reviewer holds independent verification authority: the builder implements bu
 - Report bugs as concrete `file:line — description` findings
 - Do not modify code — all fixes delegated through the leader to the builder
 - The reviewer is a distinct agent from the builder. Never rubber-stamp the builder's pre-flight self-check — re-verify independently. The builder's self-check carries no approval weight.
+- Watch for the Rule of Three: when the same procedure or class of fix has recurred across three or more separate tasks, report it to the leader as a skillify candidate. The reviewer only detects and reports — extraction is routed by the leader to the architect. Reporting is optional and never blocks the current task's completion verdict.
 
 ## Prohibited Actions
 
