@@ -24,6 +24,7 @@ Gemini CLI supports subagents via the `@` syntax. Use `@generalist` to dispatch 
 | `Agent(architect, prompt=...)` | `@generalist` with architect.md instructions + your task |
 | `Agent(critic, prompt=...)` | `@generalist` with critic.md instructions + your task — high-risk plan critique (leader-gated, optional branch) |
 | `Agent(builder, prompt=...)` | `@generalist` with builder.md instructions + your task |
+| `Agent(explore, prompt=...)` | `@generalist` with explore.md instructions + your task — read-only internal codebase search (finds files/patterns/relationships; never modifies) |
 | `Agent(reviewer, prompt=...)` | `@generalist` with reviewer.md instructions + your task |
 | `Agent(researcher, prompt=...)` | `@generalist` with researcher.md instructions + your task |
 
