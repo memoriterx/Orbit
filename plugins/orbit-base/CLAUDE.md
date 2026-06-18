@@ -6,7 +6,7 @@ This file defines the methodology and operating discipline for any project using
 
 Orbit is a hub-and-spoke multi-agent team framework for structured software delivery.
 
-**Team roles:** leader / architect / builder / critic / reviewer / researcher (6 roles)  
+**Team roles:** leader / architect / builder / explore / critic / reviewer / researcher (7 roles)  
 **State directory:** `.orbit/` in the project root  
 **Skill reference:** `skills/using-orbit/SKILL.md`
 
