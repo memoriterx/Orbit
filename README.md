@@ -35,15 +35,29 @@ orbit은 **도메인 무관** 프레임워크다. Next.js·CLI·데이터 분석
 
 ### 7역 (v0.3.0)
 
-| 역할 | 한 줄 설명 |
-|------|-----------|
-| leader | 조율·게이트, 유일 진입점 (허브). 직접 코드 작성 안 함 |
-| architect | 설계·플랜 작성 (writing-plans) |
-| builder | 구현 (TDD) |
-| reviewer | Triple Crown 검증·완료 판정 권한. ③ 품질에 조건부 보안 deep-mode 포함 |
-| researcher | 외부 소스 조사 전담, 읽기 전용 |
-| critic | 고위험 플랜 독립 비판 (PROCEED / REVISE 판정). 리드가 고위험으로 판정할 때만 호출 |
-| explore | 내부 코드베이스 검색 전담, 읽기 전용. researcher(외부)와 역할 구분 |
+| 역할 | 한 줄 설명 | 주요 스킬 |
+|------|-----------|----------|
+| leader | 조율·게이트, 유일 진입점 (허브). 직접 코드 작성 안 함 | `writing-plans`(architect에 위임), Triple Crown 참조(GSD / gstack / requesting-code-review), `skillify`(반복 패턴 감지 시) |
+| architect | 설계·플랜 작성 | `writing-plans`(핵심), `writing-skills`(skillify 추출 시) |
+| builder | 구현 (TDD) | TDD · systematic-debugging · verification-before-completion 방법론(superpowers 계열) |
+| reviewer | Triple Crown 검증·완료 판정 권한. ③ 품질에 조건부 보안 deep-mode 포함 | `GSD`(① 완성도), `gstack`(② 동작 — 슬롯 기본값), `requesting-code-review`(③ 품질 — 슬롯 기본값), `skillify`(반복 패턴 감지) |
+| researcher | 외부 소스 조사 전담, 읽기 전용 | —(역할 본연 기능: WebSearch / WebFetch) |
+| critic | 고위험 플랜 독립 비판 (PROCEED / REVISE 판정). 리드가 고위험으로 판정할 때만 호출 | —(역할 본연 기능: 독립 비판) |
+| explore | 내부 코드베이스 검색 전담, 읽기 전용. researcher(외부)와 역할 구분 | —(역할 본연 기능: glob / grep / read) |
+
+> Triple Crown ② 동작(`{{BEHAVIOR_VERIFICATION_METHOD}}`, 기본 `gstack`)과 ③ 품질(`{{QUALITY_REVIEW_SKILL}}`, 기본 `requesting-code-review`)은 도메인 슬롯으로 처리된다 — 프로젝트가 다른 도구로 교체 가능. ① 완성도(GSD)는 고정.
+
+### 스킬 카탈로그
+
+| 스킬 | 출처 | 설명 |
+|------|------|------|
+| `using-orbit` | orbit-base | 허브앤스포크 팀 구조·단일 작업 생명주기·Triple Crown 검증 오리엔테이션. 세션 시작 시 로드 |
+| `skillify` | orbit-base | 3회 이상 반복된 절차를 재사용 스킬로 추출하는 생명주기 컨벤션(트리거·라우팅·출력) |
+| `writing-plans` | superpowers | 구현 전 플랜 문서 작성 방법론 |
+| `writing-skills` | superpowers | 스킬 파일 작성 방법론(skillify가 저작 부분을 위임) |
+| `requesting-code-review` | superpowers | 코드 정확성·보안·유지보수성 리뷰 (Triple Crown ③ 기본 스킬) |
+| `gstack` | gstack | 브라우저/런타임 동작 실증 (Triple Crown ② 기본 도구) |
+| `GSD` | gsd | 플랜 대비 구현 완성도 체크 (Triple Crown ① 도구) |
 
 ### 작업 생명주기
 
