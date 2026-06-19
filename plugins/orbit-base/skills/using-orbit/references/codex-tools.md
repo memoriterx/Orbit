@@ -29,7 +29,7 @@ multi_agent = true
 
 This enables `spawn_agent`, `wait_agent`, and `close_agent` for hub-and-spoke Agent dispatch.
 
-Without `multi_agent = true`, Codex runs in single-context mode. In this mode, apply **sequential role-switching**: the single agent assumes each role (leader, architect, builder, reviewer) in sequence, explicitly narrating the role transition. Lifecycle discipline and Triple Crown verification still apply — only parallel dispatch is unavailable.
+Without `multi_agent = true`, Codex runs in single-context mode. In this mode, apply **sequential role-switching**: the single agent assumes each role (leader, architect, explore, builder, critic, reviewer, researcher) in sequence, explicitly narrating the role transition. Lifecycle discipline and Triple Crown verification still apply — only parallel dispatch is unavailable.
 
 ## Hub-and-Spoke in Codex
 
