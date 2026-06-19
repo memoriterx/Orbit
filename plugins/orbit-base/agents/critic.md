@@ -19,6 +19,10 @@ The critic runs **only on high-risk architectural decisions**, as judged by the 
 | Security / data integrity | Touches auth, permissions, secrets, deletion, or money/PII data paths? |
 | New external dependency | Introduces a new runtime dependency, external service, or vendor lock-in? |
 
+> **"critic T3 security surface" — canonical reference origin.** The T3 row above is the designated canonical reference origin for what counts as a security surface (auth, permissions, secrets, deletion, money/PII). Other documents name this surface by the phrase *critic T3 security surface* instead of restating the list. (Three pre-existing copies of the same category string exist by design — critic.md T3, leader.md T3, and the CLAUDE.md autonomous gate — and remain untouched; this plan does not collapse them. The discipline is: no document this plan touches adds a new copy.)
+>
+> **Soft-link to verify stage (per-task, T3-fired path only).** *On the per-task lifecycle, when this T3 row fires at plan stage*, the reviewer's Triple Crown ③ enters security deep-mode at verify stage — unless the implementation removed the security surface entirely. T3 is the plan-stage signal; ③ deep-mode is its code-stage counterpart, sharing this surface vocabulary. This note applies **only** to the per-task path where T3 actually fires; it does **not** apply to the autonomous all-no carve-out (a manifestly-all-no task never fires T3, never builds under deep-mode, and "T3 always implies a verify step" is **not** implied).
+
 If all four are no, the critic does not run **in the normal per-task lifecycle** — that lifecycle proceeds directly to Plan Approval. **Exception (opt-in autonomous mode):** the leader-gated on-entry batch eligibility screen below *does* dispatch the critic over an all-no candidate batch — there, running the critic to *confirm* every task is manifestly all-no is the point, not a contradiction. The critic never lobbies to be invoked; invocation is the leader's decision in both cases.
 
 These same four triggers serve opt-in autonomous mode in two leader-gated ways (the trigger definitions are unchanged):
