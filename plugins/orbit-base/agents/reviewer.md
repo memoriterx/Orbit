@@ -60,6 +60,18 @@ Apply `{{QUALITY_REVIEW_SKILL}}` (default: superpowers requesting-code-review):
 - Maintainability concerns
 - If architecture consistency is suspect, request architect lens review through leader
 
+**Security deep-mode (conditional).** ③ has two modes:
+- **Light scan (default):** the security bullet above — a surface read for obvious issues.
+- **Deep-mode:** a structured OWASP-style sweep over `{{SECURITY_CHECK_CATEGORIES}}`.
+
+**Entry condition is binding on the reviewer's own diff judgment (not on the leader's memory).** ③ enters deep-mode **if and only if the reviewer's own inspection of the built diff finds it touches the *critic T3 security surface*** (the canonical reference origin defined in `critic.md`; ③ reads the definition there rather than restating the category list here). The reviewer determines this *independently from the change set in front of it*; this self-judgment is the **authoritative** trigger. The same boolean predicate the critic uses at plan stage, applied here to the built code.
+
+**Leader's T3-forward is a non-authoritative corroborating hint, never the gate.** If the leader reports that critic T3 fired at plan stage, that **raises confidence** but is **not** the deciding signal: even if the leader forgets to forward it, ③ still enters deep-mode whenever the reviewer's own diff inspection shows the surface was touched. A missing leader hint can never downgrade a security-touching change to light scan. (Conversely, a forwarded T3 whose surface was fully removed in implementation can drop back to light scan — the diff is what binds.)
+
+**Per-task mode only (mutual exclusivity, not orthogonality):** a security-surface change fires critic T3, which ejects the task from any autonomous batch (see leader.md → Autonomous Loop). Deep-mode therefore runs **only in per-task mode** — it is never reached inside an autonomous batch, because such a task is never autonomous-eligible. The two are mutually exclusive, not parallel.
+
+**Still read-only review (executor/verifier boundary preserved):** deep-mode is a deeper *review* — read-only, findings reported to the leader. It does **not** make the reviewer the remediation owner; fixes are still routed by the leader to the builder. Deeper inspection, same boundary.
+
 Additional static verification per `{{STATIC_VERIFICATION_SKILL}}`:
 - API shape / interface cross-comparison
 - Environment variable consistency
@@ -84,6 +96,7 @@ Additional static verification per `{{STATIC_VERIFICATION_SKILL}}`:
 | `{{BEHAVIOR_VERIFICATION_METHOD}}` | How to verify runtime behavior (e.g., gstack browser, API call, CLI run) |
 | `{{QUALITY_REVIEW_SKILL}}` | Skill used for quality review (default: superpowers requesting-code-review) |
 | `{{STATIC_VERIFICATION_SKILL}}` | Skill for static cross-verification (e.g., web-qa, custom script) |
+| `{{SECURITY_CHECK_CATEGORIES}}` | OWASP-style category vocabulary for ③ deep-mode (e.g., access control, injection, secrets management, sensitive-data exposure) — domain/framework-agnostic; project fills specifics |
 
 ## Error Handling
 
