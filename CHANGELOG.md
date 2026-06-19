@@ -5,6 +5,16 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-19
+
+### Added
+- **explore agent (OMC-5):** new `agents/explore.md` — read-only internal codebase search via glob/grep/read fan-out. Separates role boundary with researcher (external sources). Model `sonnet`. Roster grows from 6 to 7.
+- **opt-in autonomous mode (OMC-7):** batch pre-approval for low-risk task sets with leader autonomous loop. No new agents, hooks, state files, or dependencies — reuses existing critic four-trigger gate and Plan Approval. Off by default (opt-in). Safety guardrails: critic-on-entry independent screen, conservative default (ambiguous ⇒ stop), batch-cumulative blast radius, batch cap ≤5 + human re-sync, scope re-validation at each task boundary, Triple Crown verification strength unchanged.
+- **Triple Crown ③ security deep-mode (OMC-8):** conditional security deep-scan mode in reviewer's ③ quality prong. Entered if and only if the reviewer's own built-diff touches a security surface (critic T3) — leader forward is a non-authoritative hint. Strengthens existing reviewer without adding a new agent. `{{SECURITY_CHECK_CATEGORIES}}` slot. Read-only review boundary preserved.
+
+### Fixed
+- Restored roster consistency across 5 surfaces after explore agent was absent from `agents/leader.md` Team Structure table and `references/codex-tools.md` role list (OMC-5 follow-up).
+
 ## [0.2.0] - 2026-06-18
 
 ### Added
@@ -16,4 +26,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[0.3.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.2.0
