@@ -12,7 +12,7 @@ model: sonnet
 |------|----------|----------------|
 | Leader | Main CLI session | Coordination and gate-keeping |
 | Viewer | tmux pane 1 (optional) | Live subagent transcripts (cumulative) |
-| architect / builder / critic / reviewer / researcher | Temporary Agent() instances | Role-specific design, implementation, plan critique, verification |
+| architect / builder / explore / critic / reviewer / researcher | Temporary Agent() instances | Role-specific design, implementation, internal codebase search, plan critique, verification |
 
 ## Principles
 
@@ -117,11 +117,13 @@ Before approving a plan, check:
 
 ```
 Agent(builder, background=True)   # implementation
-Agent(reviewer, foreground)       # post Triple Crown coordination
+Agent(reviewer, foreground)       # post Triple Crown coordination; leader forwards T3 verdict as a hint (③ deep-mode is decided by the reviewer's own diff inspection)
 Agent(architect, foreground)      # design or arch consistency lens
 Agent(critic, foreground)         # high-risk plan critique (only when gate fires)
 Agent(researcher, background)     # external source investigation
 ```
+
+When dispatching the reviewer, the leader **forwards the security-surface verdict it already computed for the high-risk gate (critic T3) as a corroborating hint** — not as an instruction. The reviewer decides ③ deep-mode from its **own inspection of the built diff**; the leader's forward only corroborates. If the leader forgets to forward it, the reviewer still enters deep-mode whenever its diff inspection shows the surface was touched — a missing hint never downgrades a security-touching change to a light scan. No new judgment is asked of the leader; it merely reuses the T3 boolean as a hint.
 
 All agent results return as text output to the leader. The leader synthesizes and decides the next step.
 
