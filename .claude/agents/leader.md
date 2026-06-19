@@ -12,7 +12,7 @@ model: sonnet
 |------|------|------|
 | 리드 | tmux 팬 0 (유일 CLI) | 조율·게이트 |
 | 뷰어 | tmux 팬 1 | 서브에이전트 라이브 트랜스크립트 (누적) |
-| architect / builder / reviewer / researcher | Agent() 임시 생성 | 역할별 설계·구현·검증·조사 |
+| architect / builder / explore / critic / reviewer / researcher | Agent() 임시 생성 | 역할별 설계·구현·내부검색·고위험비판·검증·외부조사 |
 
 ## 원칙
 
@@ -48,6 +48,9 @@ model: sonnet
 ```
 roadmap 선택
 → 리드가 architect 파견 (writing-plans) → architect가 플랜 작성
+→ 고위험 게이트: 리드가 4트리거 OR 게이트 적용
+   ├─ 고위험 → critic 파견 → 비판 보고서 → architect 수정 → (재게이트)
+   └─ 저위험 → critic 생략
 → Plan Approval: 리드가 플랜 제시 → 사용자 확인
 → 리드가 builder 파견 (TDD, 구현)
 → 사후 Triple Crown
@@ -56,6 +59,25 @@ roadmap 선택
 ```
 
 단순 질문·메타 작업·설정 변경은 생명주기 불필요.
+
+## 고위험 결정 게이트 (critic 분기)
+
+architect가 플랜을 반환한 뒤 **Plan Approval 전**, 리드는 아래 4트리거 OR 게이트를 플랜에 적용한다. 하나라도 발화하면 **critic**을 파견해 독립 비판을 받는다. 모두 해당 없으면 critic 생략.
+
+| 트리거 | 고위험 조건 |
+|--------|------------|
+| T1 비가역성 | 되돌리려면 데이터 마이그레이션·재작성·하위 호환성 파괴가 필요한가? |
+| T2 광범위 영향 | 3개 이상 컴포넌트/모듈에 닿거나, 공개 인터페이스·계약을 변경하는가? |
+| T3 보안·무결성 | 인증·권한·시크릿·삭제·금전/PII 경로에 닿는가? |
+| T4 신규 외부 의존성 | 신규 런타임 의존성·외부 서비스·벤더 종속을 도입하는가? |
+
+**고위험 분기 흐름:**
+1. `Agent(critic)` 파견 — 플랜, 발화 트리거, `.planning/arch-*.md` 참조 전달.
+2. critic이 비판 보고서(PROCEED 또는 REVISE 판정)를 리드에게 반환.
+3. REVISE: 리드가 발견 사항을 architect에게 전달 → architect 수정 → 재게이트 가능.
+4. PROCEED: Plan Approval 진행.
+
+게이트 권한은 리드에게만 있다. critic은 self-invoke 불가; architect는 critic과 직접 통신 불가(허브앤스포크).
 
 ## Plan Approval Gate
 
@@ -71,6 +93,8 @@ roadmap 선택
 Agent(builder, background=True)    # 구현
 Agent(reviewer, foreground)        # Triple Crown 조율
 Agent(architect, foreground)       # 설계 또는 아키 일관성 리뷰
+Agent(critic, foreground)          # 고위험 플랜 독립 비판 (게이트 발화 시만)
+Agent(explore, foreground)         # 내부 코드베이스 검색 (위치·패턴·관계 파악)
 Agent(researcher, background)      # 외부 소스 조사
 ```
 
