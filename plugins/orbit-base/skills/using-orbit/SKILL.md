@@ -77,6 +77,8 @@ After implementation, three orthogonal questions are asked:
 
 All three must pass before a task is marked complete. The reviewer agent coordinates the three prongs and reports consolidated results to the leader.
 
+**③ security deep-mode.** Prong ③ has a conditional deep-mode. It enters deep-mode **if and only if the reviewer's own inspection of the built diff finds it touches the *critic T3 security surface*** (the canonical reference origin defined in `critic.md`), running an OWASP-style category sweep instead of a light scan. The reviewer's diff judgment is the binding trigger; the leader's plan-stage T3-forward is only a corroborating hint, so a forgotten forward never downgrades a security-touching change to a light scan. Because a T3-touching change is high-risk and is ejected from any autonomous batch, **deep-mode runs only in per-task mode** — it and the autonomous loop are mutually exclusive, never concurrent. Deep-mode is still a read-only review (findings go to the leader; fixes route to the builder) — it does not make the reviewer the remediation owner.
+
 Executor/verifier separation: the builder is the executor and the reviewer is the verifier. The builder's pre-flight self-check is non-authoritative; only the reviewer's Triple Crown decides completion. The agent that builds never approves its own output.
 
 If ③ surfaces architecture concerns, the leader dispatches the architect for an "architecture consistency lens" review.
@@ -128,6 +130,7 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | Plan Approval | User gate before any implementation |
 | Autonomous Mode | Opt-in (default off): critic screens a finite low-risk batch on entry; user pre-approves once; leader loops with cumulative blast-radius + batch cap; any four-trigger firing or ambiguity halts the loop for individual approval |
 | Triple Crown | Three-prong post-implementation verification |
+| ③ deep-mode | Triple Crown ③ Quality escalates from light scan to an OWASP-style sweep when the reviewer's diff inspection finds the change touches the critic T3 security surface (leader's T3-forward is only a hint); per-task mode only (never inside an autonomous batch); still read-only review |
 | Thin Ledger | Minimal roadmap — no ceremony |
 | builder | Executor — generic implementer; self-check is non-authoritative |
 | explore | Read-only internal codebase search — finds files, patterns, relationships; reports to leader; never modifies, designs, or researches externally |
