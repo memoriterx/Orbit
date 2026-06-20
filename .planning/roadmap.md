@@ -22,6 +22,24 @@ researcher 외부 조사로 발굴. orbit thin·허브앤스포크·사람게이
 
 ---
 
+## 백로그 — 내부 정합성 drift 보수 (2026-06-20 explore 발굴)
+
+병렬 fan-out 조사(researcher 외부 + explore 내부)로 발굴. 외부 후보는 thin 필터 미달/문서화 권고 수준 → 장기 백로그 시드만. 내부에서 실작업 3건 잔존.
+
+- [x] **[DRIFT-1] orbit-cycle.md 생명주기에 critic 고위험 게이트 추가** (2026-06-20, 커밋 `8b63458`)  
+  `commands/orbit-cycle.md` 생명주기 다이어그램(line 13-36)과 Step 2 본문에 **고위험 게이트 → critic 분기** 단계 부재. canonical(CLAUDE.md line 19-25 / SKILL.md)에는 있음 → 표면 간 모순. 배포물 → 생명주기 정상 진행 필요(architect 플랜 → Plan Approval → builder).
+
+- [x] **[DRIFT-2] dev팀 에이전트 ↔ 배포물 동기화** (2026-06-20, 커밋 `b243c75`)  
+  `.claude/agents/leader.md`에 Discovery-first 단계·Autonomous Loop·skip-and-park·fan-out 섹션 부재(배포물엔 전부 있음). `.claude/agents/architect.md` 작업순서에 Discovery-first 누락. discovery에서 dev팀 parity 적정 수준 판단 필요(전체 미러 vs 핵심만).
+
+- [x] **[DRIFT-3] dev팀 경로 이식성** (2026-06-20, 커밋 `78ba1c1`)  
+  `.claude/settings.json` 훅이 `.planning/*.py` 절대경로 하드코딩 + 이 스크립트가 배포판 `plugins/hooks/`와 로직 분기(어느 쪽이 정전인지 불명확). `_team/*.sh` 전부 `/Users/dh/Project/orbit` 절대경로 의존. → `CLAUDE_PROJECT_DIR`/`SCRIPT_DIR` 기반 동적 경로 전환.
+
+- [ ] **[BACKLOG-장기] 외부 조사 시드** (researcher, 미착수·thin 필터 보류)  
+  프롬프트 버저닝(git tag 기반)·토큰 비용추적/예산(자율모드 성숙 후)·trajectory 로깅 — 전부 자율모드가 무인 장기실행으로 진화할 때만 의미. 현 시점 thin 미달. 관측성 도구·마켓플레이스 거버넌스·메시지큐·AOrchestra 위임트리는 T4/허브앤스포크 우회/도메인충돌로 **기각**(재논의 방지).
+
+---
+
 ## 백로그
 
 ### OMC 흡수 — orbit-base 개선 4건
