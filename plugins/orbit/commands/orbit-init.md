@@ -43,8 +43,8 @@ if [ -z "$PLUGIN_ROOT" ] || [ ! -d "$PLUGIN_ROOT/templates" ]; then
   echo "  (커맨드 컨텍스트에서는 CLAUDE_PLUGIN_ROOT 자동 주입이 보장되지 않습니다.)" >&2
   echo "" >&2
   echo "  해결: 플러그인 설치 경로를 찾아 수동 지정 후 /orbit-init 재실행." >&2
-  echo "    예) export CLAUDE_PLUGIN_ROOT=<orbit-base 플러그인 설치 디렉터리>" >&2
-  echo "        # 설치 경로는 보통 ~/.claude/plugins/.../orbit-base 하위입니다." >&2
+  echo "    예) export CLAUDE_PLUGIN_ROOT=<orbit 플러그인 설치 디렉터리>" >&2
+  echo "        # 설치 경로는 보통 ~/.claude/plugins/.../orbit 하위입니다." >&2
   exit 1
 fi
 echo "orbit-init plugin root: $PLUGIN_ROOT"

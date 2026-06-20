@@ -138,11 +138,11 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
 
     _ORBIT_BASE_INSTALLED=0
 
-    if claude plugin list 2>/dev/null | grep -q "orbit-base"; then
-        echo "  OK orbit-base already installed"
+    if claude plugin list 2>/dev/null | grep -qw "orbit"; then
+        echo "  OK orbit already installed"
         _ORBIT_BASE_INSTALLED=1
     else
-        echo "  orbit-base not detected — attempting auto-install..."
+        echo "  orbit not detected — attempting auto-install..."
 
         # Step 1: ensure orbit marketplace is registered (idempotent)
         if claude plugin marketplace add memoriterx/Orbit --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
@@ -151,9 +151,9 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             echo -e "  ${YELLOW}Warning: could not register orbit-marketplace${NC}"
         fi
 
-        # Step 2: install orbit-base (idempotent)
-        if claude plugin install orbit-base --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
-            echo -e "  ${GREEN}OK orbit-base installed${NC}"
+        # Step 2: install orbit (idempotent)
+        if claude plugin install orbit --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
+            echo -e "  ${GREEN}OK orbit installed${NC}"
             _ORBIT_BASE_INSTALLED=1
             [ "$ORBIT_INSTALL_SCOPE" != "user" ] && \
                 echo -e "  ${CYAN}Installed at $ORBIT_INSTALL_SCOPE scope — active only in this project${NC}"
@@ -161,7 +161,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             echo -e "  ${RED}Auto-install failed.${NC}"
             echo "  To activate team features, run inside claude:"
             echo "    /plugin marketplace add memoriterx/Orbit"
-            echo "    /plugin install orbit-base"
+            echo "    /plugin install orbit"
         fi
 
     fi
@@ -179,12 +179,12 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             echo -e "  ${YELLOW}  Warning: could not refresh orbit-marketplace index (offline?)${NC}"
         fi
 
-        # Update orbit-base itself (only if installed)
+        # Update orbit itself (only if installed)
         if [ "$_ORBIT_BASE_INSTALLED" = "1" ]; then
-            if claude plugin update orbit-base --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
-                echo "  OK orbit-base up-to-date"
+            if claude plugin update orbit --scope "$ORBIT_INSTALL_SCOPE" 2>/dev/null; then
+                echo "  OK orbit up-to-date"
             else
-                echo -e "  ${YELLOW}  Warning: orbit-base update check failed (non-fatal)${NC}"
+                echo -e "  ${YELLOW}  Warning: orbit update check failed (non-fatal)${NC}"
             fi
         fi
     else
