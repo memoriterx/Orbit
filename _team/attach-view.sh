@@ -25,5 +25,6 @@ echo "감지: $TRANSCRIPT"
 pkill -f "agent-view.py" 2>/dev/null || true
 sleep 0.3
 # 구분선 출력 후 새 에이전트 이어서 출력
-tmux send-keys -t "orbit-dev:0.$PANE" "echo '' && echo '━━━━━━━━━━ $LABEL ━━━━━━━━━━' && python3 '$VIEWER' '$LABEL' --file '$TRANSCRIPT' --follow" Enter
+# --follow 뷰어 종료(다음 attach의 pkill) 후 --wait 배너가 포그라운드를 점유 → 셸 프롬프트(%) 비노출
+tmux send-keys -t "orbit-dev:0.$PANE" "echo '' && echo '━━━━━━━━━━ $LABEL ━━━━━━━━━━' && python3 '$VIEWER' '$LABEL' --file '$TRANSCRIPT' --follow; python3 '$VIEWER' '$LABEL' --wait" Enter
 echo "팬 $PANE 에 '$LABEL' 이어서 연결됨 → $TRANSCRIPT"
