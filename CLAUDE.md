@@ -10,14 +10,14 @@
 
 **목표:** Claude Code 멀티에이전트 플러그인 프레임워크 orbit을 설계·개발·검증한다.
 
-**dogfooding:** orbit 개발팀은 orbit-base 에이전트(`.claude/agents/`)를 채택해 orbit 자신을 개발한다.
+**dogfooding:** orbit 개발팀은 orbit 에이전트(`.claude/agents/`)를 채택해 orbit 자신을 개발한다.
 
 ---
 
 ## 중요: `.claude/` vs `plugins/` 구분
 
 - `.claude/` = **orbit 기여자(dev팀) 전용 설정**. 이 파일, 에이전트 정의, 훅 설정, setup 스크립트가 여기 있다.
-- `plugins/orbit-base/` = **배포 제품** (end-user가 설치하는 플러그인). 절대 dev팀 설정으로 쓰거나 임의 수정하지 말 것.
+- `plugins/orbit/` = **배포 제품** (end-user가 설치하는 플러그인). 절대 dev팀 설정으로 쓰거나 임의 수정하지 말 것.
 - 둘은 완전히 별개다.
 
 ---
@@ -42,12 +42,12 @@ roadmap 선택
 
 ## 도메인 순수성 규칙
 
-`plugins/orbit-base/` 내 에이전트·스킬·템플릿 파일은 **도메인 무관(domain-agnostic)** 상태를 유지한다.
+`plugins/orbit/` 내 에이전트·스킬·템플릿 파일은 **도메인 무관(domain-agnostic)** 상태를 유지한다.
 특정 프로젝트 이름(oremi, orbit-dev 등)을 하드코딩하지 않는다. 도메인 값은 슬롯(`{{...}}`)으로 남긴다.
 
 SubagentStop 품질 게이트가 이를 자동 감지하고 위반 시 차단한다:
 ```bash
-grep -r 'oremi|Oremi' plugins/orbit-base/  # 0건이어야 함
+grep -r 'oremi|Oremi' plugins/orbit/  # 0건이어야 함
 ```
 
 ---
@@ -56,7 +56,7 @@ grep -r 'oremi|Oremi' plugins/orbit-base/  # 0건이어야 함
 
 - Co-Authored-By 줄 절대 금지.
 - 커밋 메시지는 `feat/fix/chore/docs/refactor:` 접두사 사용.
-- 배포물(`plugins/orbit-base/`)과 개발 환경(`.claude/`, `setup-orbit-dev.sh`) 변경은 별도 커밋 권장.
+- 배포물(`plugins/orbit/`)과 개발 환경(`.claude/`, `setup-orbit-dev.sh`) 변경은 별도 커밋 권장.
 
 ---
 

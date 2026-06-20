@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Contract checks for opt-in autonomous mode. Exit 0 = all invariants hold.
 set -u
-BASE="plugins/orbit-base"
+BASE="plugins/orbit"
 fail=0
 chk() { if eval "$2"; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
 

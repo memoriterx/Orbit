@@ -49,14 +49,14 @@ model: sonnet
 1. 품질 게이트 명령 실행:
    - bash 스크립트: `bash -n <file>` (문법)
    - JSON 파일: `python3 -m json.tool <file>` (유효성)
-   - 도메인 순수성: `grep -r 'oremi\|orbit-dev' plugins/orbit-base/` (0건이어야 함)
+   - 도메인 순수성: `grep -r 'oremi\|orbit-dev' plugins/orbit/` (0건이어야 함)
 2. 출력 확인 — 증거 없이 통과 선언 금지
 3. 변경이 요구사항을 충족하고 `plugin.json` 스키마와 일치하는지 확인
 
 ## 자체 검증 체크리스트 (보고 전)
 
 - [ ] 검증 명령 통과: `bash -n` (스크립트) + `python3 -m json.tool` (JSON)
-- [ ] 도메인 순수성 유지: `plugins/orbit-base/`에 특정 프로젝트명 하드코딩 없음
+- [ ] 도메인 순수성 유지: `plugins/orbit/`에 특정 프로젝트명 하드코딩 없음
 - [ ] 변경이 요구사항을 충족하고 `plugin.json` 스키마와 일치
 - [ ] 하드코딩된 시크릿·절대경로 없음 (경로가 필요하면 변수·슬롯 사용)
 - [ ] 범위 이탈 없음
@@ -82,7 +82,7 @@ model: sonnet
 |------|-------------------|
 | `{{SHARED_TYPES_PATH}}` | 해당 없음 — `plugin.json` 매니페스트 스키마 기준 |
 | `{{ARCHITECTURE_DOC_PATH}}` | `.planning/arch-*.md` |
-| `{{QUALITY_GATE_CMD}}` | `bash -n <script>` + `python3 -m json.tool <manifest>` + `grep -r 'oremi' plugins/orbit-base/ \| wc -l` (0이어야 함) |
+| `{{QUALITY_GATE_CMD}}` | `bash -n <script>` + `python3 -m json.tool <manifest>` + `grep -r 'oremi' plugins/orbit/ \| wc -l` (0이어야 함) |
 
 ## 에러 핸들링
 

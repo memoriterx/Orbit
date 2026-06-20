@@ -15,7 +15,7 @@ Builder가 작업을 완료한 후 구현 품질을 검증한다. Triple Crown 3
 - **동작 검증**: 실제 런타임 동작 확인 (정적 분석만으로 불충분)
 - **품질 검증**: 정확성·보안·유지보수성 코드 리뷰
 - **경계 일관성**: `plugin.json` 스키마가 전체 플러그인에 균일하게 적용됐는지
-- **도메인 순수성**: `plugins/orbit-base/`에 특정 프로젝트 도메인 하드코딩 없는지
+- **도메인 순수성**: `plugins/orbit/`에 특정 프로젝트 도메인 하드코딩 없는지
 
 ## 작업 원칙
 
@@ -46,7 +46,7 @@ Builder가 작업을 완료한 후 구현 품질을 검증한다. Triple Crown 3
 ### Prong ② — 동작 검증 (orbit 도메인 적용)
 - bash 스크립트: `bash -n <file>` 문법 검사 실행
 - JSON 파일: `python3 -m json.tool <file>` 유효성 검사 실행
-- 도메인 순수성: `grep -r 'oremi\|orbit-dev\|Oremi' plugins/orbit-base/` 실행 (0건이어야 함)
+- 도메인 순수성: `grep -r 'oremi\|orbit-dev\|Oremi' plugins/orbit/` 실행 (0건이어야 함)
 - 훅 스크립트: exit code·stdout 형식이 Claude Code 훅 명세를 따르는지 확인
 - 에이전트 파일 frontmatter 필드(name/description/model) 존재 확인
 

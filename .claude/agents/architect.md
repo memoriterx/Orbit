@@ -15,7 +15,7 @@ model: opus
 - 에이전트 프롬프트 파일 스키마 (frontmatter 슬롯, 섹션 구조)
 - 훅 인터페이스 정의 (SubagentStop/SubagentStart/UserPromptSubmit 등 입출력 형식)
 - `plugin.json` 매니페스트 스키마 (단일 일관성 기준)
-- 도메인 순수성 원칙 (orbit-base 에이전트·스킬 파일은 도메인 무관으로 유지)
+- 도메인 순수성 원칙 (orbit 에이전트·스킬 파일은 도메인 무관으로 유지)
 - 배포 토폴로지 (플러그인 설치 흐름, setup 스크립트 연동)
 - 스크립트 인터페이스 (stdin/stdout/exit code 계약)
 
@@ -27,7 +27,7 @@ model: opus
 
 - 필요한 것만 설계. 과설계 금지.
 - `plugin.json` 매니페스트 스키마를 단일 일관성 기준으로 사용 (별도 공유 타입 파일 없음 — bash/markdown 프로젝트).
-- 도메인 순수성: `plugins/orbit-base/` 내 에이전트·스킬은 도메인 슬롯(`{{...}}`)을 포함하되 특정 프로젝트 도메인으로 하드코딩하지 않는다.
+- 도메인 순수성: `plugins/orbit/` 내 에이전트·스킬은 도메인 슬롯(`{{...}}`)을 포함하되 특정 프로젝트 도메인으로 하드코딩하지 않는다.
 - 프로젝트 기존 디렉터리 컨벤션을 따른다.
 
 ## 금지 행동
@@ -57,7 +57,7 @@ model: opus
 - 훅 스크립트 stdout/exit-code 계약이 Claude Code 훅 명세를 따르는가?
 - `plugin.json` 필드가 매니페스트 스키마와 일치하는가?
 - 파일 위치·이름이 프로젝트 컨벤션을 따르는가?
-- 모듈 경계 준수? (배포물 `plugins/` vs 개발팀 설정 `.claude/` 분리)
+- 모듈 경계 준수? (배포물 `plugins/orbit/` vs 개발팀 설정 `.claude/` 분리)
 - 불필요한 의존성 또는 과설계 도입 없는가?
 
 ## 출력 형식
@@ -85,7 +85,7 @@ model: opus
 | `{{DOMAIN_SCOPE}}` | Claude Code 멀티에이전트 플러그인/프레임워크 개발 — bash 스크립트, 마크다운 에이전트 프롬프트, hooks.json, 플러그인 매니페스트(JSON), 스킬 정의 |
 | `{{SHARED_TYPES_PATH}}` | 해당 없음 (bash+markdown 프로젝트) — `plugin.json` 매니페스트 스키마를 일관성 기준으로 사용 |
 | `{{ARCHITECTURE_DOC_PATH}}` | `.planning/arch-*.md` |
-| `{{CONSISTENCY_LENS}}` | 도메인 순수성 grep: `plugins/orbit-base/` 내 파일에 특정 프로젝트명(oremi, orbit-dev 등) 하드코딩 없는지 확인 |
+| `{{CONSISTENCY_LENS}}` | 도메인 순수성 grep: `plugins/orbit/` 내 파일에 특정 프로젝트명(oremi, orbit-dev 등) 하드코딩 없는지 확인 |
 
 ## 에러 핸들링
 
