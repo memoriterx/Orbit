@@ -108,6 +108,8 @@ Off by default. Runs only after the user grants a **batch pre-approval** (see CL
 
 **Verification is never lightened.** Triple Crown applies in full to every task in the loop. Autonomy lowers human-approval frequency, not verification strength. (Loop length multiplies SubagentStop quality-gate runs; this cost is accepted.)
 
+**Builds stay serial (no fan-out inside the loop).** The autonomous loop's per-task **build is never parallelized**. The cumulative blast-radius tally (T2), the skip-and-park fail-closed independence predicate (D4), and halt-on-first-failure all assume **one commit at a time**: a running sum updated per task in order, an independence judgment against every already-parked task, and a halt that can stop the loop before the next build. Concurrent builds would compute against a stale tally and rob "halt" of meaning mid-flight. Fan-out (above) applies to **read-only investigation and review**, never to the autonomous build sequence. This adds no exception to the gate — it states that the existing serial-commit assumption is load-bearing.
+
 ## Plan Approval Gate
 
 Before approving a plan, check:
@@ -124,7 +126,10 @@ Agent(reviewer, foreground)       # post Triple Crown coordination; leader forwa
 Agent(architect, foreground)      # design or arch consistency lens
 Agent(critic, foreground)         # high-risk plan critique (only when gate fires)
 Agent(researcher, background)     # external source investigation
+# Independent fan-out: dispatch 2+ independent read-only agents at once (e.g. explore + researcher), aggregate after all return — leader is sole fan-in. Builds/commits stay serial.
 ```
+
+**Independent fan-out (optional throughput).** When two or more units of work are independent — no shared state, no result-feeds-prompt dependency, no required ordering, no shared files — the leader may dispatch them concurrently and aggregate once all return. The leader remains the **sole fan-in point** (no spoke reads another spoke's output), so hub-and-spoke is unchanged. If independence is unclear, **dispatch serially** (uncertain ⇒ serial). Parallelize **read-only investigation and review only**; any agent that writes files or commits (`builder`) is dispatched one at a time. See the using-orbit skill, "Independent Fan-out → Fan-in".
 
 When dispatching the reviewer, the leader **forwards the security-surface verdict it already computed for the high-risk gate (critic T3) as a corroborating hint** — not as an instruction. The reviewer decides ③ deep-mode from its **own inspection of the built diff**; the leader's forward only corroborates. If the leader forgets to forward it, the reviewer still enters deep-mode whenever its diff inspection shows the surface was touched — a missing hint never downgrades a security-touching change to a light scan. No new judgment is asked of the leader; it merely reuses the T3 boolean as a hint.
 

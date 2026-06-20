@@ -93,6 +93,22 @@ The leader delegates everything except:
 
 Root cause analysis, investigation, **plan writing**, bash execution, implementation, and verification all belong to agents. When the thought "this is simple enough to do inline" arises, that is the exact cue to delegate immediately.
 
+## Independent Fan-out → Fan-in (optional throughput pattern)
+
+When the leader has **two or more independent units of work**, it may dispatch them **concurrently** (e.g. `Agent(explore, background)` and `Agent(researcher, background)` at the same time) and aggregate every result once **all** branches return. This is hub-and-spoke unchanged: one hub fans out to N spokes and collects N results. The **leader is the sole fan-in point** — no spoke reads or merges another spoke's output. This pattern only changes *throughput*; the lifecycle, the gates, and the routing are untouched.
+
+**Independence test — all four must hold (else run serially):**
+1. No branch writes state another branch reads.
+2. No branch's prompt depends on another branch's result.
+3. No required ordering between branches.
+4. No two branches edit the same files.
+
+If any point is unclear, **uncertain ⇒ serial** — dispatch the branches one at a time. This is the same fail-closed spirit as the autonomous gate's "ambiguous ⇒ stop": parallelism is taken only when independence is affirmatively clear.
+
+**Safe to parallelize — read-only investigation and review:** concurrent `explore` + `researcher` investigation; independent reviews of already-built diffs; the two read-only Triple Crown prongs (② behavior, ③ quality) when they share no state. None of these write files or commit, so concurrency cannot create a race.
+
+**Never parallelize — builds and commits:** any agent that writes files or commits (the `builder`) is dispatched **one at a time**. In particular the **autonomous loop's per-task build stays serial**: its cumulative blast-radius (T2), its skip-and-park independence predicate, and its halt-on-first-failure all assume **one commit at a time**. Fan-out parallelizes *investigation and review only*, never the autonomous build sequence.
+
 ## Reporting Channel
 
 Agents report as **text output** to the leader. The leader reads agent output and decides the next step. No direct agent-to-agent communication.
@@ -157,3 +173,4 @@ Automation (hooks, subagents, viewer pane) degrades gracefully. **The lifecycle 
 | reviewer | Verifier — Triple Crown coordinator; holds completion authority |
 | `.orbit/` | Project state directory (roadmap, notifications, config) |
 | skillify | Optional after-done branch: extract a Rule-of-Three recurring solution into a reusable skill |
+| Fan-out → Fan-in | Optional throughput pattern: leader dispatches 2+ independent units concurrently and aggregates after all return; leader is sole fan-in; read-only investigation/review only — builds/commits stay serial |
