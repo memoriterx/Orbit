@@ -53,7 +53,7 @@ model: opus
 ## 아키텍처 일관성 체크리스트
 
 - 에이전트 파일 frontmatter(name/description/model)가 스키마에 부합하는가?
-- 슬롯(`{{...}}`) 채움이 orbit-base 도메인 순수성을 해치지 않는가?
+- 슬롯(`{{...}}`) 채움이 orbit 도메인 순수성을 해치지 않는가?
 - 훅 스크립트 stdout/exit-code 계약이 Claude Code 훅 명세를 따르는가?
 - `plugin.json` 필드가 매니페스트 스키마와 일치하는가?
 - 파일 위치·이름이 프로젝트 컨벤션을 따르는가?
