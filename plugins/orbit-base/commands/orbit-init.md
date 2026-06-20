@@ -28,10 +28,33 @@ mkdir -p "$PROJECT_ROOT/.orbit"
 
 이미 존재하면 기존 파일을 덮어쓰지 않는다(아래 Step 3~5에서 `-n` 플래그로 보호).
 
-### Step 3: roadmap.md 복사
+### Step 2.5: PLUGIN_ROOT 확정 및 가드 (필수)
+
+템플릿 파일은 플러그인 번들 안에 있으므로 `CLAUDE_PLUGIN_ROOT`가 필요하다.
+**커맨드 컨텍스트에서 `CLAUDE_PLUGIN_ROOT` 주입은 공식 보장이 없다**(훅과 달리).
+미설정 시 경로가 빈 문자열이 되어 `cp`가 루트 절대경로로 무음 실패하므로,
+**빈 값이면 여기서 명확히 중단**한다(무음 실패 방지).
 
 ```bash
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT}"
+if [ -z "$PLUGIN_ROOT" ] || [ ! -d "$PLUGIN_ROOT/templates" ]; then
+  echo "[orbit-init] ERROR: 플러그인 템플릿 경로를 찾을 수 없습니다." >&2
+  echo "  CLAUDE_PLUGIN_ROOT 가 설정되지 않았거나 templates/ 디렉터리가 없습니다." >&2
+  echo "  (커맨드 컨텍스트에서는 CLAUDE_PLUGIN_ROOT 자동 주입이 보장되지 않습니다.)" >&2
+  echo "" >&2
+  echo "  해결: 플러그인 설치 경로를 찾아 수동 지정 후 /orbit-init 재실행." >&2
+  echo "    예) export CLAUDE_PLUGIN_ROOT=<orbit-base 플러그인 설치 디렉터리>" >&2
+  echo "        # 설치 경로는 보통 ~/.claude/plugins/.../orbit-base 하위입니다." >&2
+  exit 1
+fi
+echo "orbit-init plugin root: $PLUGIN_ROOT"
+```
+
+이 가드를 통과하면 `$PLUGIN_ROOT/templates/`가 실제로 존재함이 보장된다.
+
+### Step 3: roadmap.md 복사
+
+```bash
 cp -n "$PLUGIN_ROOT/templates/roadmap.template.md" \
       "$PROJECT_ROOT/.orbit/roadmap.md"
 echo "created: .orbit/roadmap.md"
@@ -122,6 +145,7 @@ fi
 ## 주의사항
 
 - `cp -n` 사용으로 기존 `.orbit/` 파일은 절대 덮어쓰지 않는다.
-- `CLAUDE_PLUGIN_ROOT` 미설정 시 플러그인 마켓플레이스 설치 경로에서 자동 감지된다.
-  수동 지정 필요 시: `export CLAUDE_PLUGIN_ROOT=<경로>` 후 재실행.
+- 이 커맨드는 플러그인 번들의 `templates/`를 복사하므로 `CLAUDE_PLUGIN_ROOT`가 필요하다.
+  커맨드 컨텍스트에서는 이 변수의 자동 주입이 보장되지 않는다(훅과 달리). 미설정이면
+  Step 2.5 가드가 명확한 에러로 중단시킨다 — 안내대로 `export CLAUDE_PLUGIN_ROOT=<경로>` 후 재실행한다.
 - `.orbit/` 하위 파일은 `.gitignore`에 추가하거나 커밋해도 무방하다(팀 공유 가능).
