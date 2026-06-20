@@ -8,8 +8,10 @@
 
 ## 현재 진행 중
 
-**[RENAME-1] 플러그인 설치 식별자 `orbit-base` → `orbit`** (구현 완료, 2026-06-21 — Triple Crown 대기)
-ADR-RENAME-1: 설치 식별자 변경은 공개 계약 파기 → MAJOR bump `1.0.0`. 지금이 최저비용 시점(실사용자 사실상 0). `-base` 접미사는 형제 플러그인 계층 암시하지만 해당 계층 존재하지 않으며 계획도 없음 — 확장성은 도메인 슬롯(`{{...}}`)으로 달성. 기각 대안: minor bump(하위 호환 파괴라 부적절). 결과: `/plugin install orbit`. 플랜: `.planning/plans/2026-06-21-plan-rename-orbit.md`.
+(없음 — RENAME-1 정적 완료·게시. 잔여 후속은 아래 RENAME-1 항목의 Post-Build 라이브 probe.)
+
+- [x] **[RENAME-1] 플러그인 설치 식별자 `orbit-base` → `orbit` (v1.0.0)** (2026-06-21, 커밋 `7f9c6fe`~`3c43d5e`, 태그 `v1.0.0`)
+  설치 식별자 변경=공개 계약 파기 → MAJOR `1.0.0`(실사용자 사실상 0, 최저비용 시점). `-base`는 부재하는 형제-플러그인 계층 암시, 확장성은 도메인 슬롯으로 달성. `plugins/orbit-base/`→`plugins/orbit/`(순수 git mv), name/source/매니페스트 4종, 전 문서·setup, 활성 dev surface(CLAUDE.md·.claude/·roadmap 활성·verify-harness). **하드브레이크**(공식 alias 없음 — claude-code-guide 확인) + CHANGELOG/README 마이그레이션 안내. critic 게이트 2라운드(BLOCKER 게이트-공허검증 + MAJOR 인벤토리누락→클래스단위 sweep으로 해소) → PROCEED. Triple Crown 3갈래 PASS(게이트 재무장 양성/음성+CONTROL 독립재현). **잔여: Post-Build 라이브 `/plugin install orbit` probe = 라이브 세션 필요(정적 미증명).** 플랜: `.planning/plans/2026-06-21-plan-rename-orbit.md`.
 
 ---
 
