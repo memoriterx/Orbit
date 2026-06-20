@@ -24,8 +24,8 @@ Plan Approval  (사용자 승인)  ← 승인 없이 구현 금지
     │
     ▼
 사후 3갈래 검증
-    ├── ① 완성도  (GSD — /gsd:verify)
-    ├── ② 동작    (gstack — /gstack QA)
+    ├── ① 완성도  (GSD)
+    ├── ② 동작    (gstack — /qa)
     └── ③ 품질    (code review — /review 또는 /code-review)
     │
     ▼
@@ -110,10 +110,7 @@ architect의 플랜이 도착하면 리드는 Step 3(Plan Approval)으로 진행
 
 ### ① 완성도 검증 (GSD)
 
-`gsd` 플러그인이 있으면:
-```
-/gsd:verify
-```
+`gsd` 플러그인이 있으면 그 완성도/검증 워크플로를 사용한다. GSD는 `/gsd-` 접두사 명령을 쓴다 — 사용 가능한 명령은 `/gsd-help`로 확인. 버전에 따라 다를 수 있다.
 
 없으면 직접 확인:
 - 플랜의 모든 Task 체크박스가 완료됐는가?
@@ -122,9 +119,9 @@ architect의 플랜이 도착하면 리드는 Step 3(Plan Approval)으로 진행
 
 ### ② 동작 검증 (gstack)
 
-`gstack` 플러그인이 있으면:
+`gstack` 플러그인이 있으면 gstack의 QA 명령을 사용한다 (`gstack`은 명령이 아니라 프레임워크 이름이다):
 ```
-/gstack
+/qa
 ```
 
 없으면 프로젝트의 `.orbit/quality-gate.sh`를 실행:
@@ -134,14 +131,7 @@ architect의 플랜이 도착하면 리드는 Step 3(Plan Approval)으로 진행
 
 ### ③ 품질 검증 (code review)
 
-`superpowers` 또는 `code-review` 플러그인이 있으면:
-```
-/review
-```
-또는:
-```
-/code-review
-```
+gstack의 `/review` (staff-engineer 모드 코드리뷰), 또는 superpowers의 `requesting-code-review` 스킬을 사용한다.
 
 없으면 diff를 직접 검토해 명백한 버그·보안·가독성 문제를 확인한다.
 
@@ -190,9 +180,9 @@ architect의 플랜이 도착하면 리드는 Step 3(Plan Approval)으로 진행
 
 | 플러그인 | 있을 때 | 없을 때 |
 |----------|---------|---------|
-| superpowers | architect가 /writing-plans 스킬 사용, TDD 스킬, /review 사용 | architect가 수동으로 플랜 작성 (리드 직접 작성은 어느 경우도 금지), 수동 TDD, diff 직접 검토 |
-| gsd | /gsd:verify 자동화 | 체크박스 수동 확인 |
-| gstack | /gstack QA 자동화 | quality-gate.sh 수동 실행 |
+| superpowers | architect가 **writing-plans 스킬**, **test-driven-development 스킬** 사용, 코드리뷰는 **requesting-code-review 스킬** | architect가 수동으로 플랜 작성 (리드 직접 작성은 어느 경우도 금지), 수동 TDD, diff 직접 검토 |
+| gsd | GSD 검증 워크플로 자동화 (`/gsd-` 접두사) | 체크박스 수동 확인 |
+| gstack | **/qa** QA 자동화 | quality-gate.sh 수동 실행 |
 
 플러그인 없이도 생명주기는 완전히 실행 가능하다. 플러그인은 자동화·편의성을 더한다.
 
