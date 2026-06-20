@@ -5,6 +5,14 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-06-20
+
+### Changed
+- **Discovery-first lifecycle step (OMC-6b):** the architect now performs an explicit **discovery** step — framing the problem, requirements, scope, and priority — *before* authoring the plan, delegating internal facts to `explore` and external facts to `researcher` and synthesizing the result. This resolves the long-deferred OMC-6 (planner/architect separation): rather than adding an eighth `planner` agent (found ~90% redundant with explore/researcher/architect), discovery is codified as a named pre-plan step in the existing architect contract. **No new agent, no new hand-off; the roster stays at seven.** Append-only across five lifecycle surfaces (architect / CLAUDE / leader / using-orbit skill / orbit-cycle); the four-phase summary lines (plan → approve → build → verify) are intentionally left unchanged since discovery is a sub-step of the plan phase.
+
+### Fixed
+- **codex manifest role count:** `.codex-plugin/plugin.json` longDescription said "Five roles (leader/architect/builder/reviewer/researcher)" — corrected to "Seven roles (leader/architect/builder/explore/critic/reviewer/researcher)" to include the explore and critic agents.
+
 ## [0.5.0] - 2026-06-20
 
 ### Added
@@ -40,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[0.6.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.0
 [0.5.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.5.0
 [0.4.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.4.0
 [0.3.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.3.0
