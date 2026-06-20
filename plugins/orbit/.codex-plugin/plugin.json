@@ -1,6 +1,6 @@
 {
-  "name": "orbit-base",
-  "version": "0.6.3",
+  "name": "orbit",
+  "version": "1.0.0",
   "description": "Hub-and-spoke multi-agent team framework: lifecycle, Triple Crown verification, and operating discipline for any domain",
   "author": {
     "name": "H",
@@ -23,7 +23,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Orbit Base",
+    "displayName": "Orbit",
     "shortDescription": "Hub-and-spoke multi-agent team with Triple Crown verification",
     "longDescription": "Orbit provides a structured lifecycle for software delivery: plan, approve, implement, verify. Seven roles (leader/architect/builder/explore/critic/reviewer/researcher), hub-and-spoke communication, and Triple Crown three-pronged verification (completeness/behavior/quality).",
     "developerName": "H",

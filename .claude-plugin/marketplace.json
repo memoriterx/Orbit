@@ -7,10 +7,10 @@
   },
   "plugins": [
     {
-      "name": "orbit-base",
+      "name": "orbit",
       "description": "도메인 무관 멀티에이전트 팀 골격. 허브앤스포크·생명주기·Triple Crown 검증·사용량 자동재개 포함.",
-      "version": "0.6.3",
-      "source": "./plugins/orbit-base",
+      "version": "1.0.0",
+      "source": "./plugins/orbit",
       "author": {
         "name": "H",
         "email": "memoriterx@gmail.com"
