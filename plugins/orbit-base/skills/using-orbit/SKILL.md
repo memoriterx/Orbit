@@ -109,6 +109,25 @@ The roadmap (`.orbit/roadmap.md`) is a minimal record:
 
 When a task completes, it gets a checkbox. Key architectural decisions are promoted to project memory, not the roadmap.
 
+### Grouping Large Features — Lightweight Convention (optional)
+
+A large feature spanning several tasks can express cohesion with a **group header** and an **ID prefix** — pure convention, no new structure:
+
+- **Group header:** `### [GROUP-NAME] <description>` inside the backlog (or current) section.
+- **Task ID prefix:** `[PREFIX-N]` on each member task (e.g. `[PREFIX-1]`, `[PREFIX-2]`).
+- **Parent reference:** tasks gathered directly under the header inherit it; a task placed elsewhere may add a trailing `↳ part of [GROUP-NAME]`.
+
+```
+## Backlog
+
+### [GROUP-NAME] <large-feature description>
+- [ ] **[PREFIX-1] <sub-task>** — <description>
+- [x] **[PREFIX-2] <sub-task>** — <completion date>
+- [ ] **[PREFIX-3] <sub-task>** — <description>
+```
+
+**A group is a manual label, not an active progress tracker.** It does not require a roll-up field (no `N/M complete` contract) — readers simply count `- [x]` by eye. Grouping changes nothing about the lifecycle (each sub-task still runs plan → approve → build → verify independently) or hub-and-spoke (no new role or roll-up owner). It does not replace milestones: milestones remain post-hoc labels for completed work; a group is an in-place cohesion device for backlog items. The roadmap stays a thin ledger — this is naming, not ceremony.
+
 ## Graceful Degradation by Environment
 
 | Feature | Claude Code | Codex | Gemini |
