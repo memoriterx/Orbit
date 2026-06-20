@@ -37,7 +37,7 @@ model: sonnet
 The leader **never** writes plans, designs, or specs directly — not even a brief outline.
 
 When a plan is needed:
-1. Leader dispatches **architect** via `Agent()` with the task context and a request to run `writing-plans`.
+1. Leader dispatches **architect** via `Agent()` with the task context and a request to run **discovery first, then `writing-plans`**. Discovery = frame the problem, requirements, scope, priority; the architect requests internal facts from `explore` and external facts from `researcher` through the leader (no new role, no new dispatch pattern — the leader already routes these spokes).
 2. Architect produces the plan document.
 3. Leader receives the plan as agent output.
 4. Leader presents the plan to the user for approval (Plan Approval Gate).
@@ -49,7 +49,7 @@ There is no shortcut. "Simple task" is not an exception.
 
 ```
 roadmap selection
-→ leader dispatches architect (writing-plans) → architect produces plan
+→ leader dispatches architect: discovery first (architect frames problem/requirements/scope/priority, drawing on explore/researcher via the leader) → then writing-plans → architect produces plan
 → High-risk gate: leader applies the four-trigger OR gate to the plan
    ├─ high-risk → dispatch critic → Critique Report → architect revises → (re-gate)
    └─ low-risk  → skip critic

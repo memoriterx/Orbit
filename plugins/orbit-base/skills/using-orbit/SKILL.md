@@ -32,6 +32,7 @@ Every piece of work follows this lifecycle:
 ```
 0. Select    leader picks one task from roadmap
 1. Plan      leader dispatches architect (writing-plans) → architect produces plan document
+1a. Discover (within step 1, before the plan) architect frames problem/requirements/scope/priority, drawing internal facts from explore and external facts from researcher; no new agent
 1.5 Gate     leader judges high-risk (4-trigger OR gate); if high-risk → critic critiques plan → architect revises; low-risk skips
 2. Approve   leader presents architect's plan → user approval (no implementation without approval)
 3. Build     leader dispatches builder (TDD, systematic debugging, verification)

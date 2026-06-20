@@ -14,7 +14,10 @@ allowed-tools: [Read, Bash]
 roadmap 선택
     │
     ▼
-writing-plans  (플랜 작성)
+discovery  (architect — 문제 프레이밍·요구사항·스코프·우선순위; explore/researcher 활용)
+    │
+    ▼
+writing-plans  (architect — 플랜 작성)
     │
     ▼
 Plan Approval  (사용자 승인)  ← 승인 없이 구현 금지
@@ -56,10 +59,10 @@ cat "${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md"
 
 **리드는 플랜을 직접 작성하지 않는다.** 초안조차 직접 쓰는 것은 위반이다.
 
-리드는 **architect**를 `Agent()`로 디스패치해 플랜 작성을 위임한다:
+리드는 **architect**를 `Agent()`로 디스패치한다. architect는 **discovery를 먼저** 수행한 뒤 플랜을 작성한다 — 문제 프레이밍·요구사항(필수/선택 구분)·스코프·우선순위. 내부 사실은 `explore`, 외부 사실은 `researcher`(둘 다 기존 스포크, 리드 경유)에게 위임하고 architect가 종합한다. **신규 에이전트는 만들지 않는다.**
 
 ```
-Agent(architect, prompt="[작업 컨텍스트와 요구사항]. writing-plans 스킬로 플랜 문서를 작성해 주세요.")
+Agent(architect, prompt="[작업 컨텍스트와 요구사항]. 먼저 discovery(문제 프레이밍·요구사항·스코프·우선순위, explore/researcher 활용)를 수행한 뒤 writing-plans 스킬로 플랜 문서를 작성해 주세요.")
 ```
 
 `superpowers:writing-plans` 스킬이 설치돼 있으면 architect가 그 스킬을 사용한다.

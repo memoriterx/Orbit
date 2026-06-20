@@ -16,7 +16,7 @@ Whenever working on a meaningful piece of project work, apply the single-task li
 
 ```
 roadmap selection
-→ leader dispatches architect (writing-plans) → architect produces plan
+→ leader dispatches architect: discovery first (frame problem, requirements, scope, priority; uses explore/researcher) → then writing-plans → architect produces plan
 → High-risk? leader gates critic (independent plan critique) → architect revises; low-risk skips
 → Plan Approval: leader presents architect's plan → user confirms
 → leader dispatches builder (TDD) → post-implementation Triple Crown
