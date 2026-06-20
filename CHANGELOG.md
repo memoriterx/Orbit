@@ -5,6 +5,11 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **task-group lightweight convention (GROUP-1):** large features spanning several tasks can now express cohesion in the roadmap with a **group header** (`### [GROUP-NAME] <description>`) and an **ID prefix** (`[PREFIX-N]`) on each member task — pure naming convention, zero new structure, hooks, or schema. Surfaces touched: `skills/using-orbit/SKILL.md` (Thin Ledger § Grouping Large Features) and `templates/roadmap.template.md`. **A group is a manual label, not an active progress tracker** — no roll-up field, no lifecycle change, hub-and-spoke unchanged. It does not replace milestones: milestones remain post-hoc labels for completed work; a group is an in-place cohesion device for backlog items. The roadmap stays a thin ledger — this is naming, not ceremony.
+
 ## [0.3.0] - 2026-06-19
 
 ### Added
@@ -26,5 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[Unreleased]: https://github.com/memoriterx/Orbit/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.2.0
