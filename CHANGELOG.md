@@ -5,6 +5,15 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-06-20
+
+### Fixed
+- **orbit-cycle critic gate (DRIFT-1):** the `skills/using-orbit/orbit-cycle.md` command lifecycle was missing the high-risk critic gate step between plan authoring and Plan Approval. The step — four-trigger OR gate (T1 irreversibility / T2 broad impact / T3 security-integrity / T4 new external dependency); low-risk skips, high-risk routes to critic for independent PROCEED/REVISE verdict — is now present and matches the canonical flow in `CLAUDE.md`, `agents/leader.md`, and the `using-orbit` skill.
+
+### Internal
+- Discovery-first step added to dev-team leader and architect definitions (DRIFT-2).
+- Dev-team hook and script paths made portable via `CLAUDE_PROJECT_DIR`-relative references (DRIFT-3).
+
 ## [0.6.0] - 2026-06-20
 
 ### Changed
