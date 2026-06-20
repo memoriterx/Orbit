@@ -22,6 +22,16 @@ researcher 외부 조사로 발굴. orbit thin·허브앤스포크·사람게이
 
 ---
 
+## 백로그 — 실사용 검증 발굴 (2026-06-21 RWV)
+
+격리 temp에 신규 사용자 설치 시뮬레이션(QA-1 넘어 실설치 도그푸딩). README Quickstart를 그대로 따라갈 때의 차단점 발굴.
+
+- [x] **[RWV-1] 신규자 설치 차단점 수정** (2026-06-21, 커밋 `ec723c9`·`aeec965`)  
+  Triple Crown 3갈래 PASS(가드 Case A~D 독립 재현, 회귀 무, 거짓주석 정정 claude-code-guide 부합). **잔존 NIT(RWV-2 후보)**: `README.md:291` 트러블슈팅에 동일 "자동 감지" 거짓주장 잔존(플랜이 orbit-init.md로 SC-4 한정 → 범위 밖). 후속 `docs:` 1줄 정정 권고.  
+  - **BLOCKER**: `README.md:154`(+ 트러블슈팅 `:290`) 설치 블록이 `/plugin marketplace add <orbit-repo-url>` — 플레이스홀더라 신규자가 그대로 복붙하면 실패. 실값 `memoriterx/Orbit`(setup-orbit.sh 형식)로 교체 필요. 루트 README는 orbit 자신의 readme → 실repo 하드코딩 정상(도메인 누출 아님).  
+  - **MAJOR**: `plugins/orbit-base/commands/orbit-init.md:34` `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT}"` + 주석 `:125` "미설정 시 자동 감지된다"가 거짓(감지 로직 없음). claude-code-guide 확인: 커맨드 컨텍스트의 `CLAUDE_PLUGIN_ROOT` 주입은 공식 문서 보장 없음(훅만 명시). 미설정 시 `cp` 무음 실패 → /orbit-init 전체 실패 가능. 안전한 fallback 또는 fail-loud 가드 + 정직한 주석 필요(인라인 커맨드 bash엔 BASH_SOURCE 미적용 — architect 설계 판단).  
+  - 기각: plugin.json↔codex 비대칭(MINOR) = 알려진 비이슈([[orbit-plugin-discovery]] — Claude 컨벤션 자동발견). NIT: `docs/smoke-results.md` stale marketplace.json 참조(내부 dev 문서, 후속 정리 옵션).
+
 ## 백로그 — 내부 정합성 drift 보수 (2026-06-20 explore 발굴)
 
 병렬 fan-out 조사(researcher 외부 + explore 내부)로 발굴. 외부 후보는 thin 필터 미달/문서화 권고 수준 → 장기 백로그 시드만. 내부에서 실작업 3건 잔존.
