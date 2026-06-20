@@ -288,7 +288,7 @@ orbit이 기본 제공하는 주요 스킬입니다.
 | 증상 | 원인 | 대응 |
 |------|------|------|
 | `/orbit-init`·`/orbit-cycle`이 명령 목록에 안 보임 | `orbit-base` 플러그인 미설치 또는 미인식 | `/plugin install orbit-base` 재실행 후 Claude Code를 재시작. 마켓플레이스 미등록이면 `/plugin marketplace add memoriterx/Orbit` 먼저 |
-| `/orbit-init` 실행 시 `CLAUDE_PLUGIN_ROOT` 관련 오류 | 플러그인 루트 경로 미감지 | 보통 자동 감지됩니다. 안 되면 Claude Code 재시작; 그래도 안 되면 플러그인 재설치 |
+| `/orbit-init` 실행 시 `CLAUDE_PLUGIN_ROOT` 관련 오류 | 커맨드 컨텍스트에서 `CLAUDE_PLUGIN_ROOT` 자동 주입은 보장되지 않음 | `export CLAUDE_PLUGIN_ROOT=<orbit-base 플러그인 설치 경로>` 후 `/orbit-init` 재실행. 설치 경로를 모르면 Claude Code 재시작 후 다시 시도 |
 | `.orbit/` 가 안 생기거나 비어 있음 | 프로젝트 루트가 아닌 곳에서 실행 | 프로젝트 폴더 루트에서 `/orbit-init`을 다시 실행. 기존 파일은 덮어쓰지 않습니다(`cp -n`) |
 | 동반 플러그인(superpowers 등)이 없다고 표시됨 | 선택 플러그인 미설치 | **무시해도 됩니다.** orbit 핵심 방법론은 플러그인 없이 동작합니다. 자동화가 필요하면 "그 다음 — 선택 플러그인" 참고 |
 | tmux 2분할(리드+뷰어) 화면이 안 뜸 | tmux 미설치 또는 미사용 | tmux는 **선택사항**입니다. 없으면 단일 화면에서 그대로 동작합니다(훅이 조용히 종료). 쓰려면 아래 "tmux 팀 환경 셋업" 참고 |
