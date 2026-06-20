@@ -5,6 +5,13 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.3] - 2026-06-21
+
+### Fixed
+- **신규자 설치 차단 해소:** README 설치 안내의 마켓플레이스 등록 명령에 플레이스홀더(`<orbit-repo-url>`)가 그대로 남아 있어 처음 설치하는 사용자가 막히는 문제를 수정(`memoriterx/Orbit`으로 실값 교체, `ec723c9`).
+- **`/orbit-init` 무음 실패 → fail-loud 가드:** `CLAUDE_PLUGIN_ROOT`가 미설정이거나 `templates/` 디렉터리가 없을 때 `cp`가 루트 절대경로로 무음 실패하던 문제를 수정. 이제 명확한 에러 메시지와 함께 즉시 중단하고, `export CLAUDE_PLUGIN_ROOT=<경로>` 후 재실행 안내를 출력한다(`aeec965`).
+- **트러블슈팅·주석 사실 정정:** `CLAUDE_PLUGIN_ROOT`가 "보통 자동 감지된다"는 README 트러블슈팅 표의 거짓 주장을 제거. 커맨드 컨텍스트에서 자동 주입이 보장되지 않는다는 사실과 `export` 후 재실행 안내로 교체. orbit-init.md 가드 주석과 일치.
+
 ## [0.6.2] - 2026-06-21
 
 ### Added
