@@ -2,7 +2,14 @@
 """에이전트 transcript(JSONL)를 사람이 보기 좋은 실시간 화면으로 포맷.
 사용: agent-view.py <에이전트라벨> --file <transcript.jsonl> --follow
 """
-import sys, json, time, argparse
+import sys, json, time, argparse, os, signal
+
+# 뷰어 교체 시 pkill로 종료될 때 SIGTERM/SIGINT을
+# 정상 종료(exit 0)로 처리해 zsh "terminated" 메시지를 막는다.
+def _quiet_exit(*_):
+    os._exit(0)
+signal.signal(signal.SIGTERM, _quiet_exit)
+signal.signal(signal.SIGINT, _quiet_exit)
 
 C = {
     "cyan":   "\033[36m",
