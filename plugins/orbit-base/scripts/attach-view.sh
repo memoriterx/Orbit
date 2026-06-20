@@ -7,6 +7,7 @@
 
 PANE="$1"; LABEL="$2"; AGENTID="$3"
 VIEWER="${CLAUDE_PLUGIN_ROOT}/scripts/agent-view.py"
+RUNNER="${CLAUDE_PLUGIN_ROOT}/scripts/view-run.sh"
 SESSION="${ORBIT_TMUX_SESSION:-orbit}"
 
 if [ -z "$AGENTID" ]; then
@@ -38,8 +39,6 @@ pkill -f "agent-view.py" 2>/dev/null || true
 sleep 0.3
 
 # 구분선 출력 후 새 에이전트 이어서 출력
-# --follow 뷰어 종료(다음 attach의 pkill) 후 --wait 배너가 포그라운드를 점유 → 셸 프롬프트(%) 비노출
-tmux send-keys -t "${SESSION}:0.$PANE" \
-    "echo '' && echo '━━━━━━━━━━ $LABEL ━━━━━━━━━━' && python3 '$VIEWER' '$LABEL' --file '$TRANSCRIPT' --follow; python3 '$VIEWER' '$LABEL' --wait" \
-    Enter
+# 긴 복합 명령 대신 래퍼 한 줄만 팬에 echo (셸 입력 잡음 최소화)
+tmux send-keys -t "${SESSION}:0.$PANE" "'$RUNNER' '$LABEL' '$TRANSCRIPT'" Enter
 echo "팬 $PANE 에 '$LABEL' 이어서 연결됨 → $TRANSCRIPT"
