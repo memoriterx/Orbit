@@ -235,7 +235,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         else
             echo -e "  ${YELLOW}  gsd is not in any marketplace — manual install required:${NC}"
             echo "      Clone or copy the gsd skill folder into ~/.claude/skills/gsd/"
-            echo "      See: https://github.com/open-gsd/gsd-core (or your team's source)"
+            echo "      gsd: run /gsd-help in Claude Code for install guidance (or your team's source)"
         fi
     fi
 fi

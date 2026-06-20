@@ -143,13 +143,7 @@ gstack은 Git·Bun이 필요하며, Claude Code에 아래를 붙여넣어 `~/.cl
 git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
 ```
 
-gsd는 npx 설치 프로그램을 사용합니다(런타임·전역/로컬 선택):
-
-```
-npx @opengsd/gsd-core@latest
-```
-
-설치 후 `/gsd-new-project`로 시작합니다.
+gsd는 Claude Code에서 `/gsd-help`를 실행하면 설치 안내가 표시됩니다. (gstack을 사용한다면 gstack을 통한 설치가 권장됩니다.)
 
 각 도구의 설치 방식·요구사항은 저장소마다 다르므로 최신 안내는 아래 저장소를 참조하세요.
 
@@ -157,7 +151,7 @@ npx @opengsd/gsd-core@latest
 
 - [superpowers](https://github.com/obra/superpowers) — 플랜 작성·코드리뷰·스킬 작성 등 개발 방법론 스킬 모음
 - [gstack](https://github.com/garrytan/gstack) — 브라우저·런타임 동작 실증 QA 도구. 웹뿐 아니라 iOS 앱 검증도 지원
-- [gsd](https://github.com/open-gsd/gsd-core) — 계획 대비 완성도 점검 — 스펙 기반 개발 프레임워크
+- gsd (Get Shit Done, by TÂCHES) — Claude Code에서 `/gsd-help`로 설치 안내. 스펙 기반 개발 프레임워크
 
 ### 스킬 카탈로그
 
@@ -214,7 +208,7 @@ bash /path/to/orbit/setup-orbit.sh
 |----------|----------|---------------------------|
 | `superpowers` | `claude-plugins-official` 마켓플레이스 → 자동 설치 가능 | 미설치 시 자동 설치, 설치 시 업데이트 |
 | `gstack` | `~/.claude/skills/` 수동 설치 (마켓플레이스 미등록) | 설치 여부 확인 후 수동 안내만 출력 |
-| `gsd` | `npx @opengsd/gsd-core@latest` (마켓플레이스 미등록) | 설치 여부 확인 후 수동 안내만 출력 |
+| `gsd` | Claude Code에서 `/gsd-help` 실행 (마켓플레이스 미등록) | 설치 여부 확인 후 수동 안내만 출력 |
 
 SubagentStart 훅(`viewer-attach.sh`)이 서브에이전트 트랜스크립트를 뷰어 팬에 자동 연결합니다.
 tmux가 없는 환경에서는 훅이 조용히 종료되어 영향 없습니다.
