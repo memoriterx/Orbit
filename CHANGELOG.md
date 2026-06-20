@@ -5,6 +5,15 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-06-20
+
+### Added
+- **unattended skip-and-park profile (AUTO-1):** opt-in autonomous execution profile. When unattended, high-risk/ambiguous tasks are *parked* (never auto-decided or auto-built) while low-risk tasks complete to the end; the parked list is reported for human review. Default `halt-on-trigger` profile unchanged. Safety: parked high-risk is never auto-built; verification (②/③) failures halt under both profiles; D4 fail-closed (a pending task builds only if independence from every parked task is affirmatively clear, else parks); parked tasks are excluded from continuation batches and ≥3 outstanding parked tasks declines further autonomous batches. Documented as *conditional whole-loop safety*, not halt-equivalence. Zero new infrastructure; harness `C15a–g` added.
+- **Independent Fan-out → Fan-in pattern (PERF-1):** codifies leader-driven concurrent dispatch of independent work with the leader as the sole fan-in point (hub-and-spoke preserved). Read-only investigation/review is parallel-safe; **builds/commits always stay serial** (cumulative T2, skip-and-park D4, and halt-on-first-failure all assume one commit at a time). Includes a 4-point independence test (uncertain ⇒ serial). Append-only prose in `skills/using-orbit/SKILL.md` and `agents/leader.md`; zero new infrastructure.
+
+### Fixed
+- **viewer pane noise (`scripts/agent-view.py`, `scripts/attach-view.sh`, new `scripts/view-run.sh`):** the live subagent viewer now exits cleanly on SIGTERM/SIGINT (no more `zsh: terminated` messages when the viewer is replaced), shows an idle "waiting" banner instead of leaving a bare shell prompt between subagents, and launches through a short `view-run.sh` wrapper so the pane echoes one short line instead of a long compound command.
+
 ## [0.4.0] - 2026-06-20
 
 ### Added
@@ -31,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[0.5.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.5.0
 [0.4.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.4.0
 [0.3.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.2.0
