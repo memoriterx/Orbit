@@ -5,6 +5,11 @@ All notable changes to orbit-base are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.2] - 2026-06-21
+
+### Added
+- **신규 사용자 온보딩 보강:** README에 "30분 만에 첫 사이클" Quickstart 워크스루와 "막혔을 때" 트러블슈팅 표 추가. 설치 직후 첫 사이클을 처음부터 끝까지 따라갈 수 있도록 단계별 안내 및 일반적인 오류 원인·해결책을 문서화했다.
+
 ## [0.6.1] - 2026-06-20
 
 ### Fixed
@@ -57,6 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[0.6.2]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.2
+[0.6.1]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.1
 [0.6.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.0
 [0.5.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.5.0
 [0.4.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.4.0
