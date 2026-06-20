@@ -26,6 +26,9 @@ researcher 외부 조사로 발굴. orbit thin·허브앤스포크·사람게이
 
 병렬 fan-out 조사(researcher 외부 + explore 내부)로 발굴. 외부 후보는 thin 필터 미달/문서화 권고 수준 → 장기 백로그 시드만. 내부에서 실작업 3건 잔존.
 
+- [x] **[DOCS-1] 신규 사용자 온보딩 — README Quickstart 워크스루 + 트러블슈팅** (2026-06-21, 커밋 `a4eef47`)  
+  배포물 루트 README.md에 2섹션 추가형(+76/-0): "30분 만에 첫 사이클"(G1 end-to-end 워크스루 + G2 필수/선택 우선순위) + "막혔을 때" 트러블슈팅 표(G3). 신규 .md 0·표면 1파일. discovery: in-plugin 문서는 이미 완결, 갭은 흩어진 참조형 정보. 도메인순수성 0, 소스 대조 모순 0. Triple Crown 3갈래 PASS(②=문서 정확성 대조, ③ light scan=T3 무관). 저위험(추가형=계약 미변경 → T2 미발화) critic 생략. 플랜: `.planning/plans/2026-06-21-plan-docs-onboarding.md`.
+
 - [x] **[DRIFT-1] orbit-cycle.md 생명주기에 critic 고위험 게이트 추가** (2026-06-20, 커밋 `8b63458`)  
   `commands/orbit-cycle.md` 생명주기 다이어그램(line 13-36)과 Step 2 본문에 **고위험 게이트 → critic 분기** 단계 부재. canonical(CLAUDE.md line 19-25 / SKILL.md)에는 있음 → 표면 간 모순. 배포물 → 생명주기 정상 진행 필요(architect 플랜 → Plan Approval → builder).
 
