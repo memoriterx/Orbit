@@ -5,6 +5,20 @@ All notable changes to orbit are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-06-21
+
+### Changed
+- **BREAKING:** the plugin install identifier is renamed `orbit-base` → `orbit`.
+  Install now with `/plugin install orbit`. The directory `plugins/orbit-base/`
+  moved to `plugins/orbit/`. The repository (`memoriterx/Orbit`) and marketplace
+  name (`orbit-marketplace`) are unchanged.
+
+### Migration
+- Existing installs of `orbit-base` continue to function locally but no longer
+  receive updates under the old name. To migrate:
+  `/plugin uninstall orbit-base` then `/plugin install orbit`
+  (the marketplace is already registered; no re-add needed).
+
 ## [0.6.3] - 2026-06-21
 
 ### Fixed
@@ -69,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[1.0.0]: https://github.com/memoriterx/Orbit/releases/tag/v1.0.0
 [0.6.2]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.2
 [0.6.1]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.1
 [0.6.0]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.0

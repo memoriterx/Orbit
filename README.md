@@ -160,6 +160,10 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 /orbit-init
 ```
 
+> **기존 `orbit-base` 사용자:** 설치명이 `orbit`으로 변경되었습니다(v1.0.0).
+> `/plugin uninstall orbit-base` 후 `/plugin install orbit`을 실행하세요.
+> 마켓플레이스(`memoriterx/Orbit`)는 그대로이므로 재등록은 불필요합니다.
+
 `/orbit-init`을 실행하면 프로젝트 루트에 `.orbit/` 폴더가 만들어집니다.
 
 ```
