@@ -148,33 +148,31 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 
 ## 그 다음 — 선택 플러그인
 
-orbit은 아래 플러그인 없이도 핵심 기능(팀 구조·생명주기·자동 재개)이 동작합니다.
-설치하면 Triple Crown 검증이 자동화됩니다.
+orbit은 이 플러그인들 없이도 돌아갑니다. 설치하면 Triple Crown 검증이 자동화돼 더 편합니다.
 
-단, **미설치 시 검증이 약해집니다.** 완성도(①)와 품질(③)은 reviewer가 플랜·코드를 직접 읽어 수동으로 대조할 수 있지만 덜 체계적입니다. 동작 검증(②)은 프로젝트 유형에 맞는 도구를 고르는 슬롯(`{{BEHAVIOR_VERIFICATION_METHOD}}`)으로 채워지며 — 웹이면 gstack(브라우저 QA), iOS 앱이면 gstack의 앱 QA 기능, CLI·API면 에이전트 직접 실행 — 단, UI·앱처럼 직접 실행이 어려운 동작은 적절한 자동 검증 도구(또는 사람)가 없으면 에이전트만으로 한계가 있습니다. **제대로 된 자동화 검증을 원한다면 설치를 권장합니다.**
+설치하지 않으면 검증을 사람이 직접 해야 해서 덜 꼼꼼할 수 있습니다. 특히 화면·앱이 실제로 잘 도는지 확인하는 건 gstack 같은 도구가 있어야 자동으로 됩니다.
+
+**superpowers** — 플랜 작성·코드리뷰 등 개발 방법론 스킬 모음. Anthropic 공식 마켓플레이스에서 바로 설치합니다.
 
 ```
-# superpowers — Anthropic 공식 마켓플레이스에서 바로 설치 (등록 불필요)
 /plugin install superpowers@claude-plugins-official
 ```
 
-gstack은 setup 스크립트로 설치합니다. 아래를 Claude Code에 붙여넣으면 스킬을 등록하고 헤드리스 브라우저 바이너리를 빌드해 `~/.claude/skills/gstack`에 저장합니다 (Git·Bun 필요):
+**gstack** — 브라우저·앱이 실제로 잘 도는지 확인하는 QA 도구. 웹뿐 아니라 iOS 앱 검증도 지원합니다. Git·Bun이 필요하며 아래를 Claude Code에 붙여넣으면 설치됩니다.
 
 ```
 git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
 ```
 
-> `/gstack`은 설치 명령이 아니라 헤드리스 브라우저를 구동하는 스킬입니다. 설치 후 업데이트는 `/gstack-upgrade`로 합니다.
+> `/gstack`은 설치 명령이 아니라 헤드리스 브라우저를 구동하는 스킬입니다. 업데이트는 `/gstack-upgrade`로 합니다.
 
-gsd는 Claude Code에서 `/gsd-help`를 실행하면 설치 안내가 표시됩니다. (gstack을 사용한다면 gstack을 통한 설치가 권장됩니다.)
+**gsd** — 스펙 기반 개발 프레임워크. Claude Code에서 `/gsd-help`를 실행하면 설치 안내가 표시됩니다. (gstack을 사용한다면 gstack을 통한 설치가 권장됩니다.)
 
-각 도구의 설치 방식·요구사항은 저장소마다 다르므로 최신 안내는 아래 저장소를 참조하세요.
+GitHub 출처:
 
-각 플러그인의 GitHub 출처:
-
-- [superpowers](https://github.com/obra/superpowers) — 플랜 작성·코드리뷰·스킬 작성 등 개발 방법론 스킬 모음
-- [gstack](https://github.com/garrytan/gstack) — 브라우저·런타임 동작 실증 QA 도구. 웹뿐 아니라 iOS 앱 검증도 지원
-- gsd (Get Shit Done) — Claude Code에서 `/gsd-help`로 설치 안내. 스펙 기반 개발 프레임워크
+- [superpowers](https://github.com/obra/superpowers)
+- [gstack](https://github.com/garrytan/gstack)
+- gsd — Claude Code에서 `/gsd-help`로 설치 안내
 
 ### 스킬 카탈로그
 
