@@ -226,7 +226,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         else
             echo -e "  ${YELLOW}  gstack is not in any marketplace — manual install required:${NC}"
             echo "      Clone or copy the gstack skill folder into ~/.claude/skills/gstack/"
-            echo "      See: https://github.com/obra/gstack (or your team's source)"
+            echo "      See: https://github.com/garrytan/gstack (or your team's source)"
         fi
 
         # gsd — skills-dir only (no marketplace entry) → manual instructions
@@ -235,7 +235,7 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
         else
             echo -e "  ${YELLOW}  gsd is not in any marketplace — manual install required:${NC}"
             echo "      Clone or copy the gsd skill folder into ~/.claude/skills/gsd/"
-            echo "      See: https://github.com/obra/gsd (or your team's source)"
+            echo "      See: https://github.com/gsd-build/get-shit-done (or your team's source)"
         fi
     fi
 fi
