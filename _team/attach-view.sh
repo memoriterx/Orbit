@@ -4,7 +4,7 @@
 # 세션명: orbit-dev
 PANE="$1"; LABEL="$2"; AGENTID="$3"
 PROJDIR="$HOME/.claude/projects/-Users-dh-Project-orbit"
-VIEWER="$HOME/Project/orbit/_team/agent-view.py"
+RUNNER="$HOME/Project/orbit/_team/view-run.sh"
 
 if [ -z "$AGENTID" ]; then
     echo "사용법: attach-view.sh <pane> <label> <agentId>"; exit 1
@@ -25,6 +25,6 @@ echo "감지: $TRANSCRIPT"
 pkill -f "agent-view.py" 2>/dev/null || true
 sleep 0.3
 # 구분선 출력 후 새 에이전트 이어서 출력
-# --follow 뷰어 종료(다음 attach의 pkill) 후 --wait 배너가 포그라운드를 점유 → 셸 프롬프트(%) 비노출
-tmux send-keys -t "orbit-dev:0.$PANE" "echo '' && echo '━━━━━━━━━━ $LABEL ━━━━━━━━━━' && python3 '$VIEWER' '$LABEL' --file '$TRANSCRIPT' --follow; python3 '$VIEWER' '$LABEL' --wait" Enter
+# 긴 복합 명령 대신 래퍼 한 줄만 팬에 echo (셸 입력 잡음 최소화)
+tmux send-keys -t "orbit-dev:0.$PANE" "'$RUNNER' '$LABEL' '$TRANSCRIPT'" Enter
 echo "팬 $PANE 에 '$LABEL' 이어서 연결됨 → $TRANSCRIPT"
