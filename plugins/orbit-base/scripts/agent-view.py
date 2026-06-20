@@ -140,7 +140,17 @@ def main():
     ap.add_argument("label")
     ap.add_argument("--file")
     ap.add_argument("--follow", action="store_true")
+    ap.add_argument("--wait", action="store_true")
     a = ap.parse_args()
+
+    if a.wait:
+        # 유휴 배너로 포그라운드를 점유해 셸 프롬프트(%)가 노출되지 않게 한다.
+        # 다음 attach의 pkill(SIGTERM)이 _quiet_exit으로 정상 종료시킨다.
+        print(f"{C['gray']}━━ 뷰어 (대기) ━━ 다음 서브에이전트 연결을 기다리는 중…{C['reset']}")
+        sys.stdout.flush()
+        signal.pause()
+        return
+
     hdr = f"{C['bold']}{C['mag']}━━ {a.label} ━━{C['reset']}"
     print(hdr); sys.stdout.flush()
 
