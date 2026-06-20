@@ -1,6 +1,6 @@
 {
   "name": "orbit-base",
   "description": "Hub-and-spoke multi-agent team framework: lifecycle, Triple Crown verification, and operating discipline",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "contextFileName": "GEMINI.md"
 }
