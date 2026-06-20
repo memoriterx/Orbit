@@ -3,8 +3,9 @@
 # Agent()가 반환한 agentId의 서브에이전트 트랜스크립트를 찾아 해당 팬에 라이브 뷰 표시.
 # 세션명: orbit-dev
 PANE="$1"; LABEL="$2"; AGENTID="$3"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PROJDIR="$HOME/.claude/projects/-Users-dh-Project-orbit"
-RUNNER="$HOME/Project/orbit/_team/view-run.sh"
+RUNNER="$SCRIPT_DIR/view-run.sh"
 
 if [ -z "$AGENTID" ]; then
     echo "사용법: attach-view.sh <pane> <label> <agentId>"; exit 1

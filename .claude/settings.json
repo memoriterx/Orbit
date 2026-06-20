@@ -16,7 +16,7 @@
           {
             "type": "command",
             "async": true,
-            "command": "python3 /Users/dh/Project/orbit/.planning/usage-detect.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR:-$PWD}/.planning/usage-detect.py\""
           }
         ]
       }
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/dh/Project/orbit/.planning/resume-inject.py"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR:-$PWD}/.planning/resume-inject.py\""
           }
         ]
       }

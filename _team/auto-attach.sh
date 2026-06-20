@@ -1,7 +1,8 @@
 #!/bin/bash
 # SubagentStart 훅용 — stdin=훅 payload(JSON). 서브에이전트 트랜스크립트를 뷰어 팬(1)에
 # 라이브 연결한다. 세션명 orbit-dev 기준.
-PROJ="/Users/dh/Project/orbit"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+PROJ="$(dirname "$SCRIPT_DIR")"
 payload=$(cat 2>/dev/null)
 aid=$(printf '%s' "$payload" | jq -r '.agent_id // empty' 2>/dev/null)
 atype=$(printf '%s' "$payload" | jq -r '.agent_type // "agent"' 2>/dev/null)

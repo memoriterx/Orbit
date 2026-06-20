@@ -2,7 +2,7 @@
 """UserPromptSubmit 훅 → pending-resume.json 감지 → 프롬프트 앞에 경고 주입"""
 import sys, json, os, time
 
-PENDING = '/Users/dh/Project/orbit/.planning/pending-resume.json'
+PENDING = os.path.join(os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd()), '.planning', 'pending-resume.json')
 
 if not os.path.exists(PENDING):
     sys.exit(0)

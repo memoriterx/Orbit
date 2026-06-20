@@ -3,7 +3,7 @@
 import re, sys, json, os
 from datetime import datetime, date, timedelta, time
 
-PLANNING = '/Users/dh/Project/orbit/.planning'
+PLANNING = os.path.join(os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd()), '.planning')
 os.makedirs(PLANNING, exist_ok=True)
 
 raw = sys.stdin.read()

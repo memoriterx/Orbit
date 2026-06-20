@@ -1,6 +1,7 @@
 #!/bin/bash
 # SubagentStop 훅용 — stdin=payload(JSON). 완료 알림을 notifications.log에 기록.
-NOTIFY="/Users/dh/Project/orbit/_team/notify.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+NOTIFY="$SCRIPT_DIR/notify.sh"
 [ ! -x "$NOTIFY" ] && exit 0
 
 payload=$(cat 2>/dev/null)
