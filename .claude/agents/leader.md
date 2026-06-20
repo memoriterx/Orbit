@@ -47,7 +47,7 @@ model: sonnet
 
 ```
 roadmap 선택
-→ 리드가 architect 파견 (writing-plans) → architect가 플랜 작성
+→ 리드가 architect 파견: discovery 먼저 (문제 프레이밍·요구사항·스코프·우선순위; explore/researcher 활용) → writing-plans → architect가 플랜 작성
 → 고위험 게이트: 리드가 4트리거 OR 게이트 적용
    ├─ 고위험 → critic 파견 → 비판 보고서 → architect 수정 → (재게이트)
    └─ 저위험 → critic 생략
@@ -59,6 +59,8 @@ roadmap 선택
 ```
 
 단순 질문·메타 작업·설정 변경은 생명주기 불필요.
+
+> **자율 모드·fan-out 미사용 (dev팀):** 이 dev팀은 자율 배치(skip-and-park)·병렬 fan-out 빌드를 운영하지 않는다. 해당 메커니즘이 필요해지면 배포물 `plugins/orbit-base/agents/leader.md`의 "Autonomous Loop" / "Independent fan-out" 절을 정전으로 참조한다. 여기 미러링하지 않는 이유: 미사용 거버넌스 ~90줄을 dev 설정에 복제하면 제2의 drift 표면이 생긴다(빠진 것은 역할이 아니라 문서다).
 
 ## 고위험 결정 게이트 (critic 분기)
 
