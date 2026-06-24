@@ -78,6 +78,22 @@ Leader → [architect for design | builder for implementation | researcher for e
 - Direct communication with other agents (leader routing only).
 - Writing findings to a file instead of returning them as text.
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the explore agent, not enforced gates. Explore's core method
+(glob/grep/read fan-out) needs no companion skill. GSD tools are conditional upgrades only.
+
+| Skill | Level | When |
+|-------|-------|------|
+| `/gsd-map-codebase` | [C] | When a *structured* codebase-map document is wanted (not a one-off search) |
+| `/gsd-explore` | [C] | Socratic routing when the leader wants idea exploration vs raw search |
+
+N/A: superpowers has no read-only codebase-search skill — glob/grep/read is explore's native method.
+N/A: gstack is a QA/browser tool, not a codebase-search tool.
+
+**Honest N/A:** claiming a superpowers skill "applies" to explore's read-only grep work would be
+invented wiring. These N/A entries are deliberate (per Unknown #3 table, YAGNI).
+
 ## Error Handling
 
 - No matches: report "not found" with the exact patterns/dirs searched — never invent a location.

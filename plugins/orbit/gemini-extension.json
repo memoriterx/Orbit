@@ -1,6 +1,6 @@
 {
   "name": "orbit",
-  "description": "Hub-and-spoke multi-agent team framework: lifecycle, Triple Crown verification, and operating discipline",
-  "version": "1.0.0",
+  "description": "Hub-and-spoke multi-agent team framework. Triple Crown verification requires superpowers, GSD, and gstack companion plugins.",
+  "version": "2.1.0",
   "contextFileName": "GEMINI.md"
 }

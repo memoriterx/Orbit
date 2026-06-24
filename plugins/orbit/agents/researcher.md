@@ -73,6 +73,24 @@ Example format of `{{RESEARCH_SOURCES}}` content:
 - Direct communication with other agents (leader routing only)
 - POST/PUT/DELETE requests to external services without leader approval
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the researcher, not enforced gates. `[C]` = conditional-use.
+superpowers and GSD have no external-research skill — WebSearch/WebFetch + doc reading is native.
+
+| Skill | Level | When |
+|-------|-------|------|
+| `scrape` | [C] | Structured data extraction from a web page (gstack) |
+| `browse` | [C] | Live page navigation needed — not just static fetch (gstack) |
+
+N/A: superpowers has no external-research skill (all superpowers skills are dev-process methodology,
+not investigation tools). Researcher's native method (WebSearch/WebFetch) has no superpowers analog.
+
+N/A: GSD's researcher subagents are GSD-internal orchestration, not user-invocable research skills.
+
+**Honest N/A:** these N/A entries are deliberate (per Unknown #3 table). Forcing a superpowers
+skill onto a web-fetch research task would be invented wiring with no real benefit.
+
 ## Error Handling
 
 - Access blocked (4xx): try alternative access method (direct URL, headers), report limitation if still blocked

@@ -5,6 +5,76 @@ All notable changes to orbit are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-24
+
+### Added (guidance, non-breaking — TIER-2 / L1 / L2)
+
+- **7역할 동반 스킬 배선 (TIER-2 prose guidance):** architect/builder/leader/explore/critic/reviewer/researcher
+  모든 역할에 "Companion skill wiring (guidance)" 섹션 추가. `[A-directive]`(항상 고려)/`[C]`(조건부 고려)/N/A
+  분류로 역할별 적합 스킬 안내. **강제 아님** — 역할 프롬프트는 스킬 사용을 지시하지만 기계적으로
+  강제하지 않는다. 미설치 시 역할의 자체 방법으로 대체된다. 단순/메타 작업에는 불필요.
+  배포물(`plugins/orbit/`) + dev팀(`.claude/`) 양쪽 14개 파일 업데이트.
+
+- **L1 고려 제공 레이어 (`skill-consideration.sh` 훅 + hooks.json SubagentStart 엔트리):**
+  서브에이전트 스폰 시 역할별 현재 설치된 스킬 목록과 "고려 후 사용 또는 건너뛰기" 지시를
+  `hookSpecificOutput.additionalContext`로 주입. **비차단·비강제** — SubagentStart는 구조적으로
+  차단 불가; L1은 고려 프롬프트 전달만 보장하며 에이전트의 실제 스킬 사용은 에이전트 판단에 맡긴다.
+  동반 플러그인 미설치 시 해당 스킬은 주입하지 않음(팬텀 스킬 참조 방지). 역할→스킬 맵은
+  `.orbit/config`에서 설정 가능 (`{{ROLE_SKILL_MAP}}` 슬롯).
+
+### Notes on labeling
+
+- TIER-2 스킬 배선은 "guidance"이며 "required/enforced"가 아니다. 프롬프트는 지시하지만 강제하지 않는다.
+- L1은 "consideration delivery"이며 "required/enforced"가 아니다. 에이전트 준수(compliance)는
+  검증 불가이며 의도적으로 테스트하지 않는다. skip은 명시적으로 허용된다.
+- TIER-1(enforced)은 v2.0.0에서 별도 BREAKING 엔트리로 기록됨.
+
+## [2.0.0] - 2026-06-24
+
+### Changed (BREAKING — TIER-1 enforcement only)
+
+- **Triple Crown 검증 프롱에 동반 플러그인 필수 (TIER-1 BREAKING):**
+  reviewer Triple Crown ①②③ 프롱이 각 동반 플러그인 없이는 FAIL 처리된다.
+  이는 v1.0.0의 "자체 완결/graceful 저하" 보장을 의도적으로 역전한 변경이다.
+  - ① 완성도 프롱: **GSD** (`/gsd-verify-work`) 필수. 미설치 시 FAIL.
+  - ② 동작 프롱: **gstack** (`/qa`) 필수. 미설치 시 FAIL.
+  - ③ 품질 프롱: **superpowers** (`superpowers:requesting-code-review`) 필수. 미설치 시 FAIL.
+
+- **SubagentStop 훅 스코핑 (BLOCKER #1 픽스):** 동반 플러그인 체크는 **reviewer 완료 시에만**
+  트리거된다 (SubagentStop `agent_type` 필드 기준). 빌드/탐색/메타 작업은 동반 플러그인 없어도
+  차단되지 않는다. `claude` CLI 미가용 시 non-blocking 경고 후 reviewer 보고 계약에 위임.
+  두 개의 독립 게이트: SubagentStop 훅 + reviewer 보고 계약.
+
+- **계획·구현 단계는 차단 없음:** 동반 플러그인은 검증 프롱에서만 필수다.
+  planning/building 작업은 동반 플러그인 없이도 실행된다.
+
+- **manifests 업데이트 (ADR-REQDEPS-3 honesty):** `plugin.json`·`marketplace.json` 설명이
+  vendor-lock을 명시한다. "어떤 기술 스택에도 적용 가능/도메인 무관" 카피 제거.
+  orbit v2.0.0은 검증 레이어에서 Claude Code 전용이며 이를 솔직하게 반영한다.
+
+### Added
+
+- **ORBIT_SKIP_COMPANION_CHECK=1 탈출구:** CI/헤드리스/오프라인 환경에서 훅 레이어 체크 건너뜀.
+  reviewer 보고 계약(D3)은 이 변수와 무관하게 유지 — 훅만 비활성화, reviewer 계약은 유지.
+  영구 활성화 방지책 없음 = 자동화 신뢰 의도 (ADR-REQDEPS-2). `.orbit/config` 템플릿에 주석 시드.
+
+### Migration
+
+- Triple Crown 검증을 사용하려면 세 동반 플러그인을 모두 설치해야 한다:
+  - superpowers: `/plugin install superpowers@claude-plugins-official`
+  - GSD: `/gsd-help` 또는 `/plugin install gsd`
+  - gstack: `git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`
+- CI/자동화 환경에서 검증을 건너뛰려면: `ORBIT_SKIP_COMPANION_CHECK=1`
+  (reviewer 보고 계약이 유일한 잔존 강제가 됨을 참고)
+
+### Notes
+
+- `dependencies` 배열 미추가 (ADR-REQDEPS-1): cross-marketplace 해결 불가 → 런타임 fail-loud 가드로 구현.
+- 인터페이스 버전 핀닝 없음 (MINOR #7): 동반 플러그인 이름 변경 시 명확한 "명령어 없음" 오류로 표면화.
+  예상 명령어를 오류 메시지에 명시하므로 이름 변경은 silent pass가 아닌 visible fail이 된다.
+- D8 (의도된 hook 비대칭): dev팀 SubagentStop은 `.claude/settings.json` 인라인으로 별도 운용.
+  dev팀은 dogfood 환경으로 항상 동반 플러그인이 설치돼 있어 의도된 비대칭이다 (drift 아님).
+
 ## [1.0.0] - 2026-06-21
 
 ### Changed
@@ -83,6 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **executor/verifier separation (OMC-2):** the reviewer is now the authoritative completion-decision holder (absorbing the verifier role); builder self-check is demoted to a non-authoritative pre-flight. Triple Crown remains the completion gate.
 - Aligned all role surfaces (leader / builder / reviewer / using-orbit skill) and distribution manifests (codex, gemini) with the above changes.
 
+[2.1.0]: https://github.com/memoriterx/Orbit/releases/tag/v2.1.0
+[2.0.0]: https://github.com/memoriterx/Orbit/releases/tag/v2.0.0
 [1.0.0]: https://github.com/memoriterx/Orbit/releases/tag/v1.0.0
 [0.6.2]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.2
 [0.6.1]: https://github.com/memoriterx/Orbit/releases/tag/v0.6.1

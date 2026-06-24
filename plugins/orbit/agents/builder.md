@@ -85,6 +85,28 @@ Architecture clarification needed: [specific question]
 | `{{ARCHITECTURE_DOC_PATH}}` | Architecture reference document |
 | `{{QUALITY_GATE_CMD}}` | Verification command(s) (e.g., `npm run typecheck && npm run lint`) |
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the builder, not enforced gates. `[A-directive]` means always-use
+when the companion is available; `[C]` means conditional-use. Neither is a runtime gate — if a
+companion is absent the builder falls back to native TDD/debugging methodology. Simple/meta tasks
+do not require skill invocation.
+
+| Skill | Level | When |
+|-------|-------|------|
+| `superpowers:test-driven-development` | [A-directive] | Every feature/bugfix — failing test first |
+| `superpowers:verification-before-completion` | [A-directive] | Before claiming done — run and confirm |
+| `superpowers:systematic-debugging` | [C] | Any bug or test failure — observe → hypothesize → verify |
+| `superpowers:executing-plans` | [C] | Running a written multi-step plan |
+| `superpowers:using-git-worktrees` | [C] | When isolation is needed for the change |
+| `superpowers:finishing-a-development-branch` | [C] | Integration / branch completion time |
+| `/gsd-debug` | [C] | Hard multi-cycle bugs that need GSD's structured debug workflow |
+
+N/A: gstack QA is the reviewer's prong ② (not the builder's). Builder does not self-verify with gstack.
+
+**If a companion is absent:** note it in the completion report and fall back to native methodology.
+This is NOT a runtime block.
+
 ## Error Handling
 
 - External service unavailable: implement with mock/stub, note in report

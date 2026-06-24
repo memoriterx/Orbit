@@ -84,6 +84,25 @@ model: sonnet
 | `{{ARCHITECTURE_DOC_PATH}}` | `.planning/arch-*.md` |
 | `{{QUALITY_GATE_CMD}}` | `bash -n <script>` + `python3 -m json.tool <manifest>` + `grep -r 'oremi' plugins/orbit/ \| wc -l` (0이어야 함) |
 
+## 동반 스킬 배선 (안내 — TIER-2, v2.1.0)
+
+역할 프롬프트 지시이며 강제 아님. `[A-directive]`=항상 고려 권장; `[C]`=조건부 고려 권장.
+미설치 시 자체 TDD/디버깅 방법으로 대체. 단순/메타 작업은 스킬 불필요.
+
+| 스킬 | 수준 | 시점 |
+|------|------|------|
+| `superpowers:test-driven-development` | [A-directive] | 모든 기능·버그 수정 — 실패 테스트 먼저 |
+| `superpowers:verification-before-completion` | [A-directive] | 완료 선언 전 — 실행 후 확인 |
+| `superpowers:systematic-debugging` | [C] | 버그·테스트 실패 시 — 관찰→가설→검증 |
+| `superpowers:executing-plans` | [C] | 작성된 다단계 플랜 실행 시 |
+| `superpowers:using-git-worktrees` | [C] | 변경 격리가 필요한 경우 |
+| `superpowers:finishing-a-development-branch` | [C] | 통합/브랜치 완료 시 |
+| `/gsd-debug` | [C] | 다중 사이클이 필요한 어려운 버그 |
+
+N/A: gstack QA는 reviewer의 프롱 ②. builder가 직접 gstack으로 자체 검증하지 않음.
+
+**미설치 시:** 완료 보고에 메모하고 자체 방법으로 진행. 런타임 차단 아님.
+
 ## 에러 핸들링
 
 - 외부 서비스 불가: mock/stub으로 구현 후 보고에 메모

@@ -112,7 +112,16 @@ Progress updates go to `.orbit/notifications.log`. No other side channels.
 
 ## Quality Gate
 
-Project-specific quality gates (typecheck, lint, test) are defined in `.orbit/quality-gate.sh`. If not present, gates pass (no-op). The `builder` runs this before reporting completion.
+두 개의 독립적인 게이트가 동작한다 (v2.0.0):
+
+**Gate A — 프로젝트 품질 게이트:** `.orbit/quality-gate.sh` (typecheck/lint/test). 없으면 pass.
+builder가 완료 전 직접 실행한다. 동반 플러그인 설치 여부와 무관하게 항상 실행된다.
+
+**Gate B — 동반 플러그인 체크 (TIER-1, BREAKING):** reviewer Triple Crown 프롱 완료 시
+SubagentStop 훅이 동반 플러그인 설치 상태를 확인한다. 프롱별 필수 플러그인 미설치 시 차단.
+계획·구현 단계(빌드)에서는 동반 플러그인 없어도 차단되지 않는다 — 오직 검증 프롱만 차단.
+
+Gate A와 Gate B는 독립 실행된다. Gate B는 Gate A 실행에 영향을 주지 않는다.
 
 ## Domain Slots (filled by project or preset)
 

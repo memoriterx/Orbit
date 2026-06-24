@@ -11,3 +11,32 @@ ORBIT_TMUX_SESSION="orbit"
 # (선택) 프로젝트 roadmap 경로 오버라이드
 # 기본: ${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md
 # ORBIT_ROADMAP="${CLAUDE_PROJECT_DIR}/.orbit/roadmap.md"
+
+# ---- Triple Crown 동반 플러그인 체크 탈출구 (v2.0.0, TIER-1) ----
+# CI/헤드리스/오프라인 환경에서 훅 레이어의 동반 플러그인 체크를 건너뛴다.
+# 주의: 이 옵션은 SubagentStop 훅 레이어만 비활성화한다.
+#       reviewer의 보고 계약(D3)은 이 환경변수와 무관하게 유지된다.
+#       영구 활성화를 피하고, 자동화 신뢰가 보장된 환경에서만 사용한다 (ADR-REQDEPS-2).
+# ORBIT_SKIP_COMPANION_CHECK=1
+
+# ---- 역할별 스킬 맵 (L1 고려 제공 레이어 — v2.1.0) ----
+# skill-consideration.sh 훅이 이 맵을 읽어 SubagentStart 시 역할별 스킬 목록을 주입한다.
+# 동반 플러그인(superpowers/gstack/gsd)이 설치돼 있을 때만 해당 스킬이 주입된다.
+# 슬롯 {{ROLE_SKILL_MAP}} — 아래 기본값은 orbit 공식 배선.
+#
+# ★ 파생본 주의 ★ 아래 주석 값은 hooks/skill-consideration.sh case문(정전)의 사본이다.
+# 기본값 변경은 반드시 정전(skill-consideration.sh)을 먼저 수정하라.
+# 파생본과 정전의 일치는 tests/test-static.sh T-MAP 드리프트 가드로 자동 검증된다.
+# 커스텀 스킬이 있다면 여기에 추가할 수 있다.
+#
+# 형식: ROLE_SKILL_MAP_<ROLE>="skill1,skill2,..."
+#   [A] = 항상 고려 권장 (prompt directs always-use)
+#   [C] = 조건부 고려 권장 (prompt directs conditional-use)
+#
+# ROLE_SKILL_MAP_leader="superpowers:using-superpowers[A],superpowers:dispatching-parallel-agents[C]"
+# ROLE_SKILL_MAP_architect="superpowers:brainstorming[A],superpowers:writing-plans[A],/gsd-explore[C],/gsd-plan-phase[C]"
+# ROLE_SKILL_MAP_builder="superpowers:test-driven-development[A],superpowers:verification-before-completion[A],superpowers:systematic-debugging[C],superpowers:executing-plans[C],superpowers:using-git-worktrees[C],superpowers:finishing-a-development-branch[C],/gsd-debug[C]"
+# ROLE_SKILL_MAP_explore="/gsd-map-codebase[C],/gsd-explore[C]"
+# ROLE_SKILL_MAP_critic="superpowers:receiving-code-review[A],/gsd-secure-phase[C],cso[C]"
+# ROLE_SKILL_MAP_reviewer="superpowers:requesting-code-review[A],/gsd-verify-work[A],/qa[A],superpowers:receiving-code-review[C],/gsd-code-review[C],/gsd-secure-phase[C],/qa-only[C],/review[C],cso[C]"
+# ROLE_SKILL_MAP_researcher="scrape[C],browse[C]"

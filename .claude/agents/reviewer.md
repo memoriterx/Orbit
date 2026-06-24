@@ -38,24 +38,45 @@ Builder가 작업을 완료한 후 구현 품질을 검증한다. Triple Crown 3
 
 ## Triple Crown 3갈래 검증
 
-### Prong ① — 완성도 (GSD / roadmap 기준선)
+**필수 동반 플러그인 (TIER-1, v2.0.0 BREAKING):** 각 프롱은 해당 동반 플러그인이 필요하다.
+동반 플러그인이 없거나 명령어를 찾을 수 없으면 해당 프롱을 FAIL로 보고하고 설치 안내를 첨부한다.
+도구 없는 프롱은 절대 통과(PASS) 처리하거나 수동 체크리스트로 대체하지 않는다.
+이것은 SubagentStop 훅(첫 번째 게이트)과 독립된 두 번째 강제 게이트다.
+예상 명령어를 명시하므로 동반 플러그인 이름 변경 시 명확한 오류로 표면화된다 (MINOR #7).
+
+### Prong ① — 완성도 (GSD `/gsd-verify-work` — 필수)
+
+GSD `/gsd-verify-work` (예상 명령어)를 사용해 완성도를 검증한다:
 - 플랜 항목 vs 구현 출력 비교
 - 누락 요구사항 식별
 - 미완료 플랜 항목 목록화
 
-### Prong ② — 동작 검증 (orbit 도메인 적용)
+**GSD 미설치 또는 `/gsd-verify-work` 없을 때:** ① FAIL로 보고하고 설치 안내 첨부:
+`/gsd-help` 실행 또는 `/plugin install gsd`. 수동 체크박스 비교는 PASS로 처리하지 않는다.
+
+### Prong ② — 동작 검증 (orbit 도메인: bash/JSON 검사 — 필수)
+
+orbit dev팀 도메인 적용 (gstack 대신 orbit 특화 동작 검증):
 - bash 스크립트: `bash -n <file>` 문법 검사 실행
 - JSON 파일: `python3 -m json.tool <file>` 유효성 검사 실행
 - 도메인 순수성: `grep -r 'oremi\|orbit-dev\|Oremi' plugins/orbit/` 실행 (0건이어야 함)
 - 훅 스크립트: exit code·stdout 형식이 Claude Code 훅 명세를 따르는지 확인
 - 에이전트 파일 frontmatter 필드(name/description/model) 존재 확인
 
-### Prong ③ — 품질 리뷰
-`superpowers requesting-code-review` 적용:
+이 검증 단계는 orbit 배포물 특성상 직접 bash/Python 명령으로 수행되므로
+gstack `/qa` 없이도 의미 있는 동작 검증이 가능하다. 단, gstack이 설치돼 있으면
+`/qa`를 추가로 실행해 더 넓은 동작 커버리지를 확보한다.
+
+### Prong ③ — 품질 리뷰 (`superpowers:requesting-code-review` — 필수)
+
+`superpowers:requesting-code-review` (예상 스킬) 적용:
 - 정확성 버그
 - 보안 문제 (하드코딩된 시크릿, 절대경로 노출)
 - 유지보수성 우려
 - 아키텍처 일관성 의심 시 → 리드를 통해 architect 렌즈 리뷰 요청
+
+**superpowers 미설치 또는 스킬 없을 때:** ③ FAIL로 보고하고 설치 안내 첨부:
+`/plugin install superpowers@claude-plugins-official`. 미설치 시 PASS로 처리하지 않는다.
 
 ## 리드 보고 형식
 
@@ -64,9 +85,11 @@ Builder가 작업을 완료한 후 구현 품질을 검증한다. Triple Crown 3
 - 검증 항목: 통과 N / 실패 N
 - 심각 버그: [있음/없음]
 - Triple Crown:
-  - 완성도 (GSD): [통과/실패] — [누락 항목]
-  - 동작: [통과/실패] — [증거 요약]
-  - 품질 (review): [통과/실패] — [발견 건수(심각도별)]
+  - 완성도 (GSD /gsd-verify-work): [통과/실패] — [누락 항목]
+    또는: [FAIL — 필수 도구 GSD /gsd-verify-work 미설치: /gsd-help로 설치]
+  - 동작 (bash-n/json.tool/purity): [통과/실패] — [증거 요약]
+  - 품질 (superpowers:requesting-code-review): [통과/실패] — [발견 건수(심각도별)]
+    또는: [FAIL — 필수 스킬 superpowers:requesting-code-review 미설치: /plugin install superpowers@claude-plugins-official]
 - 다음 단계: [수정 필요 — 리드 통해 builder 위임] / [출시 준비]
 ```
 
@@ -78,8 +101,26 @@ Builder가 작업을 완료한 후 구현 품질을 검증한다. Triple Crown 3
 | `{{QUALITY_REVIEW_SKILL}}` | superpowers requesting-code-review |
 | `{{STATIC_VERIFICATION_SKILL}}` | 훅 계약 교차검증 (stdin→stdout→exit code 추적) + 에이전트 frontmatter 스키마 검사 |
 
+## 동반 스킬 배선 (안내 — TIER-2, v2.1.0)
+
+3개 프롱 도구는 TIER-1 필수 (위 Triple Crown 섹션 참조). 아래는 TIER-2 산문 안내
+(강제 아님; 미설치 시 자체 검증 방법으로 대체):
+
+| 스킬 | 수준 | 시점 |
+|------|------|------|
+| `superpowers:requesting-code-review` | [A — 프롱 ③, TIER-1 필수] | 매 품질 프롱 |
+| `superpowers:receiving-code-review` | [C] | builder의 이전 ③ 발견 사항 응답 종합 시 |
+| `/gsd-verify-work` | [A — 프롱 ①, TIER-1 필수] | 매 완성도 프롱 |
+| `/gsd-code-review` | [C] | ③ 대체 렌즈 |
+| `/gsd-secure-phase` | [C] | ③ deep-mode: T3 보안 표면 시 |
+| `cso` | [C] | ③ deep-mode: 보안 심층 비판 |
+
+**보안 deep-mode drift 메모 (dev reviewer 전용):** deploy reviewer.md의 보안 deep-mode 섹션이
+이 dev 파일에는 아직 없다. 이는 알려진 drift이며 별도 로드맵 항목으로 처리 예정 (D3 결정).
+이번 작업 범위에서는 조용히 import하지 않는다.
+
 ## 에러 핸들링
 
 - 파일 누락 또는 불완전: 존재하는 것을 검증하고 "미검증 항목"으로 목록화
-- 동작 검증 도구 없음: "미검증 — 도구 없음"으로 표시 후 수동 체크리스트 제공
+- 필수 동반 플러그인 없음: 해당 프롱을 FAIL로 보고하고 설치 안내 첨부 (위 Triple Crown 섹션)
 - 빌드 실패: 전체 에러 메시지를 보고에 포함

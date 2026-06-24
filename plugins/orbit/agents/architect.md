@@ -94,6 +94,25 @@ The following slots are filled by the project or preset:
 | `{{CONSISTENCY_LENS}}` | Additional domain-specific lens items (added by preset) |
 | `{{DOMAIN_DESIGN_ITEMS}}` | Preset-specific design areas (tech stack, infra, data layer) |
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the architect, not enforced gates. `[A-directive]` means the prompt
+directs always-use when the companion is available; `[C]` means conditional-use. Neither is a runtime
+gate — if a companion is absent the architect falls back to manual discovery/planning. Simple/meta
+tasks do not require skill invocation ("단순 작업은 생명주기 불필요").
+
+| Skill | Level | When |
+|-------|-------|------|
+| `superpowers:brainstorming` | [A-directive] | Discovery phase — framing the problem, exploring requirements |
+| `superpowers:writing-plans` | [A-directive] | Plan authoring — producing the plan document |
+| `/gsd-explore` | [C] | Socratic ideation in discovery when GSD is installed |
+| `/gsd-plan-phase` | [C] | When a roadmap phase wants GSD's structured phase plan format |
+
+N/A: gstack has no design skill relevant to the architect role.
+
+**If a companion is absent:** report it in the plan ("superpowers not available — manual framing used")
+and proceed with native planning. This is NOT a runtime block — absence is noted, not fatal.
+
 ## Error Handling
 
 - Ambiguous requirements: make a reasonable default decision and record it as an ADR (Architecture Decision Record) with rationale.

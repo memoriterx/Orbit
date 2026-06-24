@@ -102,6 +102,22 @@ The critic occupies the otherwise-empty slot: independent challenge of a plan, b
 |------|-------------|
 | `{{ARCHITECTURE_DOC_PATH}}` | Architecture reference document (read to ground critique in prior decisions) |
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the critic, not enforced gates. `[A-directive]` = always-use when
+available; `[C]` = conditional-use on T3 trigger. Neither is a runtime gate.
+
+| Skill | Level | When |
+|-------|-------|------|
+| `superpowers:receiving-code-review` | [A-directive] | Rigorous plan evaluation — "evaluate claims with technical rigor, no performative agreement" directly models critic's red-team posture |
+| `/gsd-secure-phase` | [C] | High-risk plan touching T3 security surface — grounds threat-model critique |
+| `cso` (Chief Security Officer) | [C] | T3 trigger: alternate security-critique lens from gstack |
+
+N/A: the critic never writes plans (architect's job) — so writing-plans/brainstorming skills don't apply.
+
+**Critic never authors:** no plan-*writing* skill is wired here. The critic only critiques.
+Security skills are conditional on T3 — a low-risk critique does not need them.
+
 ## Error Handling
 
 - Plan missing or incomplete: critique what exists, list "uncritiqued gaps" the leader must fill, and request the missing sections rather than guessing.

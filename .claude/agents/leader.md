@@ -110,3 +110,16 @@ Agent(researcher, background)      # 외부 소스 조사
 3. Triple Crown ② 동작 확인
 4. Triple Crown ③ 품질 리뷰 통과
 5. `.planning/roadmap.md` 체크박스 완료 표시
+
+## 동반 스킬 배선 (안내 — TIER-2, v2.1.0)
+
+역할 프롬프트 지시이며 강제 아님. 리드는 메타 스킬만 사용 — 허브앤스포크 오케스트레이션
+역할 보존. 작업 스킬(플랜 작성, TDD, 리뷰)은 에이전트 담당, 리드가 직접 호출하지 않음.
+
+| 스킬 | 수준 | 시점 |
+|------|------|------|
+| `superpowers:using-superpowers` | [A-directive] | 세션 시작 — 어떤 동반 플러그인이 있는지 스킬 탐색 |
+| `superpowers:dispatching-parallel-agents` | [C] | 팬아웃: 2개 이상 독립 읽기전용 스포크 동시 파견 |
+
+N/A: GSD 명령어는 작업 실행 표면으로 reviewer/builder에 위임 (리드 역할 아님).
+N/A: gstack은 QA/빌드 표면으로 다운스트림에 위임 (리드 역할 아님).

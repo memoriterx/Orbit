@@ -82,47 +82,51 @@ echo "created: .orbit/quality-gate.sh (no-op pass 기본값)"
 기본 quality-gate.sh는 `exit 0`(no-op pass)이다.
 프로젝트 빌드/린트 명령을 채워 커스터마이즈한다.
 
-### Step 6: 동반 플러그인 감지 (소프트 의존)
+### Step 6: 동반 플러그인 확인 (Triple Crown 검증 필수 요건)
 
-아래 플러그인들은 orbit의 선택적 동반 플러그인이다. 없어도 orbit은 동작하지만,
-설치 시 더 풍부한 경험을 제공한다.
+아래 플러그인들은 orbit Triple Crown 검증 프롱에 **필수**다 (v2.0.0, TIER-1).
+미설치 시 해당 검증 프롱이 FAIL 처리된다. 이 단계는 경고만 출력하고 중단하지 않는다
+(.orbit/ 스캐폴딩은 동반 플러그인과 무관하게 완료됨). 강제는 검증 프롱에서 이뤄진다.
 
 ```bash
 MISSING=()
 
-# superpowers — 생명주기 방법론 스킬(writing-plans/TDD/verification 등)
-if ! claude plugin list 2>/dev/null | grep -q "superpowers"; then
+# superpowers — Triple Crown ③ 품질 프롱 필수 (superpowers:requesting-code-review)
+if ! claude plugin list --json 2>/dev/null | python3 -c "import sys,json; pl=json.load(sys.stdin); exit(0 if any(p.get('name')=='superpowers' and p.get('enabled',False) for p in pl) else 1)" 2>/dev/null; then
   MISSING+=("superpowers")
 fi
 
-# gstack — 헤드리스 브라우저 QA (동작 검증 갈래)
-if ! claude plugin list 2>/dev/null | grep -q "gstack"; then
+# gstack — Triple Crown ② 동작 프롱 필수 (/qa)
+if ! claude plugin list --json 2>/dev/null | python3 -c "import sys,json; pl=json.load(sys.stdin); exit(0 if any(p.get('name')=='gstack' and p.get('enabled',False) for p in pl) else 1)" 2>/dev/null; then
   MISSING+=("gstack")
 fi
 
-# gsd — 완성도 검증(GSD) 갈래
-if ! claude plugin list 2>/dev/null | grep -q "gsd"; then
+# gsd — Triple Crown ① 완성도 프롱 필수 (/gsd-verify-work)
+if ! claude plugin list --json 2>/dev/null | python3 -c "import sys,json; pl=json.load(sys.stdin); exit(0 if any(p.get('name')=='gsd' and p.get('enabled',False) for p in pl) else 1)" 2>/dev/null; then
   MISSING+=("gsd")
 fi
 
 if [ ${#MISSING[@]} -gt 0 ]; then
   echo ""
-  echo "[orbit-init] 선택적 플러그인 미설치: ${MISSING[*]}"
-  echo "  설치 시 더 풍부한 경험을 제공합니다(없어도 orbit은 동작합니다):"
+  echo "[orbit-init] ⚠ Triple Crown 검증에 필수인 동반 플러그인이 미설치/비활성입니다: ${MISSING[*]}"
+  echo "  아래 플러그인이 없으면 해당 검증 프롱이 FAIL 처리됩니다:"
   for p in "${MISSING[@]}"; do
     case "$p" in
-      superpowers) echo "  - $p: /orbit-cycle 생명주기 방법론 (writing-plans·TDD·verification)" ;;
-      gstack)      echo "  - $p: 동작 검증 갈래 — 헤드리스 브라우저 QA" ;;
-      gsd)         echo "  - $p: 완성도 검증 갈래 — GSD" ;;
+      superpowers) echo "  - superpowers (③ 품질 프롱): /plugin install superpowers@claude-plugins-official" ;;
+      gstack)      echo "  - gstack (② 동작 프롱): git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup" ;;
+      gsd)         echo "  - gsd (① 완성도 프롱): /gsd-help 실행 또는 /plugin install gsd" ;;
     esac
   done
-  echo "  설치: /plugin marketplace add <name>"
+  echo ""
+  echo "  CI/헤드리스 환경에서 검증 프롱 훅 체크를 건너뛰려면:"
+  echo "    export ORBIT_SKIP_COMPANION_CHECK=1"
+  echo "  (단, reviewer 보고 계약은 이 환경변수의 영향을 받지 않습니다.)"
   echo ""
 fi
 ```
 
-`claude plugin list` 명령이 없는 환경(superpowers 미설치 등)에서도
-위 스크립트는 에러 없이 실행된다(`2>/dev/null`로 suppressed).
+`claude plugin list` 명령이 없는 환경에서도 위 스크립트는 에러 없이 실행된다
+(python3 파이프라인이 실패하면 MISSING에 추가되어 경고가 출력된다).
 
 ### Step 7: 완료 안내 출력
 
