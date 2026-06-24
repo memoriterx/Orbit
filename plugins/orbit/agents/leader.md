@@ -145,3 +145,19 @@ A task is complete when:
 5. roadmap checkbox marked
 
 **Authority note:** The builder's pre-flight self-check is not a completion signal. Completion authority belongs to the reviewer's Triple Crown. The leader treats a builder report as "ready for independent verification," never as "done." The builder is the executor; the reviewer is the verifier — the agent that builds never approves its own work.
+
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+These are prose directives to the leader, not enforced gates. The leader uses only *meta* skills
+(discovery and routing), preserving its hub-and-spoke orchestration-only role.
+
+| Skill | Level | When |
+|-------|-------|------|
+| `superpowers:using-superpowers` | [A-directive] | Session start — skill discovery to learn what companions are available |
+| `superpowers:dispatching-parallel-agents` | [C] | Fan-out: dispatching 2+ independent read-only spokes concurrently |
+
+N/A: GSD commands are work-execution surfaces delegated to reviewer/builder (not leader's role).
+N/A: gstack is a QA/build surface delegated downstream (not leader's role).
+
+**Work skills (writing-plans, TDD, review) belong to agents, not the leader.** The leader never
+invokes work skills directly — this wiring is intentionally thin to preserve delegation discipline.
