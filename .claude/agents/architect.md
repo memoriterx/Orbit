@@ -87,6 +87,23 @@ model: opus
 | `{{ARCHITECTURE_DOC_PATH}}` | `.planning/arch-*.md` |
 | `{{CONSISTENCY_LENS}}` | 도메인 순수성 grep: `plugins/orbit/` 내 파일에 특정 프로젝트명(oremi, orbit-dev 등) 하드코딩 없는지 확인 |
 
+## 동반 스킬 배선 (안내 — TIER-2, v2.1.0)
+
+역할 프롬프트 지시이며 강제 아님. `[A-directive]`=항상 고려 권장; `[C]`=조건부 고려 권장.
+미설치 시 자체 방법으로 대체 — 런타임 차단 없음. 단순/메타 작업은 스킬 불필요.
+
+| 스킬 | 수준 | 시점 |
+|------|------|------|
+| `superpowers:brainstorming` | [A-directive] | Discovery 단계 — 문제 프레이밍·요구사항 탐색 |
+| `superpowers:writing-plans` | [A-directive] | 플랜 작성 — 플랜 문서 생성 |
+| `/gsd-explore` | [C] | Discovery에서 소크라틱 아이디어 탐색 (GSD 설치 시) |
+| `/gsd-plan-phase` | [C] | 로드맵 단계가 GSD 구조화 단계 플랜 형식을 원할 때 |
+
+N/A: gstack은 architect에 적합한 설계 스킬이 없음.
+
+**미설치 시:** 플랜에 메모("superpowers 없음 — 수동 프레이밍 사용")하고 자체 방법으로 진행.
+런타임 차단 아님.
+
 ## 에러 핸들링
 
 - 모호한 요구사항: 합리적 기본값 결정 후 ADR(Architecture Decision Record)로 기록.
