@@ -22,7 +22,11 @@ ORBIT_TMUX_SESSION="orbit"
 # ---- 역할별 스킬 맵 (L1 고려 제공 레이어 — v2.1.0) ----
 # skill-consideration.sh 훅이 이 맵을 읽어 SubagentStart 시 역할별 스킬 목록을 주입한다.
 # 동반 플러그인(superpowers/gstack/gsd)이 설치돼 있을 때만 해당 스킬이 주입된다.
-# 슬롯 {{ROLE_SKILL_MAP}} — 아래 기본값은 orbit 공식 배선 (Unknown #3 표 기준).
+# 슬롯 {{ROLE_SKILL_MAP}} — 아래 기본값은 orbit 공식 배선.
+#
+# ★ 파생본 주의 ★ 아래 주석 값은 hooks/skill-consideration.sh case문(정전)의 사본이다.
+# 기본값 변경은 반드시 정전(skill-consideration.sh)을 먼저 수정하라.
+# 파생본과 정전의 일치는 tests/test-static.sh T-MAP 드리프트 가드로 자동 검증된다.
 # 커스텀 스킬이 있다면 여기에 추가할 수 있다.
 #
 # 형식: ROLE_SKILL_MAP_<ROLE>="skill1,skill2,..."

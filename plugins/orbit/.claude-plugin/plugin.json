@@ -1,7 +1,7 @@
 {
   "name": "orbit",
   "description": "허브앤스포크 멀티에이전트 팀 프레임워크. 7역할(leader/architect/builder/explore/critic/reviewer/researcher)·Plan Approval·생명주기·Triple Crown 검증 포함. Triple Crown 검증 프롱은 superpowers(③ 품질)·GSD(① 완성도)·gstack(② 동작)을 동반 플러그인으로 필요로 한다. Claude Code 전용.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "H",
     "email": "memoriterx@gmail.com"

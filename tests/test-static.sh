@@ -285,5 +285,118 @@ else
 fi
 
 echo ""
+
+# ---- T-MAP: ROLE_SKILL_MAP drift guard ----
+# source of truth: skill-consideration.sh case statements
+# derived: agent wiring tables (L2 prose)
+# cross-source diff: skills in canonical must all appear in L2 table for that role
+echo "--- T-MAP: ROLE_SKILL_MAP drift guard (canonical case stmt vs L2 agent tables) ---"
+
+map_drift_result=$(python3 - << 'PYEOF'
+import re, os, sys
+
+hook_file = "/Users/dh/Project/orbit/plugins/orbit/hooks/skill-consideration.sh"
+agent_dir = "/Users/dh/Project/orbit/plugins/orbit/agents"
+roles = ['leader', 'architect', 'builder', 'explore', 'critic', 'reviewer', 'researcher']
+
+def parse_case_block(func_name, text):
+    """Extract role->skills from a case statement function body."""
+    pattern = rf'{re.escape(func_name)}\(\)\s*\{{(.*?)^}}'
+    m = re.search(pattern, text, re.MULTILINE | re.DOTALL)
+    if not m:
+        return {}
+    block = m.group(1)
+    role_skills = {}
+    for role_match in re.finditer(r'(\w+)\)\s+echo\s+"([^"]+)"', block):
+        role = role_match.group(1)
+        if role == '*':
+            continue
+        skills_str = role_match.group(2)
+        skills = [re.sub(r'\[.*?\]', '', s).strip() for s in skills_str.split(',')]
+        role_skills[role] = [s for s in skills if s]
+    return role_skills
+
+with open(hook_file) as f:
+    hook_content = f.read()
+
+sp = parse_case_block('get_sp_skills', hook_content)
+gsd = parse_case_block('get_gsd_skills', hook_content)
+gs = parse_case_block('get_gs_skills', hook_content)
+
+# Combine all skills per role (canonical)
+canonical = {}
+for role in set(list(sp.keys()) + list(gsd.keys()) + list(gs.keys())):
+    skills = []
+    if role in sp: skills.extend(sp[role])
+    if role in gsd: skills.extend(gsd[role])
+    if role in gs: skills.extend(gs[role])
+    canonical[role] = sorted(set(skills))
+
+def extract_l2_skills(filepath):
+    """Extract all backtick skill names from Companion Skill Wiring section."""
+    with open(filepath) as f:
+        content = f.read()
+    m = re.search(r'## Companion Skill Wiring.*?(?=^## |\Z)', content, re.MULTILINE | re.DOTALL)
+    if not m:
+        return []
+    section = m.group(0)
+    # Extract all backtick contents
+    all_bt = re.findall(r'`([^`]+)`', section)
+    # Filter: skill names contain ':', '/', or are short names like 'cso', 'scrape', 'browse'
+    # Exclude level annotations like [A-directive], [C], etc.
+    skills = []
+    for s in all_bt:
+        s = s.strip()
+        if s.startswith('[') or s in ('[A-directive]', '[C]', 'A', 'C'):
+            continue
+        # Must look like a skill: has ':', '/', or is a known short name
+        if ':' in s or s.startswith('/') or re.match(r'^[a-z][a-z0-9_-]+$', s):
+            # Normalize: strip level annotations from end
+            s_clean = re.sub(r'\s*\[.*', '', s).strip()
+            if s_clean:
+                skills.append(s_clean)
+    return sorted(set(skills))
+
+errors = []
+for role in sorted(canonical.keys()):
+    agent_file = os.path.join(agent_dir, f"{role}.md")
+    if not os.path.exists(agent_file):
+        errors.append(f"MISSING_FILE:{role}:{agent_file}")
+        continue
+    l2_skills = set(extract_l2_skills(agent_file))
+    canonical_set = set(canonical[role])
+    missing = canonical_set - l2_skills
+    if missing:
+        errors.append(f"DRIFT:{role}:in canonical but missing from L2:{sorted(missing)}")
+
+if errors:
+    for e in errors:
+        print(f"FAIL:{e}")
+    sys.exit(1)
+else:
+    for role in sorted(canonical.keys()):
+        print(f"PASS:{role}")
+    sys.exit(0)
+PYEOF
+)
+map_drift_exit=$?
+
+while IFS= read -r line; do
+    if [[ "$line" == PASS:* ]]; then
+        role="${line#PASS:}"
+        echo "  PASS  T-MAP no drift: $role"
+        PASS=$((PASS+1))
+    elif [[ "$line" == FAIL:* ]]; then
+        echo "  FAIL  T-MAP $line"
+        FAIL=$((FAIL+1))
+    fi
+done <<< "$map_drift_result"
+
+if [ $map_drift_exit -ne 0 ] && ! echo "$map_drift_result" | grep -q "^FAIL:"; then
+    echo "  FAIL  T-MAP python3 script error (exit $map_drift_exit)"
+    FAIL=$((FAIL+1))
+fi
+
+echo ""
 echo "=== Results: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

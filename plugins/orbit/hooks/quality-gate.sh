@@ -82,19 +82,15 @@ fi
 is_enabled() {
     local plugin_name="$1"
     if command -v python3 >/dev/null 2>&1; then
-        python3 -c "
-import json, sys
-data = json.loads('''$plugin_json''')
-for p in data:
-    if p.get('name') == '$plugin_name' and p.get('enabled', False):
-        sys.exit(0)
-sys.exit(1)
-" 2>/dev/null
+        # stdin 전달로 쉘 보간 우회 (하드닝)
+        # Note: pipe and heredoc both claim stdin; use -c with sys.stdin, pass JSON via pipe only
+        local py_script='import json,sys; name=sys.argv[1]; data=json.load(sys.stdin); sys.exit(0 if any(p.get("name")==name and p.get("enabled",False) for p in data) else 1)'
+        printf '%s' "$plugin_json" | python3 -c "$py_script" "$plugin_name" 2>/dev/null
     elif command -v jq >/dev/null 2>&1; then
-        echo "$plugin_json" | jq -e ".[] | select(.name == \"$plugin_name\" and .enabled == true)" >/dev/null 2>&1
+        printf '%s' "$plugin_json" | jq -e ".[] | select(.name == \"$plugin_name\" and .enabled == true)" >/dev/null 2>&1
     else
         # 최후 수단: 텍스트 grep (정확도 낮음)
-        echo "$plugin_json" | grep -q "\"$plugin_name\""
+        printf '%s' "$plugin_json" | grep -q "\"$plugin_name\""
     fi
 }
 

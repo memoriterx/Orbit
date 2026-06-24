@@ -13,8 +13,15 @@
 # L1은 "consideration delivery"이며 "required/enforced"가 아니다 (BLOCKER #2 트랩 반복 금지).
 # 동반 플러그인 미설치 시 해당 스킬은 주입하지 않음 (팬텀 스킬 참조 방지).
 #
-# 역할→스킬 맵: .orbit/config의 ROLE_SKILL_MAP_<ROLE> 변수에서 읽음 (단일 정전).
-# 미설정 시 아래 case문 기본값 사용 (Unknown #3 표 기준, orbit 공식 배선).
+# ★ ROLE_SKILL_MAP 단일 정전 (source of truth) ★
+#   아래 get_sp_skills/get_gsd_skills/get_gs_skills case문이 역할↔스킬 공식 매핑의 정전이다.
+#   파생본은 두 곳에 있으며, 정전과 일치해야 한다:
+#     1) templates/orbit-config.template — 주석 처리된 기본값 예시 (파생본)
+#     2) 각 에이전트 프롬프트의 "Companion Skill Wiring" 표 (파생본, 인간 독해용)
+#   정전과 파생본의 일치는 tests/test-static.sh T-MAP drift 가드로 자동 검증된다.
+#
+# 역할→스킬 맵: .orbit/config의 ROLE_SKILL_MAP_<ROLE> 변수에서 읽음 (런타임 오버라이드).
+# 미설정 시 아래 case문 기본값 사용 (orbit 공식 배선).
 #
 # 주의: declare -A (bash4 associative array) 대신 case문 사용 — macOS /bin/bash는 3.x.
 
@@ -55,17 +62,9 @@ GSD_ENABLED=0
 if command -v claude >/dev/null 2>&1; then
     plugin_json=$(claude plugin list --json 2>/dev/null || echo "[]")
     if command -v python3 >/dev/null 2>&1; then
-        read -r SUPERPOWERS_ENABLED GSTACK_ENABLED GSD_ENABLED <<< "$(python3 -c "
-import json, sys
-try:
-    pl = json.loads('''$plugin_json''')
-    sp = 1 if any(p.get('name')=='superpowers' and p.get('enabled',False) for p in pl) else 0
-    gs = 1 if any(p.get('name')=='gstack' and p.get('enabled',False) for p in pl) else 0
-    gsd = 1 if any(p.get('name')=='gsd' and p.get('enabled',False) for p in pl) else 0
-    print(sp, gs, gsd)
-except Exception:
-    print(0, 0, 0)
-" 2>/dev/null || echo "0 0 0")"
+        # stdin 전달로 쉘 보간 우회 (하드닝: -c 방식, pipe stdin으로 JSON 전달)
+        local_py='import json,sys; pl=json.load(sys.stdin); sp=1 if any(p.get("name")=="superpowers" and p.get("enabled",False) for p in pl) else 0; gs=1 if any(p.get("name")=="gstack" and p.get("enabled",False) for p in pl) else 0; gsd=1 if any(p.get("name")=="gsd" and p.get("enabled",False) for p in pl) else 0; print(sp,gs,gsd)'
+        read -r SUPERPOWERS_ENABLED GSTACK_ENABLED GSD_ENABLED <<< "$(printf '%s' "$plugin_json" | python3 -c "$local_py" 2>/dev/null || echo "0 0 0")"
     fi
 fi
 
@@ -78,7 +77,7 @@ if [ -f "$CONFIG_FILE" ]; then
 fi
 
 # ---- 역할별 동반 플러그인 스킬 기본값 (case문 — bash 3.x 호환) ----
-# Unknown #3 표 기준, orbit 공식 배선
+# [ROLE_SKILL_MAP 정전] orbit 공식 배선 — 이 case문이 변경의 단일 진입점이다.
 # 형식: "skill[level],skill[level],..." where [A]=always, [C]=conditional
 
 get_sp_skills() {
