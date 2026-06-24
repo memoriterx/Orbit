@@ -1,7 +1,7 @@
 {
   "name": "orbit",
-  "version": "1.0.0",
-  "description": "Hub-and-spoke multi-agent team framework: lifecycle, Triple Crown verification, and operating discipline for any domain",
+  "version": "2.1.0",
+  "description": "Hub-and-spoke multi-agent team framework. Triple Crown verification requires superpowers (quality prong), GSD (completeness prong), and gstack (behavior prong) as companion plugins. Claude Code required for enforcement.",
   "author": {
     "name": "H",
     "email": "memoriterx@gmail.com",
@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Orbit",
     "shortDescription": "Hub-and-spoke multi-agent team with Triple Crown verification",
-    "longDescription": "Orbit provides a structured lifecycle for software delivery: plan, approve, implement, verify. Seven roles (leader/architect/builder/explore/critic/reviewer/researcher), hub-and-spoke communication, and Triple Crown three-pronged verification (completeness/behavior/quality).",
+    "longDescription": "Orbit provides a structured lifecycle for software delivery: plan, approve, implement, verify. Seven roles (leader/architect/builder/explore/critic/reviewer/researcher), hub-and-spoke communication, and Triple Crown three-pronged verification (completeness/behavior/quality). Triple Crown verification requires superpowers, GSD, and gstack as companion plugins.",
     "developerName": "H",
     "category": "Coding"
   }

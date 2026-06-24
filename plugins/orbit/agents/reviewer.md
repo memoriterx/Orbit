@@ -42,23 +42,48 @@ The reviewer holds independent verification authority: the builder implements bu
 
 ## Triple Crown Three-Pronged Verification
 
-### Prong ① — Completeness (GSD / roadmap baseline)
+**Required companion tools (TIER-1, v2.0.0 BREAKING):** Each prong requires its companion plugin.
+If a companion is absent or the command is not found, that prong MUST be reported as FAIL with
+install guidance — never silently passed or downgraded to a manual checklist. A tool-absent prong
+is FAIL, not PASS. This is the second independent enforcement gate (the SubagentStop hook is first).
+Expected commands are named below so a companion rename surfaces as a clear "command not found"
+failure rather than a silent pass (interface version pinning per ADR-REQDEPS-1 note, MINOR #7).
+
+### Prong ① — Completeness (GSD `/gsd-verify-work` — required)
+
+Use GSD `/gsd-verify-work` (expected command) to verify completeness:
 - Compare plan items against implemented output
 - Identify any missing requirements
 - List unchecked plan items
 
-### Prong ② — Behavior Verification
-Run the project's behavior verification tool or manual steps per `{{BEHAVIOR_VERIFICATION_METHOD}}`:
+**If GSD is absent or `/gsd-verify-work` is not available:** report ① FAIL with install guidance:
+`/gsd-help` to install GSD, or `/plugin install gsd` if available. Do NOT checkbox-compare manually
+and call it a pass — a tool-absent ① is FAIL.
+
+### Prong ② — Behavior Verification (gstack `/qa` — required)
+
+Use gstack `/qa` (expected command) to verify runtime behavior:
 - Confirm actual runtime behavior, not just static code reading
 - Check key user flows and edge cases
 - Capture evidence (screenshots, command output, response payloads)
 
-### Prong ③ — Quality Review
-Apply `{{QUALITY_REVIEW_SKILL}}` (default: superpowers requesting-code-review):
+**If gstack is absent or `/qa` is not available:** report ② FAIL with install guidance:
+`git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`
+A tool-absent ② is FAIL — never PASS. Manual checklist is not a substitute.
+
+Alternative: `/qa-only` [C] for report-only mode when interactive QA is not needed.
+
+### Prong ③ — Quality Review (superpowers `superpowers:requesting-code-review` — required)
+
+Use `superpowers:requesting-code-review` (expected skill) for quality review:
 - Correctness bugs
 - Security issues (hardcoded secrets, injection vectors)
 - Maintainability concerns
 - If architecture consistency is suspect, request architect lens review through leader
+
+**If superpowers is absent or `superpowers:requesting-code-review` is not available:** report ③ FAIL
+with install guidance: `/plugin install superpowers@claude-plugins-official`.
+A tool-absent ③ is FAIL — never PASS.
 
 **Security deep-mode (conditional).** ③ has two modes:
 - **Light scan (default):** the security bullet above — a surface read for obvious issues.
@@ -83,9 +108,12 @@ Additional static verification per `{{STATIC_VERIFICATION_SKILL}}`:
 - Verified items: pass N / fail N
 - Critical bugs: [yes/no]
 - Triple Crown:
-  - Completeness (GSD): [pass/fail] — [missing items if any]
-  - Behavior: [pass/fail] — [evidence summary]
-  - Quality (review): [pass/fail] — [finding count by severity]
+  - Completeness (GSD /gsd-verify-work): [pass/fail] — [missing items if any]
+    OR: [FAIL — required tool GSD /gsd-verify-work not installed/available: install with /gsd-help]
+  - Behavior (gstack /qa): [pass/fail] — [evidence summary]
+    OR: [FAIL — required tool gstack /qa not installed/available: git clone ... ./setup]
+  - Quality (superpowers:requesting-code-review): [pass/fail] — [finding count by severity]
+    OR: [FAIL — required tool superpowers:requesting-code-review not installed/available: /plugin install superpowers@claude-plugins-official]
 - Next step: [fix required — delegate to builder via leader] / [ready to ship]
 ```
 
@@ -98,8 +126,26 @@ Additional static verification per `{{STATIC_VERIFICATION_SKILL}}`:
 | `{{STATIC_VERIFICATION_SKILL}}` | Skill for static cross-verification (e.g., web-qa, custom script) |
 | `{{SECURITY_CHECK_CATEGORIES}}` | OWASP-style category vocabulary for ③ deep-mode (e.g., access control, injection, secrets management, sensitive-data exposure) — domain/framework-agnostic; project fills specifics |
 
+## Companion Skill Wiring (guidance — TIER-2, v2.1.0)
+
+The three prong tools are TIER-1 required (see Triple Crown section above). The following are
+TIER-2 prose guidance (not enforced; native fallback if absent):
+
+| Skill | Level | When |
+|-------|-------|------|
+| `superpowers:requesting-code-review` | [A — prong ③, TIER-1 required] | Every quality prong — see above |
+| `superpowers:receiving-code-review` | [C] | When synthesizing builder's response to prior ③ findings |
+| `/gsd-verify-work` | [A — prong ①, TIER-1 required] | Every completeness prong — see above |
+| `/gsd-progress` | [C] | For incremental progress reporting alongside ① |
+| `/gsd-code-review` | [C] | Alternative ③ lens alongside or instead of superpowers ③ |
+| `/gsd-secure-phase` | [C] | ③ deep-mode on T3 security surface |
+| `/qa` | [A — prong ②, TIER-1 required] | Every behavior prong — see above |
+| `/qa-only` | [C] | Report-only behavior verification (no interactive) |
+| `/review` | [C] | Alternative ③ lens (staff-engineer code review) |
+| `cso` | [C] | ③ deep-mode: Chief Security Officer security critique |
+
 ## Error Handling
 
 - Missing or incomplete files: verify what exists and list "unverified items"
 - Build failure: include full error message in report
-- Behavior verification tool unavailable: note as "unverified — tool not available" and provide manual checklist
+- Required companion absent: report that prong as FAIL with install guidance (see Triple Crown section)

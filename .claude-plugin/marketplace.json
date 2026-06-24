@@ -1,6 +1,6 @@
 {
   "name": "orbit-marketplace",
-  "description": "Orbit — 허브앤스포크 멀티에이전트 팀 프레임워크 (도메인 무관 단일 플러그인)",
+  "description": "Orbit — 허브앤스포크 멀티에이전트 팀 프레임워크. Triple Crown 검증은 superpowers·GSD·gstack 동반 플러그인이 필요하다 (Claude Code 전용).",
   "owner": {
     "name": "H",
     "email": "memoriterx@gmail.com"
@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "orbit",
-      "description": "도메인 무관 멀티에이전트 팀 골격. 허브앤스포크·생명주기·Triple Crown 검증·사용량 자동재개 포함.",
-      "version": "1.0.0",
+      "description": "허브앤스포크 멀티에이전트 팀 프레임워크. 7역할·Triple Crown 검증·사용량 자동재개 포함. Triple Crown 검증 프롱(①완성도/②동작/③품질)은 각각 GSD·gstack·superpowers 동반 플러그인이 필요하다.",
+      "version": "2.0.0",
       "source": "./plugins/orbit",
       "author": {
         "name": "H",

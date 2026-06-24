@@ -203,15 +203,29 @@ gstack의 `/review` (staff-engineer 모드 코드리뷰), 또는 superpowers의 
 
 ---
 
-## 동반 플러그인 없을 때 graceful 동작
+## Triple Crown 검증 — 필수 동반 플러그인 (TIER-1, v2.0.0)
 
-| 플러그인 | 있을 때 | 없을 때 |
-|----------|---------|---------|
-| superpowers | architect가 **writing-plans 스킬**, **test-driven-development 스킬** 사용, 코드리뷰는 **requesting-code-review 스킬** | architect가 수동으로 플랜 작성 (리드 직접 작성은 어느 경우도 금지), 수동 TDD, diff 직접 검토 |
-| gsd | GSD 검증 워크플로 자동화 (`/gsd-` 접두사) | 체크박스 수동 확인 |
-| gstack | **/qa** QA 자동화 | quality-gate.sh 수동 실행 |
+Step 5 ①②③ 프롱은 각각 동반 플러그인이 **필요하다**. 동반 플러그인이 없으면 해당 프롱이
+FAIL 처리된다(설치 안내 포함). 검증 단계는 동반 플러그인 없이 완전히 실행할 수 없다.
+단, 계획·구현 단계(Step 1~4)는 동반 플러그인 없이 실행 가능하다 — 오직 검증 프롱만 차단된다.
 
-플러그인 없이도 생명주기는 완전히 실행 가능하다. 플러그인은 자동화·편의성을 더한다.
+| 프롱 | 필수 동반 플러그인 | 예상 명령어 | 미설치 시 |
+|------|-------------------|------------|---------|
+| ① 완성도 | **GSD** | `/gsd-verify-work` | ① FAIL + 설치 안내 |
+| ② 동작 | **gstack** | `/qa` | ② FAIL + 설치 안내 |
+| ③ 품질 | **superpowers** | `superpowers:requesting-code-review` | ③ FAIL + 설치 안내 |
+
+**설치 안내:**
+- GSD: `/gsd-help` 실행 또는 `/plugin install gsd`
+- gstack: `git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`
+- superpowers: `/plugin install superpowers@claude-plugins-official`
+
+**CI/헤드리스 환경:** `ORBIT_SKIP_COMPANION_CHECK=1` 환경변수로 훅 레이어 체크를 건너뛸 수 있다.
+단, reviewer 보고 계약(D3)은 환경변수의 영향을 받지 않으므로 reviewer가 유일한 잔존 강제가 된다.
+
+**예상 명령어 고정 이유:** 동반 플러그인이 명령어 이름을 변경할 경우 명확한 "명령어 없음" 오류로
+표면화되도록 예상 명령어를 명시한다 (인터페이스 버전 핀닝 — ADR-REQDEPS-1 제약으로 semver 핀닝 불가,
+문서화된 취약점). 이름 변경 시 해당 프롱 FAIL 메시지와 이 문서를 함께 갱신한다.
 
 ---
 
