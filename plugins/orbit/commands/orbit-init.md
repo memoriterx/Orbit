@@ -153,3 +153,10 @@ fi
   커맨드 컨텍스트에서는 이 변수의 자동 주입이 보장되지 않는다(훅과 달리). 미설정이면
   Step 2.5 가드가 명확한 에러로 중단시킨다 — 안내대로 `export CLAUDE_PLUGIN_ROOT=<경로>` 후 재실행한다.
 - `.orbit/` 하위 파일은 `.gitignore`에 추가하거나 커밋해도 무방하다(팀 공유 가능).
+- `.orbit/config`는 orbit 컨텍스트 마커다. orbit의 배포 훅(session-log, usage-detect,
+  resume-inject, quality-gate, skill-consideration, notify-done, viewer-attach,
+  MessageDisplay)은 이 파일이 있을 때만 동작한다. `/orbit-init`을 실행하지 않은
+  프로젝트(이 파일 없음)에서는 모든 훅이 no-op이므로, orbit을 `user`(전역) 스코프로
+  설치해도 비-orbit 프로젝트를 오염시키지 않는다.
+- 전역 노출이 우려되면 `ORBIT_INSTALL_SCOPE=project`(또는 `local`)로 설치 범위를
+  현재 프로젝트로 제한할 수 있다 — 단 컨텍스트 가드가 있으므로 필수는 아니다.

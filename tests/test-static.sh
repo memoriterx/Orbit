@@ -398,5 +398,117 @@ if [ $map_drift_exit -ne 0 ] && ! echo "$map_drift_result" | grep -q "^FAIL:"; t
 fi
 
 echo ""
+
+# ---- T-GUARD: EVERY hook in hooks/ carries the orbit-context guard (invariant A) ----
+# (critic major #9: dynamic directory traversal — a future 9th hook with no guard
+#  must auto-FAIL. Intentional exceptions go in GUARD_ALLOWLIST, never silent omission.)
+echo "--- T-GUARD: all hooks guarded (dynamic) ---"
+HOOKS_DIR="$ORBIT/hooks"
+# Hooks that legitimately carry NO orbit-context guard. Must be justified in a comment.
+# (empty today — all 7 script hooks are side-effecting and guarded; the .json/.gitkeep
+#  are handled separately below. Add a basename here ONLY with a written rationale.)
+GUARD_ALLOWLIST=" "   # space-delimited basenames, e.g. " probe-readonly.sh "
+for f in "$HOOKS_DIR"/*.sh "$HOOKS_DIR"/*.py; do
+    [ -e "$f" ] || continue            # nullglob-safe if a class is absent
+    b=$(basename "$f")
+    case "$GUARD_ALLOWLIST" in *" $b "*)
+        echo "  PASS  T-GUARD $b allowlisted (intentional no-guard)"; PASS=$((PASS+1)); continue ;;
+    esac
+    case "$b" in
+        *.sh)
+            if grep -q 'orbit-context.sh' "$f" && grep -q 'is_orbit_context' "$f"; then
+                echo "  PASS  T-GUARD $b sources guard"; PASS=$((PASS+1))
+            else
+                echo "  FAIL  T-GUARD $b missing orbit-context guard (source + is_orbit_context)"; FAIL=$((FAIL+1))
+            fi ;;
+        *.py)
+            if grep -q '_is_orbit_context' "$f"; then
+                echo "  PASS  T-GUARD $b defines _is_orbit_context"; PASS=$((PASS+1))
+            else
+                echo "  FAIL  T-GUARD $b missing _is_orbit_context guard"; FAIL=$((FAIL+1))
+            fi ;;
+    esac
+done
+# hooks.json inline commands must each carry the inline marker test (iterate ALL inline cmds)
+if python3 - "$HOOKS_DIR/hooks.json" <<'PYEOF'
+import json, sys
+d = json.load(open(sys.argv[1]))
+missing = []
+for event, groups in d.get("hooks", {}).items():
+    for g in groups:
+        for h in g.get("hooks", []):
+            cmd = h.get("command", "")
+            # only inline shell commands carry side effects directly; script-invoking
+            # commands ("bash .../x.sh", "python3 .../x.py") are guarded inside the script.
+            invokes_script = (".sh" in cmd or ".py" in cmd)
+            if not invokes_script and ".orbit/config" not in cmd:
+                missing.append(event)
+sys.exit(1 if missing else 0)
+PYEOF
+then
+    echo "  PASS  T-GUARD hooks.json inline commands carry .orbit/config test"; PASS=$((PASS+1))
+else
+    echo "  FAIL  T-GUARD a hooks.json inline command missing .orbit/config test"; FAIL=$((FAIL+1))
+fi
+
+echo ""
+
+# ---- T-NOWRITE: no hook may WRITE .orbit/config (invariant B — chicken-egg lock) ----
+echo "--- T-NOWRITE: no hook writes .orbit/config ---"
+# (critic blocker #8: the prior regex used open\([^)]*...config[^)]*["'](w|a) — the
+#  [^)]* stopped at the FIRST ')' so it never reached the mode arg in the common idiom
+#  open(os.path.join(O,'.orbit','config'),'w'). Fixed: use .* (not括弧-bounded) so a
+#  same-line config-write reaches the mode literal. 2-line variable-split writes
+#  (path=...; open(path,'w') on separate lines) are an accepted structural limit.)
+NOWRITE_PAT='(>>?|tee |cp |mv )[ "]*[^[:space:]]*\.orbit/config[^/.]|open\(.*\.orbit['"'"'",/ ]+config.*['"'"'"](w|a)['"'"'"]'
+if grep -rnE "$NOWRITE_PAT" "$HOOKS_DIR" 2>/dev/null; then
+    echo "  FAIL  T-NOWRITE a hook writes .orbit/config (re-creates chicken-egg marker)"; FAIL=$((FAIL+1))
+else
+    echo "  PASS  T-NOWRITE no hook writes .orbit/config"; PASS=$((PASS+1))
+fi
+# scan the hooks.json inline command strings too
+if python3 - "$HOOKS_DIR/hooks.json" <<'PYEOF'
+import json, sys, re
+d = json.load(open(sys.argv[1]))
+# Tight pattern: redirection operator followed (closely) by .orbit/config path
+# Does NOT match if .orbit/config appears only in a read/test context earlier in the line.
+pat = re.compile(r'(>>?|tee )\s*[^\s]*\.orbit/config(?![./\w])|open\(.*\.orbit[\'",/ ]+config.*[\'\"](w|a)[\'\"]\)')
+for event, groups in d.get("hooks", {}).items():
+    for g in groups:
+        for h in g.get("hooks", []):
+            if pat.search(h.get("command", "")):
+                sys.exit(1)
+sys.exit(0)
+PYEOF
+then
+    echo "  PASS  T-NOWRITE hooks.json inline does not write .orbit/config"; PASS=$((PASS+1))
+else
+    echo "  FAIL  T-NOWRITE a hooks.json inline command writes .orbit/config"; FAIL=$((FAIL+1))
+fi
+
+# ---- T-NOWRITE self-test: positive/negative controls lock the regex (critic blocker #8) ----
+# Guarantees the detection regex actually CATCHES a config-write and does NOT false-positive
+# on a config-READ or a pending-resume.json write. Run against synthetic fixtures, not hooks/.
+echo "--- T-NOWRITE controls: regex catches writes, ignores reads ---"
+_ctl=$(mktemp -d)
+printf "open(os.path.join(O,'.orbit','config'),'w')\n"            > "$_ctl/pos_join.py"   # MUST catch
+printf 'echo x > "%s/.orbit/config"\n' '$DIR'                    > "$_ctl/pos_redir.sh"  # MUST catch
+printf "open(os.path.join(ORBIT,'pending-resume.json'),'w')\n"   > "$_ctl/neg_pending.py" # must NOT catch
+printf '[ -f "$_dir/.orbit/config" ]\n'                          > "$_ctl/neg_read.sh"    # must NOT catch
+_pos_hits=0; _neg_hits=0
+for cf in "$_ctl/pos_join.py" "$_ctl/pos_redir.sh"; do
+    grep -nE "$NOWRITE_PAT" "$cf" >/dev/null 2>&1 && _pos_hits=$((_pos_hits+1))
+done
+for cf in "$_ctl/neg_pending.py" "$_ctl/neg_read.sh"; do
+    grep -nE "$NOWRITE_PAT" "$cf" >/dev/null 2>&1 && _neg_hits=$((_neg_hits+1))
+done
+rm -rf "$_ctl"
+if [ "$_pos_hits" -eq 2 ] && [ "$_neg_hits" -eq 0 ]; then
+    echo "  PASS  T-NOWRITE regex controls (2 positive caught, 0 false-positive)"; PASS=$((PASS+1))
+else
+    echo "  FAIL  T-NOWRITE regex controls drifted (pos=$_pos_hits/2 neg=$_neg_hits/0)"; FAIL=$((FAIL+1))
+fi
+
+echo ""
 echo "=== Results: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

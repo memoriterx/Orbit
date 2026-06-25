@@ -1,6 +1,9 @@
 #!/bin/bash
 # SubagentStop 훅용 — stdin=payload(JSON). 완료 알림을 .orbit/notifications.log 에 기록.
 # 포맷: [완료] <agent_type> (<id8>) — <last_assistant_message 첫 줄 60자>
+source "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-context.sh" 2>/dev/null || exit 0
+is_orbit_context || exit 0
+
 NOTIFY="${CLAUDE_PLUGIN_ROOT}/scripts/notify.sh"
 [ ! -x "$NOTIFY" ] && exit 0
 

@@ -6,6 +6,13 @@
 import re, sys, json, os
 from datetime import datetime, date, timedelta, time
 
+def _is_orbit_context():
+    base = os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd())
+    return os.path.isfile(os.path.join(base, '.orbit', 'config'))
+
+if not _is_orbit_context():
+    sys.exit(0)
+
 ORBIT = os.path.join(
     os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd()),
     '.orbit'

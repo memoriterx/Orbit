@@ -7,6 +7,9 @@ if ! command -v tmux >/dev/null 2>&1; then
     exit 0
 fi
 
+source "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-context.sh" 2>/dev/null || exit 0
+is_orbit_context || exit 0
+
 payload=$(cat 2>/dev/null)
 aid=$(printf '%s' "$payload" | jq -r '.agent_id // empty' 2>/dev/null)
 atype=$(printf '%s' "$payload" | jq -r '.agent_type // "agent"' 2>/dev/null)

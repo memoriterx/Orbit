@@ -27,6 +27,11 @@
 
 set -uo pipefail
 
+# orbit-context 가드: 비-orbit 프로젝트면 스킬 고려 주입 안 함 (no-op).
+_ocx="${CLAUDE_PLUGIN_ROOT:-}/scripts/orbit-context.sh"
+[ -f "$_ocx" ] && source "$_ocx" || exit 0
+is_orbit_context || exit 0
+
 # ---- stdin에서 SubagentStart 페이로드 읽기 ----
 stdin_payload=""
 if [ ! -t 0 ]; then

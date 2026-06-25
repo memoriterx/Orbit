@@ -6,6 +6,13 @@ ScheduleWakeup 여유: reset_epoch + 120초 (네트워크 재연결 120초 + 처
 """
 import sys, json, os, time
 
+def _is_orbit_context():
+    base = os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd())
+    return os.path.isfile(os.path.join(base, '.orbit', 'config'))
+
+if not _is_orbit_context():
+    sys.exit(0)
+
 ORBIT = os.path.join(
     os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd()),
     '.orbit'

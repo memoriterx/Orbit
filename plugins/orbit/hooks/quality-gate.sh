@@ -18,6 +18,11 @@
 
 set -euo pipefail
 
+# ---- 0. orbit-context 가드: 비-orbit 프로젝트면 orbit은 차단 권한이 없다 ----
+_ocx="${CLAUDE_PLUGIN_ROOT:-}/scripts/orbit-context.sh"
+[ -f "$_ocx" ] && source "$_ocx" || exit 0
+is_orbit_context || exit 0
+
 # ---- 1. 기존 프로젝트 품질 게이트 위임 (동반 플러그인 체크와 독립 실행) ----
 GATE="${CLAUDE_PROJECT_DIR:-.}/.orbit/quality-gate.sh"
 if [ -f "$GATE" ] && [ -x "$GATE" ]; then

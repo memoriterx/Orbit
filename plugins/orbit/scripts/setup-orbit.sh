@@ -157,6 +157,8 @@ if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
             _ORBIT_BASE_INSTALLED=1
             [ "$ORBIT_INSTALL_SCOPE" != "user" ] && \
                 echo -e "  ${CYAN}Installed at $ORBIT_INSTALL_SCOPE scope — active only in this project${NC}"
+            [ "$ORBIT_INSTALL_SCOPE" = "user" ] && \
+                echo -e "  ${CYAN}Installed at user scope (global). Orbit hooks are inert in non-orbit projects (guarded by .orbit/config). For per-project isolation, re-run with ORBIT_INSTALL_SCOPE=project.${NC}"
         else
             echo -e "  ${RED}Auto-install failed.${NC}"
             echo "  To activate team features, run inside claude:"

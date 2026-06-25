@@ -10,6 +10,11 @@
 
 (없음 — REQDEPS-1 게시 완료(2026-06-25, 태그 `v2.1.0` push, `origin/main` 동기화). RENAME-1 Post-Build 라이브 `/plugin install orbit` probe만 잔존 = 라이브 세션 필요.)
 
+- [x] **[HOOKGUARD-1] 훅 크로스프로젝트 가드 — user 스코프 전역 설치 시 비-orbit 프로젝트 오염 차단** (2026-06-25)
+  포렌식 발굴: orbitt(→orbits) 포크 setup-orbit.sh가 orbit을 user(전역) 스코프로 자동설치(14:21 KST, UTC 착시로 "05:21"처럼 보였던 그 설치) → 훅 8종이 Oremi 등 비-orbit 프로젝트서 발화, `session-log.sh`·`usage-detect.py` 등 무가드로 `.orbit/` 생성·로그 오염, 연쇄로 `resume-inject.py` 프롬프트 주입, `quality-gate.sh` 조건부 차단 위험.
+  **해법:** `.orbit/config`(orbit-init만 생성, 어떤 훅도 안 만듦 → 닭-달걀 회피) 마커 기반 컨텍스트 가드. 공유 헬퍼 `scripts/orbit-context.sh`의 `is_orbit_context()`(bash 5훅 source), python 2종 인라인 `_is_orbit_context()`, hooks.json MessageDisplay 인라인 프리픽스. **fail-toward-no-op**(env 부재 시 외부오염 차단 우선·내부 침묵 수용). Task 8b 정적 불변식(T-GUARD 동적순회로 신규 훅 가드 누락 자동FAIL + T-NOWRITE config-write 금지·regex 컨트롤 self-test).
+  **critic 게이트 3라운드**(1R: 회귀 스위트 자가무력화 blocker×2 → 2R: 정규식 join-write 누락 blocker#8+하드코딩목록 major#9 → 3R PROCEED). Plan Approval. **Triple Crown ①②③ PASS**(③ 보안 deep-mode: MAJOR 1건[set -u+env미설정 시 silent no-op 위반] → Fix A 적용 후 재검 PASS). 122 테스트 green, 도메인순수성 0. 임시조치: user 스코프 언인스톨 완료(orbits·dev팀은 레포로컬 .claude/ 자립 → 무영향). 플랜: `.planning/plans/2026-06-25-plan-hook-cross-project-guard.md`.
+
 - [x] **[REQDEPS-2] dev reviewer 보안 deep-mode parity drift 해소** (2026-06-25, 커밋 `bdaea35`, dev-meta)
   REQDEPS-1에서 분리한 별도 항목(D3 결정). 배포물 `plugins/orbit/agents/reviewer.md`엔 있던 ③ 보안 deep-mode 절이 dev `.claude/agents/reviewer.md`엔 부재(미import drift 메모만 존재)했던 비대칭 해소. **단순 복붙 아님** — 배포물의 도메인무관 슬롯(auth/PII) 대신 dev가 실제 검토하는 orbit 내부 표면(훅 인젝션·품질게이트 무결성·setup escape hatch)으로 체크리스트 치환. 발동은 reviewer 자기 diff 판단에 구속(리드 힌트 누락이 light로 강등 못 시킴), read-only 경계 유지. **저위험(4트리거 all-no)→critic 생략·버전/릴리스 없음.** drift 메모 삭제(절 추가로 거짓이 되므로). lead-verify(절 삽입·메모제거·배포물 무접촉·critic.md T3 참조 유효).
 

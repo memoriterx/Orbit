@@ -55,6 +55,7 @@ trap "rm -rf $TMPDIR_ROOT" EXIT
 
 TMPPROJECT="$TMPDIR_ROOT/project"
 mkdir -p "$TMPPROJECT/.orbit"
+: > "$TMPPROJECT/.orbit/config"        # durable marker so the context guard passes
 
 # Stub claude that reports companion present (enabled)
 CLAUDE_PRESENT="$TMPDIR_ROOT/bin/claude-present"
@@ -110,6 +111,7 @@ PAYLOAD_META='{"agent_type":"architect","subagent_id":"abc126","task":"plan writ
 PAYLOAD_NOAGENTTYPE='{"subagent_id":"abc127","task":"some task"}'
 
 # Helper to run gate with stdin payload and PATH override
+ORBIT_PLUGIN_ROOT="/Users/dh/Project/orbit/plugins/orbit"
 run_gate_with_payload() {
     local payload="$1"
     local claude_bin="$2"
@@ -127,6 +129,7 @@ run_gate_with_payload() {
     env \
         PATH="$stub_dir:$PATH" \
         CLAUDE_PROJECT_DIR="$project_dir" \
+        CLAUDE_PLUGIN_ROOT="$ORBIT_PLUGIN_ROOT" \
         $extra_env \
         bash -c "echo '$payload' | bash '$GATE'" 2>&1
 }
@@ -169,7 +172,7 @@ fi
 
 # dev-team self-build scenario: claude not on PATH (absent), builder payload
 # Use PATH=/usr/bin:/bin to ensure claude is not found
-out=$(env PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$TMPPROJECT" bash -c "echo '$PAYLOAD_BUILDER' | bash '$GATE'" 2>&1)
+out=$(env PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$TMPPROJECT" CLAUDE_PLUGIN_ROOT="$ORBIT_PLUGIN_ROOT" bash -c "echo '$PAYLOAD_BUILDER' | bash '$GATE'" 2>&1)
 if echo "$out" | grep -q '"decision":"block"'; then
     echo "  FAIL  T-C dev-self-build-claude-absent: expected pass, got block"
     FAIL=$((FAIL+1))
@@ -258,7 +261,7 @@ echo ""
 echo "--- T-C2: Reviewer prong + claude absent → warn, not block ---"
 
 # Use PATH=/usr/bin:/bin to hide claude (typically in ~/.local/bin or /usr/local/bin)
-out=$(env PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$TMPPROJECT" bash -c "echo '$PAYLOAD_REVIEWER' | bash '$GATE'" 2>&1)
+out=$(env PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$TMPPROJECT" CLAUDE_PLUGIN_ROOT="$ORBIT_PLUGIN_ROOT" bash -c "echo '$PAYLOAD_REVIEWER' | bash '$GATE'" 2>&1)
 if echo "$out" | grep -q '"decision":"block"'; then
     echo "  FAIL  T-C2 claude-absent-reviewer: expected warn+pass, got block"
     echo "        stdout: $out"
@@ -282,13 +285,29 @@ else
     echo "  PASS  T-C3 escape-hatch-passes"
     PASS=$((PASS+1))
     # Check that it printed a skip notice somewhere (stderr or stdout)
-    out_both=$(env ORBIT_SKIP_COMPANION_CHECK=1 CLAUDE_PROJECT_DIR="$TMPPROJECT" bash -c "echo '$PAYLOAD_REVIEWER' | bash '$GATE'" 2>&1)
+    out_both=$(env ORBIT_SKIP_COMPANION_CHECK=1 CLAUDE_PROJECT_DIR="$TMPPROJECT" CLAUDE_PLUGIN_ROOT="$ORBIT_PLUGIN_ROOT" bash -c "echo '$PAYLOAD_REVIEWER' | bash '$GATE'" 2>&1)
     if echo "$out_both" | grep -qiE 'skip|SKIP'; then
         echo "  PASS  T-C3 escape-hatch-notice-visible"
         PASS=$((PASS+1))
     else
         echo "  WARN  T-C3 escape-hatch-notice-not-found (not required but recommended)"
     fi
+fi
+
+echo ""
+
+# ---- T-CTX: non-orbit reviewer is NOT blocked (context guard, contrast to T-A) ----
+echo "--- T-CTX: Reviewer prong in NON-orbit project → no block ---"
+PLAINPROJ="$TMPDIR_ROOT/plain"            # deliberately NO .orbit/config
+mkdir -p "$PLAINPROJ"
+out=$(run_gate_with_payload "$PAYLOAD_REVIEWER" "$CLAUDE_MISSING" "" "$PLAINPROJ")
+if echo "$out" | grep -q '"decision":"block"'; then
+    echo "  FAIL  T-CTX non-orbit-reviewer: expected pass (no orbit authority), got block"
+    echo "        stdout: $out"
+    FAIL=$((FAIL+1))
+else
+    echo "  PASS  T-CTX non-orbit-reviewer-not-blocked"
+    PASS=$((PASS+1))
 fi
 
 echo ""

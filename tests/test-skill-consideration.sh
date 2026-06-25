@@ -15,6 +15,10 @@ FAIL=0
 TMPDIR_ROOT=$(mktemp -d)
 trap "rm -rf $TMPDIR_ROOT" EXIT
 
+ORBITPROJ="$TMPDIR_ROOT/orbit-proj"
+mkdir -p "$ORBITPROJ/.orbit"
+: > "$ORBITPROJ/.orbit/config"
+
 # Stub claude: all companions present and enabled
 CLAUDE_PRESENT="$TMPDIR_ROOT/bin/claude"
 mkdir -p "$TMPDIR_ROOT/bin"
@@ -53,11 +57,14 @@ PAYLOAD_REVIEWER='{"agent_type":"reviewer","subagent_id":"abc998"}'
 PAYLOAD_CRITIC='{"agent_type":"critic","subagent_id":"abc997"}'
 PAYLOAD_RESEARCHER='{"agent_type":"researcher","subagent_id":"abc996"}'
 
+ORBIT_PLUGIN_ROOT="/Users/dh/Project/orbit/plugins/orbit"
 run_hook() {
     local payload="$1"
     local stub_dir="$2"
     local extra="$3"
-    env PATH="$stub_dir:$PATH" $extra bash -c "echo '$payload' | bash '$HOOK'" 2>&1
+    local project_dir="${4:-$ORBITPROJ}"     # default = orbit-context
+    env PATH="$stub_dir:$PATH" CLAUDE_PROJECT_DIR="$project_dir" CLAUDE_PLUGIN_ROOT="$ORBIT_PLUGIN_ROOT" $extra \
+        bash -c "echo '$payload' | bash '$HOOK'" 2>&1
 }
 
 echo "=== skill-consideration.sh test suite ==="
@@ -179,6 +186,21 @@ for role_payload in "$PAYLOAD_BUILDER" "$PAYLOAD_REVIEWER" "$PAYLOAD_CRITIC" "$P
         PASS=$((PASS+1))
     fi
 done
+
+echo ""
+
+# ---- T-CTX: no injection outside orbit (context guard, contrast to T-H positive) ----
+echo "--- T-CTX: builder in NON-orbit project → no additionalContext injection ---"
+PLAINPROJ="$TMPDIR_ROOT/plain"            # NO .orbit/config
+mkdir -p "$PLAINPROJ"
+out_ctx=$(run_hook "$PAYLOAD_BUILDER" "$(dirname $CLAUDE_PRESENT)" "" "$PLAINPROJ")
+if [ -z "$out_ctx" ]; then
+    echo "  PASS  T-CTX non-orbit-no-injection (empty stdout)"
+    PASS=$((PASS+1))
+else
+    echo "  FAIL  T-CTX non-orbit-no-injection: expected empty stdout, got: $out_ctx"
+    FAIL=$((FAIL+1))
+fi
 
 echo ""
 
