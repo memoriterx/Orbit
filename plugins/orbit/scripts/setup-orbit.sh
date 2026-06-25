@@ -110,8 +110,8 @@ start_claude_in_pane() {
     wait_for_pane "$pane" "bypass permissions" 30 || true
 }
 
-# ── [0/5] Prerequisites ───────────────────────────────────────
-echo -e "${YELLOW}[0/5] Checking prerequisites...${NC}"
+# ── [1/7] Prerequisites ───────────────────────────────────────
+echo -e "${YELLOW}[1/7] Checking prerequisites...${NC}"
 
 MISSING=()
 command -v tmux    &>/dev/null || MISSING+=("tmux")
@@ -130,11 +130,11 @@ echo "  OK python3 $(python3 --version 2>/dev/null | awk '{print $2}')"
 echo "  Project root: $PROJECT"
 echo "  Session name: $SESSION"
 
-# ── [0.5/5] orbit plugin detection, update & companion install ─
+# ── [2/7] orbit plugin detection, update & companion install ─
 # Skip entirely if ORBIT_SKIP_PLUGIN_CHECK=1 (offline / already installed).
 if [ "${ORBIT_SKIP_PLUGIN_CHECK:-}" != "1" ]; then
     echo ""
-    echo -e "${YELLOW}[0.5/5] Checking orbit plugin...${NC}"
+    echo -e "${YELLOW}[2/7] Checking orbit plugin...${NC}"
 
     _ORBIT_BASE_INSTALLED=0
 
@@ -248,15 +248,15 @@ touch "$NOTIF_LOG"
 printf '[%s] ── session start ──\n' "$(date +%H:%M)" >> "$NOTIF_LOG"
 echo "  OK notifications.log ready"
 
-# ── [1/5] Kill existing session ───────────────────────────────
-echo -e "\n${YELLOW}[1/5] Resetting existing session...${NC}"
+# ── [3/7] Kill existing session ───────────────────────────────
+echo -e "\n${YELLOW}[3/7] Resetting existing session...${NC}"
 tmux has-session -t "$SESSION" 2>/dev/null && {
     tmux kill-session -t "$SESSION"
     echo "  Killed existing '$SESSION' session"
 }
 
-# ── [2/5] Create tmux session & layout ───────────────────────
-echo -e "\n${YELLOW}[2/5] Creating tmux session & layout...${NC}"
+# ── [4/7] Create tmux session & layout ───────────────────────
+echo -e "\n${YELLOW}[4/7] Creating tmux session & layout...${NC}"
 
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 280)
 TERM_HEIGHT=$(tput lines 2>/dev/null || echo 65)
@@ -289,8 +289,8 @@ tmux select-pane -t "$SESSION:0.1" -T "Subagent Viewer"
 
 echo "  OK Layout ready (2 panes)"
 
-# ── [3/5] Start processes ─────────────────────────────────────
-echo -e "\n${YELLOW}[3/5] Starting processes...${NC}"
+# ── [5/7] Start processes ─────────────────────────────────────
+echo -e "\n${YELLOW}[5/7] Starting processes...${NC}"
 
 # Pane 1 (viewer): standby message
 tmux send-keys -t "$SESSION:0.1" \
@@ -304,14 +304,14 @@ tmux capture-pane -t "$SESSION:0.0" -p 2>/dev/null | grep -qi "bypass permission
     && echo -e "${GREEN}OK Ready${NC}" \
     || echo -e "${RED}Warning: timed out — check pane manually${NC}"
 
-# ── [4/5] Usage notes ─────────────────────────────────────────
-echo -e "\n${YELLOW}[4/5] Operating model: hub-and-spoke + live viewer${NC}"
+# ── [6/7] Usage notes ─────────────────────────────────────────
+echo -e "\n${YELLOW}[6/7] Operating model: hub-and-spoke + live viewer${NC}"
 echo "  · All work is delegated from the lead (pane 0) via Agent()."
 echo "  · Live view: SubagentStart hook (viewer-attach.sh) auto-connects to pane 1."
 echo "  · Previous agent output is preserved and separated by a divider line."
 echo "  · Notification log: $NOTIF_LOG"
 
-# ── [5/5] Done ────────────────────────────────────────────────
+# ── [7/7] Done ────────────────────────────────────────────────
 echo -e "\n${GREEN}"
 echo "  ╔══════════════════════════════════════════════╗"
 echo "  ║   Team environment ready! (2 panes)          ║"
