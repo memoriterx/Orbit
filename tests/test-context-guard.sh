@@ -34,6 +34,14 @@ echo '{"session_id":"abc"}' | CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT" CLAUDE_PROJECT_D
 echo '{"session_id":"abc"}' | CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT" CLAUDE_PROJECT_DIR="$ORBITP" bash "$HOOKS/session-log.sh" >/dev/null 2>&1
 [ -f "$ORBITP/.orbit/session-log.md" ] && ok "session-log: writes in orbit proj" || bad "session-log: writes in orbit proj" "no session-log.md"
 
+# unset CLAUDE_PROJECT_DIR must fall back to $(pwd) (matches is_orbit_context guard)
+rm -f "$ORBITP/.orbit/session-log.md"
+( cd "$ORBITP" && echo '{"session_id":"u"}' | \
+  env -u CLAUDE_PROJECT_DIR CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT" bash "$HOOKS/session-log.sh" >/dev/null 2>&1 )
+[ -f "$ORBITP/.orbit/session-log.md" ] \
+  && ok "session-log: falls back to pwd when CLAUDE_PROJECT_DIR unset" \
+  || bad "session-log: falls back to pwd when CLAUDE_PROJECT_DIR unset" "no session-log.md written"
+
 echo ""
 
 # ---- usage-detect.py ----
@@ -138,6 +146,14 @@ echo '{"delta":"approaching usage limit, resets at 3:00 PM"}' | CLAUDE_PROJECT_D
 [ -f "$PLAINP/.orbit/usage-detect.log" ] && bad "MessageDisplay: no-op in plain" "wrote log" || ok "MessageDisplay: no-op in plain"
 echo '{"delta":"approaching usage limit, resets at 3:00 PM"}' | CLAUDE_PROJECT_DIR="$ORBITP" bash -c "$MD_CMD" >/dev/null 2>&1
 [ -f "$ORBITP/.orbit/usage-detect.log" ] && ok "MessageDisplay: writes in orbit" || bad "MessageDisplay: writes in orbit" "no log"
+
+# unset CLAUDE_PROJECT_DIR: guard uses :-$PWD, so mkdir/append must use the SAME fallback
+rm -f "$ORBITP/.orbit/usage-detect.log"
+( cd "$ORBITP" && echo '{"delta":"approaching usage limit, resets at 3:00 PM"}' | \
+  env -u CLAUDE_PROJECT_DIR bash -c "$MD_CMD" >/dev/null 2>&1 )
+[ -f "$ORBITP/.orbit/usage-detect.log" ] \
+  && ok "MessageDisplay: falls back to PWD when CLAUDE_PROJECT_DIR unset" \
+  || bad "MessageDisplay: falls back to PWD when CLAUDE_PROJECT_DIR unset" "no usage-detect.log"
 
 echo ""
 echo "context-guard: $PASS passed, $FAIL failed"

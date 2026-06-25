@@ -4,7 +4,7 @@
 source "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-context.sh" 2>/dev/null || exit 0
 is_orbit_context || exit 0
 
-ORBIT_DIR="${CLAUDE_PROJECT_DIR}/.orbit"
+ORBIT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}/.orbit"
 mkdir -p "$ORBIT_DIR"
 sid=$(cat 2>/dev/null | jq -r '.session_id // "?"' 2>/dev/null || echo "?")
 printf '[%s] session stopped (sid=%s)\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$sid" \
