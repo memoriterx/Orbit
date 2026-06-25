@@ -376,6 +376,26 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-orbit.sh"
 bash /path/to/orbit/setup-orbit.sh
 ```
 
+#### setup-orbit.sh를 단독으로 받아 실행하기
+
+> **정식 설치는 여전히 위 "빠른 시작 — 3단계 설치"입니다.** 아래는 tmux 팀 환경을 한 번에 구성하려는 편의·부트스트랩 경로이며, 정식 설치를 대체하지 않습니다.
+
+"스크립트 하나만 받아서 실행하면 되나요?"에 대한 답은 **어느 파일을 받느냐에 따라 다릅니다.** orbit에는 이름이 같은 `setup-orbit.sh`가 두 개 있고, 동작이 다릅니다.
+
+| 파일 | 단독 실행 | 동작 |
+|------|----------|------|
+| `plugins/orbit/scripts/setup-orbit.sh` (**번들**) | **가능** | 자체완결형. orbit 미설치 시 마켓플레이스 등록·`orbit` 설치까지 자동 부트스트랩한 뒤 tmux 2분할 환경을 만듭니다. |
+| `setup-orbit.sh` (**레포 루트, wrapper**) | **불가** | 옆에 있는 번들 스크립트(`plugins/orbit/scripts/setup-orbit.sh`)로 위임하는 얇은 래퍼입니다. 이 파일만 떼어 복사·다운로드해 실행하면 `Error: bundled script not found` 와 함께 종료됩니다(exit 1). orbit 레포 디렉터리 구조 전체가 있어야 동작합니다. |
+
+**따라서 "하나만 받아 실행"하려면 반드시 번들 파일(`plugins/orbit/scripts/setup-orbit.sh`)을 받으세요.** 루트 래퍼는 레포를 통째로 클론·체크아웃한 개발·테스트 환경에서만 의미가 있습니다.
+
+받는 방법:
+
+- **이미 플러그인을 설치했다면** — 위 코드블록의 `${CLAUDE_PLUGIN_ROOT}/scripts/setup-orbit.sh` 형태를 그대로 쓰면 됩니다(추가 다운로드 불필요).
+- **레포를 클론했다면** — `plugins/orbit/scripts/setup-orbit.sh`를 직접 실행하거나, 그 파일 하나만 다른 위치로 복사해 실행해도 됩니다(자체완결이라 단독 동작).
+
+<!-- CURL_BLOCK_SLOT: Task 3에서 CURL_VERIFIED 값에 따라 채움 -->
+
 주요 환경변수:
 
 | 변수 | 기본값 | 설명 |
