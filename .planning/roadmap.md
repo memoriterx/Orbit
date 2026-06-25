@@ -10,6 +10,9 @@
 
 (없음 — REQDEPS-1 빌드·검증 완료, 브랜치 `feat/required-deps-wiring` 머지/게시 대기. RENAME-1 Post-Build 라이브 probe 잔존.)
 
+- [x] **[REQDEPS-2] dev reviewer 보안 deep-mode parity drift 해소** (2026-06-25, 커밋 `bdaea35`, dev-meta)
+  REQDEPS-1에서 분리한 별도 항목(D3 결정). 배포물 `plugins/orbit/agents/reviewer.md`엔 있던 ③ 보안 deep-mode 절이 dev `.claude/agents/reviewer.md`엔 부재(미import drift 메모만 존재)했던 비대칭 해소. **단순 복붙 아님** — 배포물의 도메인무관 슬롯(auth/PII) 대신 dev가 실제 검토하는 orbit 내부 표면(훅 인젝션·품질게이트 무결성·setup escape hatch)으로 체크리스트 치환. 발동은 reviewer 자기 diff 판단에 구속(리드 힌트 누락이 light로 강등 못 시킴), read-only 경계 유지. **저위험(4트리거 all-no)→critic 생략·버전/릴리스 없음.** drift 메모 삭제(절 추가로 거짓이 되므로). lead-verify(절 삽입·메모제거·배포물 무접촉·critic.md T3 참조 유효).
+
 - [x] **[REQDEPS-1] 동반 플러그인(superpowers·GSD·gstack) 필수 전환 + 7역 스킬 배선 + 3층 모델 (v2.1.0)** (2026-06-25, 브랜치 `feat/required-deps-wiring`, 커밋 `b0969fa`·`81bc42d`·`c1e9b32`·`b778459`·`151974c`)
   v1.0.0 "자기완결성·도메인 무관" 불변식을 의도적으로 뒤집어 세 동반 플러그인을 일급 활용. **"필수"는 `dependencies` 배열 불가(크로스 마켓플레이스 self-disable, ADR-REQDEPS-1) → 런타임 fail-loud만.** **3층 모델:** L1 검토유도(SubagentStart `additionalContext` 주입, 차단불가·skip허용) / L2 산문권고 / **L3 ENFORCED**(reviewer 3프롱만 — companion 부재 시 비PASS+설치안내, 유일한 진짜 강제). 강제는 흔적 남는 reviewer 프롱에만 정직 한정(BLOCKER #2: 프롬프트 산문은 invoke 보장 불가). vendor-lock 매니페스트·README 정직 반영(ADR-REQDEPS-3). 단계 롤아웃 라벨 v2.0.0(TIER-1)/v2.1.0(L1·L2), 매니페스트 4종 현재버전 2.1.0 통일. critic 게이트 **2라운드**(BLOCKER#1 fail-closed 자살게이트→agent_type 스코핑·SubagentStart 차단불가 / BLOCKER#2 강제착각→TIER 분리 / MAJOR 공급망·도메인순수성) + L1통합 후 self-judge PROCEED. Triple Crown 3갈래 PASS(88/88 실행재현·비공허·인젝션안전·진짜 fail-loud, 도메인순수성 0). 빌드 중 잠복버그 발견·수정(all-enabled여도 block하던 false-positive). 플랜: `.planning/plans/2026-06-24-plan-required-deps-wiring.md`.
 
