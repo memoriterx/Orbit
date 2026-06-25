@@ -394,7 +394,14 @@ bash /path/to/orbit/setup-orbit.sh
 - **이미 플러그인을 설치했다면** — 위 코드블록의 `${CLAUDE_PLUGIN_ROOT}/scripts/setup-orbit.sh` 형태를 그대로 쓰면 됩니다(추가 다운로드 불필요).
 - **레포를 클론했다면** — `plugins/orbit/scripts/setup-orbit.sh`를 직접 실행하거나, 그 파일 하나만 다른 위치로 복사해 실행해도 됩니다(자체완결이라 단독 동작).
 
-<!-- CURL_BLOCK_SLOT: Task 3에서 CURL_VERIFIED 값에 따라 채움 -->
+- **아무것도 클론·설치하지 않았다면** — 번들 스크립트 한 파일만 내려받아 실행할 수 있습니다(자체완결이라 부트스트랩 포함):
+
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/memoriterx/Orbit/main/plugins/orbit/scripts/setup-orbit.sh -o setup-orbit.sh
+  bash setup-orbit.sh
+  ```
+
+  > 받은 파일은 **반드시 위 표의 "번들" 파일**입니다(루트 래퍼가 아님). 실행하면 orbit 미설치 시 자동으로 설치한 뒤 tmux 환경을 구성합니다.
 
 주요 환경변수:
 
