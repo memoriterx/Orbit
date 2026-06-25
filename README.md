@@ -40,15 +40,17 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 
 ## 팀 구성 — 7가지 역할
 
-| 역할 | 한 마디로 | 무엇을 하나요? | 모델 | 주요 스킬 |
-|------|----------|--------------|------|----------|
-| **leader (리드)** | 팀장 | 지시를 받고, 역할에 배분하고, 결과를 취합합니다. 코드는 직접 쓰지 않습니다. | `sonnet` | `writing-plans`(설계자에 위임) · `skillify`(반복 감지) |
-| **architect (설계자)** | 계획 작성자 | 구현 전 플랜 문서를 만듭니다. 당신이 승인한 뒤에야 구현이 시작됩니다. | `opus` | `writing-plans` · `writing-skills`(스킬 추출 시) |
-| **builder (구현자)** | 실제 개발자 | 승인된 계획대로 코드를 만듭니다. 테스트를 먼저 쓰고(TDD), 검증 후 완료를 선언합니다. | `sonnet` | `test-driven-development` · `systematic-debugging` · `verification-before-completion` |
-| **explore (내부 탐색자)** | 코드베이스 탐색 전담 | 프로젝트 내 파일·코드 패턴을 찾아 보고합니다. researcher(외부)와 구분됩니다. 코드는 건드리지 않습니다. | `sonnet` | —(역할 본연 기능) |
-| **critic (비판자)** | 독립 검토자 | 위험한 계획이 있을 때만 호출됩니다. 설계자의 계획을 독립적으로 비판하고 PROCEED / REVISE를 판정합니다. | `opus` | —(역할 본연 기능) |
-| **reviewer (검토자)** | 품질 보증 | 구현이 끝나면 완성도·동작·코드 품질을 3갈래로 검증합니다. | `opus` | `GSD`(①) · `gstack`(②) · `requesting-code-review`(③) · `skillify` |
-| **researcher (외부 조사자)** | 웹 탐색 전담 | 외부 문서·라이브러리·커뮤니티 패턴을 조사해 리드에게 보고합니다. 코드는 건드리지 않습니다. | `haiku` | —(역할 본연 기능) |
+| 역할 | 한 마디로 | 무엇을 하나요? | 모델 |
+|------|----------|--------------|------|
+| **leader (리드)** | 팀장 | 지시를 받고, 역할에 배분하고, 결과를 취합합니다. 코드는 직접 쓰지 않습니다. | `sonnet` |
+| **architect (설계자)** | 계획 작성자 | 구현 전 플랜 문서를 만듭니다. 당신이 승인한 뒤에야 구현이 시작됩니다. | `opus` |
+| **builder (구현자)** | 실제 개발자 | 승인된 계획대로 코드를 만듭니다. 테스트를 먼저 쓰고(TDD), 검증 후 완료를 선언합니다. | `sonnet` |
+| **explore (내부 탐색자)** | 코드베이스 탐색 전담 | 프로젝트 내 파일·코드 패턴을 찾아 보고합니다. researcher(외부)와 구분됩니다. 코드는 건드리지 않습니다. | `sonnet` |
+| **critic (비판자)** | 독립 검토자 | 위험한 계획이 있을 때만 호출됩니다. 설계자의 계획을 독립적으로 비판하고 PROCEED / REVISE를 판정합니다. | `opus` |
+| **reviewer (검토자)** | 품질 보증 | 구현이 끝나면 완성도·동작·코드 품질을 3갈래로 검증합니다. | `opus` |
+| **researcher (외부 조사자)** | 웹 탐색 전담 | 외부 문서·라이브러리·커뮤니티 패턴을 조사해 리드에게 보고합니다. 코드는 건드리지 않습니다. | `haiku` |
+
+정확한 역할↔스킬 배선은 아래 [역할별 동반 스킬 배선](#역할별-동반-스킬-배선-v210) 절을 정전으로 봅니다.
 
 **모델 티어:** `haiku` = 빠르고 가벼움(단순 탐색·조사) / `sonnet` = 균형(구현·조율·내부 탐색) / `opus` = 깊은 추론(설계·검증·비판 등 판단이 중요한 역할). 역할의 사고 난이도에 맞춰 모델을 배정하며, 프로젝트 설정에서 교체 가능합니다.
 
@@ -144,6 +146,50 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 ```
 
 **핵심 계약:** 그룹은 **수동 라벨**이지 능동 진행률 추적기가 아닙니다. 진행률 롤업 필드(`N/M complete` 같은 것)는 없고, 읽는 사람이 `- [x]` 를 눈으로 셉니다. 각 하위 task는 여전히 독립적으로 계획 → 승인 → 구현 → 검증 생명주기를 거칩니다. milestone(완료된 작업 묶음의 사후 라벨)과는 다릅니다 — 그룹은 백로그 항목을 제자리에서 묶는 응집 장치입니다. 로드맵은 여전히 thin ledger로 유지됩니다.
+
+---
+
+## 역할별 동반 스킬 배선 (v2.1.0)
+
+각 역할은 작업 시작 시(SubagentStart) 자기 역할에 배선된 동반 스킬 목록을 고려 프롬프트로 받습니다.
+어떤 스킬을 쓸지는 역할의 판단이며, 단순·메타 작업이면 건너뜁니다.
+
+**범례:** `[A]` = 항상 고려 (always) · `[C]` = 조건부 고려 (conditional) · 출처 표기: `superpowers:` / `/gsd-…`(GSD) / 그 외(gstack)
+
+| 역할 | 담당 | 배선된 스킬 |
+|------|------|------------|
+| **leader** | 조율·게이트 (코드 안 씀) | `superpowers:using-superpowers`[A] · `superpowers:dispatching-parallel-agents`[C] |
+| **architect** | 플랜·설계 | `superpowers:brainstorming`[A] · `superpowers:writing-plans`[A] · `/gsd-explore`[C] · `/gsd-plan-phase`[C] |
+| **builder** | 구현 (TDD) | `superpowers:test-driven-development`[A] · `superpowers:verification-before-completion`[A] · `superpowers:systematic-debugging`[C] · `superpowers:executing-plans`[C] · `superpowers:using-git-worktrees`[C] · `superpowers:finishing-a-development-branch`[C] · `/gsd-debug`[C] |
+| **explore** | 내부 코드 탐색 | `/gsd-map-codebase`[C] · `/gsd-explore`[C] |
+| **critic** | 고위험 플랜 비판 | `superpowers:receiving-code-review`[A] · `/gsd-secure-phase`[C] · `cso`[C] |
+| **reviewer** | Triple Crown 검증 | `superpowers:requesting-code-review`[A] · `superpowers:receiving-code-review`[C] · `/gsd-verify-work`[A] · `/gsd-progress`[C] · `/gsd-code-review`[C] · `/gsd-secure-phase`[C] · `/qa`[A] · `/qa-only`[C] · `/review`[C] · `cso`[C] |
+| **researcher** | 외부 조사 | `scrape`[C] · `browse`[C] |
+
+> 동반 플러그인(superpowers/GSD/gstack) 중 **설치·활성화된 것의 스킬만** 주입됩니다. 미설치 플러그인의 스킬은 목록에 나타나지 않습니다(팬텀 참조 방지).
+
+### 3층 모델 — 어디까지 강제되나요?
+
+배선은 세 층으로 동작하며, **실제 강제는 reviewer의 Triple Crown 3프롱뿐**입니다. 나머지는 권고입니다.
+
+| 층 | 무엇을 | 강제 수준 |
+|----|--------|----------|
+| **L1 — 고려 전달** | SubagentStart 훅이 역할별 스킬 목록을 고려 프롬프트로 주입 | 차단 없음. **skip 허용** (단순/메타 작업) |
+| **L2 — 산문 권고** | 각 에이전트 프롬프트가 `[A]`/`[C]` 스킬을 언제 쓸지 산문으로 안내 | 권고만. 강제 아님 |
+| **L3 — 검증 강제** | reviewer의 Triple Crown 3프롱은 동반 플러그인 스킬을 **필수**로 요구 | **강제** (미설치 시 SubagentStop 훅이 차단) |
+
+정직하게: `[A]`는 "항상 **고려**"이지 "항상 **실행**"이 아닙니다. 에이전트 준수는 검증하지 않습니다.
+강제되는 단 하나의 지점은 reviewer가 완료를 선언하는 순간의 Triple Crown 3프롱입니다.
+
+### Triple Crown ↔ reviewer 강제 배선
+
+reviewer의 검증 3프롱은 각각 특정 스킬에 고정 배선되며, 동반 플러그인 미설치 시 해당 프롱은 FAIL/차단됩니다.
+
+| 프롱 | 강제 스킬 | 출처 |
+|------|----------|------|
+| ① 완성도 | `/gsd-verify-work`[A] | GSD |
+| ② 동작 | `/qa`[A] | gstack |
+| ③ 품질 | `superpowers:requesting-code-review`[A] | superpowers |
 
 ---
 
