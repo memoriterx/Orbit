@@ -14,9 +14,9 @@
 # 운영 모델:
 #   - 리드(pane 0)만 실제 Claude CLI. 에이전트는 리드 안에서 Agent()로 임시 생성·소멸.
 #   - 서브에이전트 트랜스크립트는 ~/.claude/projects/-Users-dh-Project-orbit/<sid>/subagents/ 에 생성.
-#   - SubagentStart 훅(auto-attach.sh)이 뷰어 팬(1)에 라이브 렌더를 자동 연결.
+#   - SubagentStart 훅(viewer-attach.sh)이 뷰어 팬(1)에 라이브 렌더를 자동 연결.
 
-set -e
+set -euo pipefail
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -137,7 +137,7 @@ echo -e "\n${YELLOW}[3/5] 프로세스 실행 중...${NC}"
 
 # pane 1 (뷰어): 대기 안내
 tmux send-keys -t "$SESSION:0.1" \
-    "clear; printf '\033[1;35m━━ 뷰어 (대기) ━━\033[0m\n서브에이전트가 시작되면 자동으로\n여기에 라이브 트랜스크립트가 연결됩니다.\n수동 연결: _team/attach-view.sh 1 <라벨> <agentId>\n'" Enter
+    "clear; printf '\033[1;35m━━ 뷰어 (대기) ━━\033[0m\n서브에이전트가 시작되면 자동으로\n여기에 라이브 트랜스크립트가 연결됩니다.\n수동 연결: plugins/orbit/scripts/attach-view.sh 1 <라벨> <agentId>\n'" Enter
 echo "  Pane 1 (뷰어): 대기 모드"
 
 # pane 0 (리드): 실제 Claude CLI 실행
@@ -150,8 +150,8 @@ tmux capture-pane -t "$SESSION:0.0" -p 2>/dev/null | grep -qi "bypass permission
 # ── [4/5] 운영 안내 ──────────────────────────────────────────
 echo -e "\n${YELLOW}[4/5] 운영 모델: 허브 앤 스포크 + 라이브 뷰${NC}"
 echo "  · 모든 작업은 리드(pane 0)가 Agent()로 위임한다."
-echo "  · 라이브 뷰: SubagentStart 훅(auto-attach.sh)이 뷰어(pane 1)에 자동 연결."
-echo "      수동 연결: _team/attach-view.sh 1 <라벨> <agentId>"
+echo "  · 라이브 뷰: SubagentStart 훅(viewer-attach.sh)이 뷰어(pane 1)에 자동 연결."
+echo "      수동 연결: plugins/orbit/scripts/attach-view.sh 1 <라벨> <agentId>"
 echo "  · 이전 에이전트 출력은 지워지지 않고 구분선 아래 누적된다."
 echo ""
 echo "  ★ 이 환경은 orbit 개발자(contributor)용이다."
