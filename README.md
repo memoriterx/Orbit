@@ -51,6 +51,10 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 
 ## 빠른 시작 — 3단계 설치
 
+orbit은 두 가지 방법으로 설치할 수 있습니다. **둘은 동급**입니다 — tmux 분할 화면(리드+뷰어)까지 한 번에 구성하려면 **방법 2**를, 표준 설치만 필요하면 **방법 1**을 고르세요.
+
+#### 방법 1: 표준 설치
+
 ```
 # 1단계: 마켓플레이스 연결
 /plugin marketplace add memoriterx/Orbit
@@ -74,6 +78,17 @@ orbit은 각 단계마다 **다른 역할**이 담당하도록 강제합니다.
 ├── config           ← 세션명 등 설정
 └── quality-gate.sh  ← 품질 게이트 (기본값: 항상 통과. 프로젝트에 맞게 수정)
 ```
+
+#### 방법 2: 스크립트로 한 번에
+
+tmux 팀 환경(리드+뷰어 2분할)까지 한 번에 구성하려면, **번들** 스크립트 한 파일만 내려받아 실행합니다. 아무것도 클론·설치하지 않은 상태에서도 동작합니다(자체완결 — orbit 미설치 시 자동 부트스트랩).
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/memoriterx/Orbit/main/plugins/orbit/scripts/setup-orbit.sh -o setup-orbit.sh
+bash setup-orbit.sh
+```
+
+> 받는 파일은 반드시 **번들** 파일(`plugins/orbit/scripts/setup-orbit.sh`)입니다. 레포 루트의 동명 래퍼(`setup-orbit.sh`)는 단독 실행 시 `Error: bundled script not found`로 종료(exit 1)됩니다. 번들/루트 구분·환경변수 등 상세는 [setup-orbit.sh를 단독으로 받아 실행하기](#setup-orbitsh를-단독으로-받아-실행하기) 참조.
 
 ### 요구사항 (Requirements)
 
